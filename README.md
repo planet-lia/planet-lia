@@ -1,5 +1,5 @@
 # Planet Lia 
 
-This is the monorepo of the Planet Lia Platform containing all needed parts.
+This is the repository of the Planet Lia Platform.
 
 WIP
