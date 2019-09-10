@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+"""
+Hook taken from https://gist.github.com/eyarz/64770d343b9cab442b257869f497af9e and modified.
+"""
+
+import sys
+import re
+
+REGEX = '^(revert: )?(feat|fix|docs|style|refactor|perf|build|test|ci|infra|chore)(\(.+\))?\:\s(.{3,})' 
+
+GUIDELINE_LINK = 'https://github.com/planet-lia/planet-lia/blob/master/CONTRIBUTING.md#commit-messages' 
+
+with open(sys.argv[1]) as commit:
+    lines = commit.readlines()
+    if len(lines) == 0:
+        sys.stderr.write("\nEmpty commit message\n")
+        sys.stderr.write("\n - Refer commit guide: {}\n\n".format(help_address))
+        sys.exit(1)
+
+    match_regex = re.match('({})'.format(REGEX), lines[0])
+
+    if match_regex is None:
+        sys.stderr.write("\nYour commit message subject line does not follow the guideline\n")
+        sys.stderr.write("\n - Refer commit guideline: {}\n\n".format(GUIDELINE_LINK))
+        sys.exit(1)
+
+    sys.stderr.write("\nYour commit message looks good! \n\n")
+sys.exit(0)

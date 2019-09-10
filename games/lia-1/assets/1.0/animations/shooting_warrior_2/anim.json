@@ -1,0 +1,17 @@
+{
+  "frames": [
+    {
+      "path": "1.png",
+      "duration": 0.05
+    },
+    {
+      "path": "2.png",
+      "duration": 0.05
+    },
+    {
+      "path": "3.png",
+      "duration": 0.05
+    }
+  ],
+  "loop": false
+}

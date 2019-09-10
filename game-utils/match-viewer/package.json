@@ -1,0 +1,53 @@
+{
+  "name": "match-viewer",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development  ": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "dependencies": {
+    "@types/echarts": "^4.1.9",
+    "@types/jest": "24.0.17",
+    "@types/jszip": "^3.1.6",
+    "@types/node": "12.7.2",
+    "@types/pako": "^1.0.1",
+    "@types/react": "16.9.1",
+    "@types/react-bootstrap": "^0.32.19",
+    "@types/react-dom": "16.8.5",
+    "echarts": "^4.2.1",
+    "echarts-for-react": "^2.0.15-beta.0",
+    "jquery": "^3.3.1",
+    "jszip": "^3.2.2",
+    "pako": "^1.0.10",
+    "pixi-particles": "^4.1.2",
+    "pixi.js": "^5.0.4",
+    "react": "^16.9.0",
+    "react-bootstrap": "^0.32.1",
+    "react-bootstrap-slider": "^2.1.5",
+    "react-dom": "^16.9.0",
+    "react-full-screen": "^0.2.2",
+    "react-scripts": "3.1.1",
+    "typescript": "3.5.3"
+  },
+  "devDependencies": {
+    "jest-canvas-mock": "^2.1.1"
+  }
+}

@@ -1,3 +1,5 @@
 # Backend
 
-WIP
+Complete backend infrastructure for Planet Lia platform.
+
+WIP 
