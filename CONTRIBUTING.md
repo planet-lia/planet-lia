@@ -109,6 +109,7 @@ A few important style conventions that you need to consider:
 * adding comments to your code
 * documenting your changes in project specific docs (usually README.md within the project)
 * **Golang** - before commiting use `gofmt` command to format your code
+* **Markdown** - put every sentence in a new line as it helps a ton when reviewing changes with git diff
 
 ## Commit Messages
 *Our commit message style is based and adopted from [Angular commit message guidelines](https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#-commit-message-guidelines). 
