@@ -60,7 +60,7 @@ Controlling Entities
 * [Changing Multiple Attributes](replay_file_examples.md#changing-multiple-attributes)
 * [Multiple Entities](replay_file_examples.md#multiple-entities)
 * [Ordering Entities](replay_file_examples.md#ordering-entities)
-* Entity Animation
+* [TextureEntity - Animation](replay_file_examples.md#textureentity-animation)
 * Attach Simple
 * Attach Rotation
 * Attach Rotation and Angle

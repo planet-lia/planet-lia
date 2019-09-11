@@ -283,7 +283,7 @@ In this example we display a simple particle effect `collect-resource` which des
         // Replay ends with the last 
         // provided endTime of any curve.
         // This section is only used 
-        // to extend game duration to 3s
+        // to extend replay duration to 3s
         {
             "type": "BooleanSection",
             "entityId": "CURVE_END_TIME",
@@ -1006,6 +1006,81 @@ Here we display two [TextureEntities](writing_replay_files.md#textureentity) whe
             "attribute": "LAYER",
             "endTime": 1,
             "endRangeValue": 3
+        }
+    ]
+}
+```
+
+### TextureEntity - Animation
+
+This example shows how to use sprite animations with [TextureEntity](writing_replay_files.md#textureentity).
+It first displays a `"warrior-1.png"` image and after `1 s` it switches to displaying a simple shooting animation named `"shooting_warrior_1"`.
+
+In this example animation consists out of 3 images, first two being displayed for `0.25 s` and the last one until the `TEXTURE` attribute has a different value since the animation is not set to loop. See this ilustrated below:
+
+<img src="images/replay-file-examples/TextureEntity-animation-images.png" style="max-width: 500px;" />
+
+Learn more about [Animations format](#animations-format).
+
+<img src="images/replay-file-examples/TextureEntity-animation.gif" />
+
+```json5
+{
+    // ... see metadata at the beginning of this 
+    //     guide in chapter "Replay File Metadata"
+    "sections": [
+        // Set position X at time 0 to 96
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "X",
+            "endTime": 0,
+            "endRangeValue": 96
+        },
+        // Set position Y at time 0 to 54
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "Y",
+            "endTime": 0,
+            "endRangeValue": 54
+        },
+        // Set the WIDTH to 20, because height was 
+        // not provided it defaults to WIDTH value
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "WIDTH",
+            "endTime": 0,
+            "endRangeValue": 20
+        },
+        // Start with a normal image as a TEXTURE
+        {
+            "type": "TextSection",
+            "entityId": "1",
+            "attribute": "TEXTURE",
+            "endTime": 0,
+            "text": "warrior-1.png"
+        },
+        // Set the TEXTURE of the entity to 
+        // "shooting_warrior_1" animation
+        {
+            "type": "TextSection",
+            "entityId": "1",
+            "attribute": "TEXTURE",
+            "endTime": 1,
+            "text": "shooting_warrior_1"
+        },
+         // Replay ends with the last 
+        // provided endTime of any curve.
+        // This section is only used 
+        // to extend replay duration to 3s
+        {
+            "type": "BooleanSection",
+            "entityId": "CURVE_END_TIME",
+            "attribute": "NONE",
+            "endTime": 4,
+            "endRangeValue": true
         }
     ]
 }
