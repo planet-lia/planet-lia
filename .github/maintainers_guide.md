@@ -13,7 +13,7 @@ There are two types of branches that we use:
 * `<feature-branch>`: a short lived branch containing incomplete feature/bug-fix work
 
 `<feature-branch>` rules:
-* has work describe in a approved issue(s)
+* has work describe in a approved issue(s) (feature, bug, refactor, ...)
 * has a short life cycle before it gets merged to master
 * it is merged to `master` branch via PR
 * when merging PRs to `master` consider **squashing** commits if there are many of them or if their quality is bad
@@ -26,8 +26,8 @@ To manage Planet Lia development we use [Github Project boards](https://github.c
 ### Issues
 We use the following types of issues:
 
-* **Epic:** contains a broad requirements for a larger change. Before we start to work on it is broken down into atomic issues. To mark an Epic issue use `Epic` label.
-* **Atomic**: normal issue that holds a small change with all necessary data for it to be implemented
+* **Epic:** contains a broad requirements for a larger piece of work. Before we start to work on it is broken down into atomic issues. To mark an Epic issue use `Epic` label.
+* **Atomic**: normal issue that holds a change with all necessary data for it to be implemented. It **maps 1 to 1 with a feature-branch**.
 
 **Close an issues** when it is:
 * completed
@@ -40,12 +40,13 @@ We use the following types of issues:
 We use two types of labels.
 
 Labels defining **scope**:
-* `web`
-* `backend`
-* `cli`
-* `game-utils`
-* `game`
-* `infra`
+* `project/`
+* `project/web`
+* `project/backend`
+* `project/cli`
+* `project/game-utils`
+* `project/game`
+* `project/infra`
 
 Labels defining **type** of work:
 * `bug`: *(atuomatic via Bug report template)* - something isn't working
