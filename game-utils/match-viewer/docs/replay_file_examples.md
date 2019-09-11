@@ -1321,3 +1321,105 @@ Note that the relative position between green and yellow entities also changes s
     ]
 }
 ```
+
+## Camera
+
+## Camera Movement
+
+This example demonstrates how to create your own [Camera](writing_replay_files.md#camera). 
+
+
+Here we create a simple map out of 1 obstacles and use two entities from [Attach Rotation & Angle](#attach-rotation-&-angle) example.
+Then we create a camera object zooms and rotates through time. 
+You can also move the camera by changing values of attributes `X` and `Y`.
+
+
+*NOTE: Animation below might be laggy because it is stored as .gif.*
+
+<img src="images/replay-file-examples/camera-movement.gif" />
+
+```json5
+{
+    // ... see metadata at the beginning of this 
+    //     guide in chapter "Replay File Metadata"
+    "sections": [
+        // ...
+        // We didn't provide sections for two obstacles and 
+        // moving entity here as it would take to much space.
+        // Check other examples in this guide to understand
+        // how you can create and move entities on the map.
+        // ...
+        // Create a camera
+                {
+            "type": "LinearSection",
+            "entityId": "CAMERA_1",
+            "attribute": "X",
+            "endTime": 0,
+            "endRangeValue": 88
+          },
+          {
+            "type": "LinearSection",
+            "entityId": "CAMERA_1",
+            "attribute": "Y",
+            "endTime": 0,
+            "endRangeValue": 54
+          },
+          {
+            "type": "LinearSection",
+            "entityId": "CAMERA_1",
+            "attribute": "ZOOM",
+            "endTime": 0,
+            "endRangeValue": 1
+          },
+          {
+            "type": "LinearSection",
+            "entityId": "CAMERA_1",
+            "attribute": "ROTATION_DEG",
+            "endTime": 0,
+            "endRangeValue": 0
+          },
+          // Make camera zoom out to x0.3
+          // linearly until 3 s
+          {
+            "type": "LinearSection",
+            "entityId": "CAMERA_1",
+            "attribute": "ZOOM",
+            "endTime": 3,
+            "endRangeValue": 0.3
+          },
+          // Make camera zoom back in to
+          // x1.2
+          {
+            "type": "LinearSection",
+            "entityId": "CAMERA_1",
+            "attribute": "ZOOM",
+            "endTime": 6,
+            "endRangeValue": 1.2
+          },
+          // Make the camera rotate for 
+          // 360 deg between 7 s and 9 s
+          {
+            "type": "LinearSection",
+            "entityId": "CAMERA_1",
+            "attribute": "ROTATION_DEG",
+            "endTime": 7,
+            "endRangeValue": 0
+          },
+          {
+            "type": "LinearSection",
+            "entityId": "CAMERA_1",
+            "attribute": "ROTATION_DEG",
+            "endTime": 9,
+            "endRangeValue": 360
+          }
+    ]
+}
+```
+
+## Multiple Cameras 
+
+In order to support more [Camera](writing_replay_files.md#camera) objects in the same replay file you simply create multiple objects with different `entityId`s.
+The cameras will be automatically displayed in the match viewer controls.
+
+Check [Camera Movement](#camera-movement) example to see how to create a Camera object.
+

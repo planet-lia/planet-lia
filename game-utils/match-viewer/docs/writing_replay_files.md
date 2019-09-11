@@ -66,8 +66,8 @@ Controlling Entities
 * [Attach Rotation & Angle](replay_file_examples.md#attach-rotation-&-angle)
 
 Camera
-* Camera Movement
-* Multiple Cameras
+* [Camera Movement](replay_file_examples.md#camera-movement)
+* [Multiple Cameras](replay_file_examples.md#multiple-cameras)
 * HUD Camera Elements
 
 Other
