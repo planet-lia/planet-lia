@@ -70,7 +70,7 @@ Camera
 * [Multiple Cameras](replay_file_examples.md#multiple-cameras)
 * [HUD Elements](replay_file_examples.md#hud-elements)
 
-Other
+Other Examples
 * Charts (Statistics)
 * Show Entity Path
 * Match Details

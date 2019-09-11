@@ -1324,7 +1324,7 @@ Note that the relative position between green and yellow entities also changes s
 
 ## Camera
 
-## Camera Movement
+### Camera Movement
 
 This example demonstrates how to create your own [Camera](writing_replay_files.md#camera). 
 
@@ -1416,14 +1416,14 @@ You can also move the camera by changing values of attributes `X` and `Y`.
 }
 ```
 
-## Multiple Cameras 
+### Multiple Cameras 
 
 In order to support more [Camera](writing_replay_files.md#camera) objects in the same replay file you simply create multiple objects with different `entityId`s.
 The cameras will be automatically displayed in the match viewer controls.
 
 Check [Camera Movement](#camera-movement) example to see how to create a Camera object.
 
-## HUD Elements 
+### HUD Elements 
 
 When using [Camera](writing_replay_files.md#camera) that for example move around the map, zoom in our out etc., the entities that are on the map automatically get out of view when camera is moving, get bigger or smaller when camera is zooming etc.
 
@@ -1432,3 +1432,146 @@ Some examples might be HUD elements, match time, team stats, labels with statist
 To make an entity not move with the camera, simply make it use the `entityId` with a prefix `"HUD_"`. 
 
 For example an entity that display current time in the game on the screen can have an `entityId` set to `"HUD_timer"` and its position set with attributes `X` and `Y` will not be influenced by what is the camera doing.
+
+## Other Examples
+
+### Charts (Statistics)
+
+This example demonstrates how to create [charts](writing_replay_files.md#charts) that displays besides a match viewer.
+
+Each chart represent values from a curve/attribute that is described in `"sections"` part of the replay file.
+
+Here we create two charts (any number of charts is allowed), one that displays the `X` attribute of a warrior entity and the other displays values from a standalone curve.
+
+*NOTE: Animation below might be laggy because it is stored as .gif.*
+
+<img src="images/replay-file-examples/charts.gif" />
+
+```json5
+{
+    // ... see metadata at the beginning of this 
+    //     guide in chapter "Replay File Metadata"
+    "charts": [
+        // Create a chart that displays 
+        // X and Y attributes of an entity
+        {
+            "type": "Chart",
+            "name": "Entity 1",
+            "series": [
+                {
+                    "name": "x",
+                    "color": "#FF0000",
+                    "curveRef": {
+                        "entityId": "1",
+                        "attribute": "X"
+                    }
+                },
+                {
+                    "name": "y",
+                    "color": "#000000",
+                    "curveRef": {
+                        "entityId": "1",
+                        "attribute": "Y"
+                    }
+                }
+            ]
+        },
+        // Create a chart that displays 
+        // curve with entityId "CURVE_power"
+        {
+            "type": "Chart",
+            "name": "Power",
+            "series": [
+                {
+                    "name": "Power",
+                    "color": "#0000FF",
+                    "curveRef": {
+                        "entityId": "CURVE_power",
+                        "attribute": "NONE"
+                    }
+                }
+            ]
+        }
+    ],
+    "sections": [
+        // Create warrior entity
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "X",
+            "endTime": 0,
+            "endRangeValue": 60
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "Y",
+            "endTime": 0,
+            "endRangeValue": 54
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "WIDTH",
+            "endTime": 0,
+            "endRangeValue": 20
+        },
+        {
+            "type": "TextSection",
+            "entityId": "1",
+            "attribute": "TEXTURE",
+            "endTime": 0,
+            "text": "warrior-1.png"
+        },
+        // Move warrior entity linearly to
+        // new position
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "X",
+            "endTime": 3,
+            "endRangeValue": 140
+        },
+        // Move warrior entity to 
+        // another position
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "X",
+            "endTime": 5,
+            "endRangeValue": 100
+        },
+        // Create a standalone curve with 
+        // fictional power data
+        {
+            "type": "LinearSection",
+            "entityId": "CURVE_power",
+            "attribute": "NONE",
+            "endTime": 0,
+            "endRangeValue": 10
+        },
+                {
+            "type": "LinearSection",
+            "entityId": "CURVE_power",
+            "attribute": "NONE",
+            "endTime": 2,
+            "endRangeValue": 20
+        },
+        {
+            "type": "StepCurve",
+            "entityId": "CURVE_power",
+            "attribute": "NONE",
+            "endTime": 3,
+            "endRangeValue": 10
+        },
+        {
+            "type": "LinearCurve",
+            "entityId": "CURVE_power",
+            "attribute": "NONE",
+            "endTime": 6,
+            "endRangeValue": 5
+        }
+    ]
+}
+```
+
