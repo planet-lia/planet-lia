@@ -1423,3 +1423,12 @@ The cameras will be automatically displayed in the match viewer controls.
 
 Check [Camera Movement](#camera-movement) example to see how to create a Camera object.
 
+## HUD Elements 
+
+When using [Camera](writing_replay_files.md#camera) that for example move around the map, zoom in our out etc., the entities that are on the map automatically get out of view when camera is moving, get bigger or smaller when camera is zooming etc.
+
+Often we want to have certain entities that are always on the fixed spot on the match screen regarding of what camera is doing. 
+Some examples might be HUD elements, match time, team stats, labels with statistics, etc.
+To make an entity not move with the camera, simply make it use the `entityId` with a prefix `"HUD_"`. 
+
+For example an entity that display current time in the game on the screen can have an `entityId` set to `"HUD_timer"` and its position set with attributes `X` and `Y` will not be influenced by what is the camera doing.

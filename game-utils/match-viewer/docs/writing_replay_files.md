@@ -68,7 +68,7 @@ Controlling Entities
 Camera
 * [Camera Movement](replay_file_examples.md#camera-movement)
 * [Multiple Cameras](replay_file_examples.md#multiple-cameras)
-* HUD Camera Elements
+* [HUD Elements](replay_file_examples.md#hud-elements)
 
 Other
 * Charts (Statistics)
