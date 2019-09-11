@@ -45,6 +45,7 @@ Labels defining **scope**:
 * `project/backend`
 * `project/cli`
 * `project/game-utils`
+* `project/match-viewer`
 * `project/game`
 * `project/infra`
 
