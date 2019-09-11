@@ -61,11 +61,9 @@ Controlling Entities
 * [Multiple Entities](replay_file_examples.md#multiple-entities)
 * [Ordering Entities](replay_file_examples.md#ordering-entities)
 * [TextureEntity - Animation](replay_file_examples.md#textureentity-animation)
-* Attach Simple
-* Attach Rotation
-* Attach Rotation and Angle
-* Attach No Scale
-* Attach With Scale
+* [Attach Simple](replay_file_examples.md#attach-simple)
+* [Attach Rotation](replay_file_examples.md#attach-rotation)
+* [Attach Rotation & Angle](replay_file_examples.md#attach-rotation-&-angle)
 
 Camera
 * Camera Movement

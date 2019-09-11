@@ -920,6 +920,8 @@ The entities with `LAYER` values greater than other entities will be drawn on to
 
 Here we display two [TextureEntities](writing_replay_files.md#textureentity) where block entity starts on layer `1`, warrior entity on layer `2` and after `2 s` block entity is moved to layer `3` and is thus after that time rendered on top of warrior entity.
 
+*NOTE: Animation below might be laggy because it is stored as .gif.*
+
 <img src="images/replay-file-examples/ordering-entities.gif" />
 
 ```json5
@@ -1022,6 +1024,8 @@ In this example animation consists out of 3 images, first two being displayed fo
 
 Learn more about [Animations format](#animations-format).
 
+*NOTE: Animation below might be laggy because it is stored as .gif.*
+
 <img src="images/replay-file-examples/TextureEntity-animation.gif" />
 
 ```json5
@@ -1081,6 +1085,238 @@ Learn more about [Animations format](#animations-format).
             "attribute": "NONE",
             "endTime": 4,
             "endRangeValue": true
+        }
+    ]
+}
+```
+
+### Attach Simple
+
+This example shows how to attach one entity to another.
+
+Here we have two [TextureEntities](writing_replay_files.md#textureentity). 
+The yellow entity moves around the map. 
+The green entity attaches to the yellow entity and moves with it automatically so that it is always away from it for `10` on `X` and `20` on `Y`.
+
+***IMPORTANT:** By attaching entities to other entities you can easily make things like health bars, viewing areas, ammo bars, etc. that attach to other entities and move with them.*
+
+Green entity attaches to the yellow entity by setting the following Attach parameters to the following values (see what each of them does [here](writing_replay_files.md#attachsection)):
+- `attachX`: **true**
+- `attachY`: **true**
+- `attachRotation`: false (see an [example](#attach-rotation) when set to `true`)
+- `attachAngle`: false (see an [example](#attach-rotation-&-angle) when set to `true`)
+- `attachScale`: false
+- `attachVisibility`: false
+
+If an entity gets attached to another entity it moves with it and its attributes (eg. `X`, `Y`) are treated within local coordinate system that moves with the entity it attaches to.
+
+*NOTE: Animation below might be laggy because it is stored as .gif.*
+
+<img src="images/replay-file-examples/attach-simple.gif" />
+
+```json5
+{
+    // ... see metadata at the beginning of this 
+    //     guide in chapter "Replay File Metadata"
+    "sections": [
+        // Create the yellow entity and make it
+        // move first linearly on x axis, then 
+        // rotate for 90 degrees and then move
+        // it linearly on y axis
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "X",
+            "endTime": 0,
+            "endRangeValue": 40
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "Y",
+            "endTime": 0,
+            "endRangeValue": 30
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "WIDTH",
+            "endTime": 0,
+            "endRangeValue": 10
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "ROTATION_DEG",
+            "endTime": 0,
+            "endRangeValue": 0
+        },
+        {
+            "type": "TextSection",
+            "entityId": "1",
+            "attribute": "TEXTURE",
+            "endTime": 0,
+            "text": "warrior-1.png"
+        },
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "X",
+            "endTime": 3,
+            "endRangeValue": 110
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "ROTATION_DEG",
+            "endTime": 3,
+            "endRangeValue": 0
+        },
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "ROTATION_DEG",
+            "endTime": 5,
+            "endRangeValue": 90
+        },
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "Y",
+            "endTime": 5,
+            "endRangeValue": 30
+        },
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "Y",
+            "endTime": 7,
+            "endRangeValue": 84
+        },
+        // Create the green entity and
+        // attach it to the yellow entity
+        {
+            "type": "StepSection",
+            "entityId": "2",
+            "attribute": "X",
+            "endTime": 0,
+            "endRangeValue": 10
+        },
+        {
+            "type": "StepSection",
+            "entityId": "2",
+            "attribute": "Y",
+            "endTime": 0,
+            "endRangeValue": 20
+        },
+        {
+            "type": "StepSection",
+            "entityId": "2",
+            "attribute": "WIDTH",
+            "endTime": 0,
+            "endRangeValue": 6
+        },
+        {
+            "type": "TextSection",
+            "entityId": "2",
+            "attribute": "TEXTURE",
+            "endTime": 0,
+            "text": "warrior-2.png"
+        },
+        // HERE you attach entity with
+        // id "2" to entity with id "1"
+        {
+            "type": "AttachSection",
+            "entityId": "2",
+            "attribute": "ATTACH",
+            "endTime": 0.0,
+            "attachToEntityId": "1",
+            "attachX": true,
+            "attachY": true,
+            "attachRotation": false,
+            "attachAngle": false,
+            "attachScale": false,
+            "attachVisibility": false
+        }
+    ]
+}
+```
+
+### Attach Rotation
+
+This example shows how to attach one entity to another.
+
+:bangbang: The example is exactly the same as the the [Attach Simple example](#attach-simple).
+The only change is that parameter `attachRotation` is set to `true`. 
+This makes the green entity rotate around the yellow entity as the yellow entity rotates.
+Note that the relative position between green and yellow entities also changes since the rotation of the entity is taken into the account.
+
+*NOTE: Animation below might be laggy because it is stored as .gif.*
+
+<img src="images/replay-file-examples/attach-rotation.gif" />
+
+```json5
+{
+    // ... see metadata at the beginning of this 
+    //     guide in chapter "Replay File Metadata"
+    "sections": [
+        // ...
+        // Everything is the same as in "Attach Simple" 
+        // example except "attachRotation" field in the 
+        // section below is set to true.
+        // ...
+        {
+            "type": "AttachSection",
+            "entityId": "2",
+            "attribute": "ATTACH",
+            "endTime": 0.0,
+            "attachToEntityId": "1",
+            "attachX": true,
+            "attachY": true,
+            "attachRotation": true,  // <-- Change
+            "attachAngle": false,
+            "attachScale": false,
+            "attachVisibility": false
+        }
+    ]
+}
+```
+
+### Attach Rotation & Angle
+
+This example shows how to attach one entity to another.
+
+:bangbang: The example is exactly the same as the the [Attach Simple example](#attach-simple).
+The only change is that parameters `attachRotation` and `attachScale` are set to `true`. 
+This makes the green entity rotate around the yellow entity as the yellow entity rotates as well as rotate around its own center as the yellow entities rotates.
+Note that the relative position between green and yellow entities also changes since the rotation of the entity is taken into the account.
+
+*NOTE: Animation below might be laggy because it is stored as .gif.*
+
+<img src="images/replay-file-examples/attach-rotation-and-angle.gif" />
+
+```json5
+{
+    // ... see metadata at the beginning of this 
+    //     guide in chapter "Replay File Metadata"
+    "sections": [
+        // ...
+        // Everything is the same as in "Attach Simple" 
+        // example except "attachRotation" field in the 
+        // section below is set to true.
+        // ...
+        {
+            "type": "AttachSection",
+            "entityId": "2",
+            "attribute": "ATTACH",
+            "endTime": 0.0,
+            "attachToEntityId": "1",
+            "attachX": true,
+            "attachY": true,
+            "attachRotation": true,  // <-- Change
+            "attachAngle": true,  // <-- Change
+            "attachScale": false,
+            "attachVisibility": false
         }
     ]
 }
