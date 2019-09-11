@@ -206,11 +206,12 @@ The footer should contain any information about **Breaking Changes** and is also
 Example of a breaking change and closing an issue.
 
 ```
-feat(backend): add user achievement colors
+feat(backend): rename achievement field in user info endpoint
 
-Changes in the database structure and API where necessary.
+Previous achievement field was called "userAchievements" this has been renamed to 
+simply "achievements".
 
-BREAKING CHANGE: API returns 400 when achievement color is not provided on POST.
+BREAKING CHANGE: User achievements field rename in user info endpoint.
 Closes #105"
 ```
 
