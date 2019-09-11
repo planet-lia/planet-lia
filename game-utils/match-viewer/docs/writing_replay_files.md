@@ -59,7 +59,7 @@ Attribute Interpolation
 Controlling Entities
 * [Changing Multiple Attributes](replay_file_examples.md#changing-multiple-attributes)
 * [Multiple Entities](replay_file_examples.md#multiple-entities)
-* Layer Entities
+* [Ordering Entities](replay_file_examples.md#ordering-entities)
 * Entity Animation
 * Attach Simple
 * Attach Rotation

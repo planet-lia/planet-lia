@@ -910,3 +910,103 @@ Here we display two [TextureEntities](writing_replay_files.md#textureentity) and
     ]
 }
 ```
+
+### Ordering Entities
+
+This example demonstrates how to order different entities to determine which one is drawn on top of which.
+
+For that you can use `LAYER` attribute of [TextureEntity](writing_replay_files.md#textureentity), [TextEntity](writing_replay_files.md#textentity) or [ParticleEntity](writing_replay_files.md#particleentity). 
+The entities with `LAYER` values greater than other entities will be drawn on top of them (eg. entity with `LAYER` value 2 will be drawn on top of entity with value 1).
+
+Here we display two [TextureEntities](writing_replay_files.md#textureentity) where block entity starts on layer `1`, warrior entity on layer `2` and after `2 s` block entity is moved to layer `3` and is thus after that time rendered on top of warrior entity.
+
+<img src="images/replay-file-examples/ordering-entities.gif" />
+
+```json5
+{
+    // ... see metadata at the beginning of this 
+    //     guide in chapter "Replay File Metadata"
+    "sections": [
+        // Create first entity on layer 1 (block)
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "X",
+            "endTime": 0,
+            "endRangeValue": 88
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "Y",
+            "endTime": 0,
+            "endRangeValue": 54
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "WIDTH",
+            "endTime": 0,
+            "endRangeValue": 20
+        },
+        {
+            "type": "TextSection",
+            "entityId": "1",
+            "attribute": "TEXTURE",
+            "endTime": 0,
+            "text": "block.png"
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "LAYER",
+            "endTime": 0,
+            "endRangeValue": 1
+        },
+        // Create second entity on layer 2 (warrior)
+        {
+            "type": "StepSection",
+            "entityId": "2",
+            "attribute": "X",
+            "endTime": 0,
+            "endRangeValue": 95
+        },
+        {
+            "type": "StepSection",
+            "entityId": "2",
+            "attribute": "Y",
+            "endTime": 0,
+            "endRangeValue": 54
+        },
+        {
+            "type": "StepSection",
+            "entityId": "2",
+            "attribute": "WIDTH",
+            "endTime": 0,
+            "endRangeValue": 15
+        },
+        {
+            "type": "TextSection",
+            "entityId": "2",
+            "attribute": "TEXTURE",
+            "endTime": 0,
+            "text": "warrior-1.png"
+        },
+        {
+            "type": "StepSection",
+            "entityId": "2",
+            "attribute": "LAYER",
+            "endTime": 0,
+            "endRangeValue": 2
+        },
+        // Move block entity to layer 3
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "LAYER",
+            "endTime": 1,
+            "endRangeValue": 3
+        }
+    ]
+}
+```
