@@ -1575,3 +1575,150 @@ Here we create two charts (any number of charts is allowed), one that displays t
 }
 ```
 
+### Show Entity Path
+
+This example demonstrates how if entity is clicked on it displays a path that it travels throughout the replay.
+
+You can enable and configure this functionality by providing the `showEntityPath` field in `gameDetails`. Check what you can configure [here](writing_replay_files.md#gamedetails).
+
+*NOTE: Animation below might be laggy because it is stored as .gif.*
+
+<img src="images/replay-file-examples/show-entity-path.gif" />
+
+```json5
+{
+    "gameDetails": {
+        // ... 
+        "showEntityPath": {
+            "pathColor": "#FFFFFF",
+            "pathAlpha": 0.6,
+            "clickedEntityTint": "#FF0000",
+            "pathWidth": 0.4,
+            "drawingTimeInterval": 0.2
+        }
+    },
+    // ... see metadata at the beginning of this 
+    //     guide in chapter "Replay File Metadata"
+    "sections": [
+        // Create a warrior an entity that moves 
+        // around the map, just as we are used to.
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "X",
+            "endTime": 0,
+            "endRangeValue": 40
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "Y",
+            "endTime": 0,
+            "endRangeValue": 30
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "WIDTH",
+            "endTime": 0,
+            "endRangeValue": 10
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "ROTATION_DEG",
+            "endTime": 0,
+            "endRangeValue": 0
+        },
+        {
+            "type": "TextSection",
+            "entityId": "1",
+            "attribute": "TEXTURE",
+            "endTime": 0,
+            "text": "warrior-1.png"
+        },
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "X",
+            "endTime": 3,
+            "endRangeValue": 110
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "ROTATION_DEG",
+            "endTime": 3,
+            "endRangeValue": 0
+        },
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "ROTATION_DEG",
+            "endTime": 5,
+            "endRangeValue": 90
+        },
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "Y",
+            "endTime": 5,
+            "endRangeValue": 30
+        },
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "Y",
+            "endTime": 7,
+            "endRangeValue": 84
+        }
+    ]
+}
+```
+
+### Match Details
+
+This example demonstrates how to display additional match details besides the match viewer. 
+Note that the first few details in the image below (Bot 1 vs. Bot 2, Duration: 0) are added automatically.
+
+You can see how to configure `matchDetails` field [here](writing_replay_files.md#matchdetails).
+
+*NOTE: Animation below might be laggy because it is stored as .gif.*
+
+<img src="images/replay-file-examples/match-details.png" />
+
+```json5
+{
+    "gameDetails": {
+        "game": "lia-1",
+        "version": "1.0",
+        "backgroundColor": "#333333",
+        "camera": {
+        "width": 176,
+        "height": 99
+        },
+        "showEntityPath": null
+    },
+    "matchDetails": [
+        {
+            "description": "Game seed",
+            "value": 5
+        },
+        {
+            "description": "Map type",
+            "value": "empty"
+        },
+        {
+            "description": "Difficulty",
+            "value": "easy"
+        },
+        {
+            "description": "Some other field",
+            "value": 42
+        }
+    ],
+    "charts": [],
+    "sections": []
+}
+```
+

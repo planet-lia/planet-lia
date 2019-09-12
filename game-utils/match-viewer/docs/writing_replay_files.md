@@ -71,9 +71,9 @@ Camera
 * [HUD Elements](replay_file_examples.md#hud-elements)
 
 Other Examples
-* Charts (Statistics)
-* Show Entity Path
-* Match Details
+* [Charts (Statistics)](replay_file_examples.md#charts-(statistics))
+* [Show Entity Path](replay_file_examples.md#show-entity-path)
+* [Match Details](replay_file_examples.md#match-details)
 
 ## Replay File Format
 
