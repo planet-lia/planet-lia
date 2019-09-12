@@ -24,6 +24,39 @@ Assets that will be referenced in examples eg. `"block.png"` will be taken from 
 "charts": [],
 ```
 
+### Examples
+
+Entity Types
+* [TextureEntity](replay_file_examples.md#textureentity)
+* TextEntity ([text](replay_file_examples.md#textentity), [time](replay_file_examples.md#textentity---numeric-text))
+* [ParticleEntity](replay_file_examples.md#particleentity)
+
+Attribute Interpolation
+* [Linear Interpolation](replay_file_examples.md#linear-interpolation)
+* [Step Interpolation](replay_file_examples.md#step-interpolation)
+* [Sine Interpolation](replay_file_examples.md#sine-interpolation)
+* [Circular Interpolation](replay_file_examples.md#circular-interpolation)
+* [Mixed Interpolation](replay_file_examples.md#mixed-interpolation)
+
+Controlling Entities
+* [Changing Multiple Attributes](replay_file_examples.md#changing-multiple-attributes)
+* [Multiple Entities](replay_file_examples.md#multiple-entities)
+* [Ordering Entities](replay_file_examples.md#ordering-entities)
+* [TextureEntity - Animation](replay_file_examples.md#textureentity---animation)
+* [Attach Simple](replay_file_examples.md#attach-simple)
+* [Attach Rotation](replay_file_examples.md#attach-rotation)
+* [Attach Rotation & Angle](replay_file_examples.md#attach-rotation--angle)
+
+Camera
+* [Camera Movement](replay_file_examples.md#camera-movement)
+* [Multiple Cameras](replay_file_examples.md#multiple-cameras)
+* [HUD Elements](replay_file_examples.md#hud-elements)
+
+Other Examples
+* [Charts (Statistics)](replay_file_examples.md#charts-statistics)
+* [Show Entity Path](replay_file_examples.md#show-entity-path)
+* [Match Details](replay_file_examples.md#match-details)
+
 ## Entity Types
 
 ### TextureEntity
@@ -283,7 +316,7 @@ In this example we display a simple particle effect `collect-resource` which des
         // Replay ends with the last 
         // provided endTime of any curve.
         // This section is only used 
-        // to extend game duration to 3s
+        // to extend replay duration to 3s
         {
             "type": "BooleanSection",
             "entityId": "CURVE_END_TIME",
@@ -910,3 +943,815 @@ Here we display two [TextureEntities](writing_replay_files.md#textureentity) and
     ]
 }
 ```
+
+### Ordering Entities
+
+This example demonstrates how to order different entities to determine which one is drawn on top of which.
+
+For that you can use `LAYER` attribute of [TextureEntity](writing_replay_files.md#textureentity), [TextEntity](writing_replay_files.md#textentity) or [ParticleEntity](writing_replay_files.md#particleentity). 
+The entities with `LAYER` values greater than other entities will be drawn on top of them (eg. entity with `LAYER` value 2 will be drawn on top of entity with value 1).
+
+Here we display two [TextureEntities](writing_replay_files.md#textureentity) where block entity starts on layer `1`, warrior entity on layer `2` and after `2 s` block entity is moved to layer `3` and is thus after that time rendered on top of warrior entity.
+
+*NOTE: Animation below might be laggy because it is stored as .gif.*
+
+<img src="images/replay-file-examples/ordering-entities.gif" />
+
+```json5
+{
+    // ... see metadata at the beginning of this 
+    //     guide in chapter "Replay File Metadata"
+    "sections": [
+        // Create first entity on layer 1 (block)
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "X",
+            "endTime": 0,
+            "endRangeValue": 88
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "Y",
+            "endTime": 0,
+            "endRangeValue": 54
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "WIDTH",
+            "endTime": 0,
+            "endRangeValue": 20
+        },
+        {
+            "type": "TextSection",
+            "entityId": "1",
+            "attribute": "TEXTURE",
+            "endTime": 0,
+            "text": "block.png"
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "LAYER",
+            "endTime": 0,
+            "endRangeValue": 1
+        },
+        // Create second entity on layer 2 (warrior)
+        {
+            "type": "StepSection",
+            "entityId": "2",
+            "attribute": "X",
+            "endTime": 0,
+            "endRangeValue": 95
+        },
+        {
+            "type": "StepSection",
+            "entityId": "2",
+            "attribute": "Y",
+            "endTime": 0,
+            "endRangeValue": 54
+        },
+        {
+            "type": "StepSection",
+            "entityId": "2",
+            "attribute": "WIDTH",
+            "endTime": 0,
+            "endRangeValue": 15
+        },
+        {
+            "type": "TextSection",
+            "entityId": "2",
+            "attribute": "TEXTURE",
+            "endTime": 0,
+            "text": "warrior-1.png"
+        },
+        {
+            "type": "StepSection",
+            "entityId": "2",
+            "attribute": "LAYER",
+            "endTime": 0,
+            "endRangeValue": 2
+        },
+        // Move block entity to layer 3
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "LAYER",
+            "endTime": 1,
+            "endRangeValue": 3
+        }
+    ]
+}
+```
+
+### TextureEntity - Animation
+
+This example shows how to use sprite animations with [TextureEntity](writing_replay_files.md#textureentity).
+It first displays a `"warrior-1.png"` image and after `1 s` it switches to displaying a simple shooting animation named `"shooting_warrior_1"`.
+
+In this example animation consists out of 3 images, first two being displayed for `0.25 s` and the last one until the `TEXTURE` attribute has a different value since the animation is not set to loop. See this ilustrated below:
+
+<img src="images/replay-file-examples/TextureEntity-animation-images.png" style="max-width: 500px;" />
+
+Learn more about [Animations format](#animations-format).
+
+*NOTE: Animation below might be laggy because it is stored as .gif.*
+
+<img src="images/replay-file-examples/TextureEntity-animation.gif" />
+
+```json5
+{
+    // ... see metadata at the beginning of this 
+    //     guide in chapter "Replay File Metadata"
+    "sections": [
+        // Set position X at time 0 to 96
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "X",
+            "endTime": 0,
+            "endRangeValue": 96
+        },
+        // Set position Y at time 0 to 54
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "Y",
+            "endTime": 0,
+            "endRangeValue": 54
+        },
+        // Set the WIDTH to 20, because height was 
+        // not provided it defaults to WIDTH value
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "WIDTH",
+            "endTime": 0,
+            "endRangeValue": 20
+        },
+        // Start with a normal image as a TEXTURE
+        {
+            "type": "TextSection",
+            "entityId": "1",
+            "attribute": "TEXTURE",
+            "endTime": 0,
+            "text": "warrior-1.png"
+        },
+        // Set the TEXTURE of the entity to 
+        // "shooting_warrior_1" animation
+        {
+            "type": "TextSection",
+            "entityId": "1",
+            "attribute": "TEXTURE",
+            "endTime": 1,
+            "text": "shooting_warrior_1"
+        },
+         // Replay ends with the last 
+        // provided endTime of any curve.
+        // This section is only used 
+        // to extend replay duration to 3s
+        {
+            "type": "BooleanSection",
+            "entityId": "CURVE_END_TIME",
+            "attribute": "NONE",
+            "endTime": 4,
+            "endRangeValue": true
+        }
+    ]
+}
+```
+
+### Attach Simple
+
+This example shows how to attach one entity to another.
+
+Here we have two [TextureEntities](writing_replay_files.md#textureentity). 
+The yellow entity moves around the map. 
+The green entity attaches to the yellow entity and moves with it automatically so that it is always away from it for `10` on `X` and `20` on `Y`.
+
+***IMPORTANT:** By attaching entities to other entities you can easily make things like health bars, viewing areas, ammo bars, etc. that attach to other entities and move with them.*
+
+Green entity attaches to the yellow entity by setting the following Attach parameters to the following values (see what each of them does [here](writing_replay_files.md#attachsection)):
+- `attachX`: **true**
+- `attachY`: **true**
+- `attachRotation`: false (see an [example](#attach-rotation) when set to `true`)
+- `attachAngle`: false (see an [example](#attach-rotation-&-angle) when set to `true`)
+- `attachScale`: false
+- `attachVisibility`: false
+
+If an entity gets attached to another entity it moves with it and its attributes (eg. `X`, `Y`) are treated within local coordinate system that moves with the entity it attaches to.
+
+*NOTE: Animation below might be laggy because it is stored as .gif.*
+
+<img src="images/replay-file-examples/attach-simple.gif" />
+
+```json5
+{
+    // ... see metadata at the beginning of this 
+    //     guide in chapter "Replay File Metadata"
+    "sections": [
+        // Create the yellow entity and make it
+        // move first linearly on x axis, then 
+        // rotate for 90 degrees and then move
+        // it linearly on y axis
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "X",
+            "endTime": 0,
+            "endRangeValue": 40
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "Y",
+            "endTime": 0,
+            "endRangeValue": 30
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "WIDTH",
+            "endTime": 0,
+            "endRangeValue": 10
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "ROTATION_DEG",
+            "endTime": 0,
+            "endRangeValue": 0
+        },
+        {
+            "type": "TextSection",
+            "entityId": "1",
+            "attribute": "TEXTURE",
+            "endTime": 0,
+            "text": "warrior-1.png"
+        },
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "X",
+            "endTime": 3,
+            "endRangeValue": 110
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "ROTATION_DEG",
+            "endTime": 3,
+            "endRangeValue": 0
+        },
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "ROTATION_DEG",
+            "endTime": 5,
+            "endRangeValue": 90
+        },
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "Y",
+            "endTime": 5,
+            "endRangeValue": 30
+        },
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "Y",
+            "endTime": 7,
+            "endRangeValue": 84
+        },
+        // Create the green entity and
+        // attach it to the yellow entity
+        {
+            "type": "StepSection",
+            "entityId": "2",
+            "attribute": "X",
+            "endTime": 0,
+            "endRangeValue": 10
+        },
+        {
+            "type": "StepSection",
+            "entityId": "2",
+            "attribute": "Y",
+            "endTime": 0,
+            "endRangeValue": 20
+        },
+        {
+            "type": "StepSection",
+            "entityId": "2",
+            "attribute": "WIDTH",
+            "endTime": 0,
+            "endRangeValue": 6
+        },
+        {
+            "type": "TextSection",
+            "entityId": "2",
+            "attribute": "TEXTURE",
+            "endTime": 0,
+            "text": "warrior-2.png"
+        },
+        // HERE you attach entity with
+        // id "2" to entity with id "1"
+        {
+            "type": "AttachSection",
+            "entityId": "2",
+            "attribute": "ATTACH",
+            "endTime": 0.0,
+            "attachToEntityId": "1",
+            "attachX": true,
+            "attachY": true,
+            "attachRotation": false,
+            "attachAngle": false,
+            "attachScale": false,
+            "attachVisibility": false
+        }
+    ]
+}
+```
+
+### Attach Rotation
+
+This example shows how to attach one entity to another.
+
+:bangbang: The example is exactly the same as the the [Attach Simple example](#attach-simple).
+The only change is that parameter `attachRotation` is set to `true`. 
+This makes the green entity rotate around the yellow entity as the yellow entity rotates.
+Note that the relative position between green and yellow entities also changes since the rotation of the entity is taken into the account.
+
+*NOTE: Animation below might be laggy because it is stored as .gif.*
+
+<img src="images/replay-file-examples/attach-rotation.gif" />
+
+```json5
+{
+    // ... see metadata at the beginning of this 
+    //     guide in chapter "Replay File Metadata"
+    "sections": [
+        // ...
+        // Everything is the same as in "Attach Simple" 
+        // example except "attachRotation" field in the 
+        // section below is set to true.
+        // ...
+        {
+            "type": "AttachSection",
+            "entityId": "2",
+            "attribute": "ATTACH",
+            "endTime": 0.0,
+            "attachToEntityId": "1",
+            "attachX": true,
+            "attachY": true,
+            "attachRotation": true,  // <-- Change
+            "attachAngle": false,
+            "attachScale": false,
+            "attachVisibility": false
+        }
+    ]
+}
+```
+
+### Attach Rotation & Angle
+
+This example shows how to attach one entity to another.
+
+:bangbang: The example is exactly the same as the the [Attach Simple example](#attach-simple).
+The only change is that parameters `attachRotation` and `attachScale` are set to `true`. 
+This makes the green entity rotate around the yellow entity as the yellow entity rotates as well as rotate around its own center as the yellow entities rotates.
+Note that the relative position between green and yellow entities also changes since the rotation of the entity is taken into the account.
+
+*NOTE: Animation below might be laggy because it is stored as .gif.*
+
+<img src="images/replay-file-examples/attach-rotation-and-angle.gif" />
+
+```json5
+{
+    // ... see metadata at the beginning of this 
+    //     guide in chapter "Replay File Metadata"
+    "sections": [
+        // ...
+        // Everything is the same as in "Attach Simple" 
+        // example except "attachRotation" field in the 
+        // section below is set to true.
+        // ...
+        {
+            "type": "AttachSection",
+            "entityId": "2",
+            "attribute": "ATTACH",
+            "endTime": 0.0,
+            "attachToEntityId": "1",
+            "attachX": true,
+            "attachY": true,
+            "attachRotation": true,  // <-- Change
+            "attachAngle": true,  // <-- Change
+            "attachScale": false,
+            "attachVisibility": false
+        }
+    ]
+}
+```
+
+## Camera
+
+### Camera Movement
+
+This example demonstrates how to create your own [Camera](writing_replay_files.md#camera). 
+
+
+Here we create a simple map out of 1 obstacles and use two entities from [Attach Rotation & Angle](#attach-rotation-&-angle) example.
+Then we create a camera object zooms and rotates through time. 
+You can also move the camera by changing values of attributes `X` and `Y`.
+
+
+*NOTE: Animation below might be laggy because it is stored as .gif.*
+
+<img src="images/replay-file-examples/camera-movement.gif" />
+
+```json5
+{
+    // ... see metadata at the beginning of this 
+    //     guide in chapter "Replay File Metadata"
+    "sections": [
+        // ...
+        // We didn't provide sections for two obstacles and 
+        // moving entity here as it would take to much space.
+        // Check other examples in this guide to understand
+        // how you can create and move entities on the map.
+        // ...
+        // Create a camera
+                {
+            "type": "LinearSection",
+            "entityId": "CAMERA_1",
+            "attribute": "X",
+            "endTime": 0,
+            "endRangeValue": 88
+          },
+          {
+            "type": "LinearSection",
+            "entityId": "CAMERA_1",
+            "attribute": "Y",
+            "endTime": 0,
+            "endRangeValue": 54
+          },
+          {
+            "type": "LinearSection",
+            "entityId": "CAMERA_1",
+            "attribute": "ZOOM",
+            "endTime": 0,
+            "endRangeValue": 1
+          },
+          {
+            "type": "LinearSection",
+            "entityId": "CAMERA_1",
+            "attribute": "ROTATION_DEG",
+            "endTime": 0,
+            "endRangeValue": 0
+          },
+          // Make camera zoom out to x0.3
+          // linearly until 3 s
+          {
+            "type": "LinearSection",
+            "entityId": "CAMERA_1",
+            "attribute": "ZOOM",
+            "endTime": 3,
+            "endRangeValue": 0.3
+          },
+          // Make camera zoom back in to
+          // x1.2
+          {
+            "type": "LinearSection",
+            "entityId": "CAMERA_1",
+            "attribute": "ZOOM",
+            "endTime": 6,
+            "endRangeValue": 1.2
+          },
+          // Make the camera rotate for 
+          // 360 deg between 7 s and 9 s
+          {
+            "type": "LinearSection",
+            "entityId": "CAMERA_1",
+            "attribute": "ROTATION_DEG",
+            "endTime": 7,
+            "endRangeValue": 0
+          },
+          {
+            "type": "LinearSection",
+            "entityId": "CAMERA_1",
+            "attribute": "ROTATION_DEG",
+            "endTime": 9,
+            "endRangeValue": 360
+          }
+    ]
+}
+```
+
+### Multiple Cameras 
+
+In order to support more [Camera](writing_replay_files.md#camera) objects in the same replay file you simply create multiple objects with different `entityId`s.
+The cameras will be automatically displayed in the match viewer controls.
+
+Check [Camera Movement](#camera-movement) example to see how to create a Camera object.
+
+### HUD Elements 
+
+When using [Camera](writing_replay_files.md#camera) that for example move around the map, zoom in our out etc., the entities that are on the map automatically get out of view when camera is moving, get bigger or smaller when camera is zooming etc.
+
+Often we want to have certain entities that are always on the fixed spot on the match screen regarding of what camera is doing. 
+Some examples might be HUD elements, match time, team stats, labels with statistics, etc.
+To make an entity not move with the camera, simply make it use the `entityId` with a prefix `"HUD_"`. 
+
+For example an entity that display current time in the game on the screen can have an `entityId` set to `"HUD_timer"` and its position set with attributes `X` and `Y` will not be influenced by what is the camera doing.
+
+## Other Examples
+
+### Charts (Statistics)
+
+This example demonstrates how to create [charts](writing_replay_files.md#charts) that displays besides a match viewer.
+
+Each chart represent values from a curve/attribute that is described in `"sections"` part of the replay file.
+
+Here we create two charts (any number of charts is allowed), one that displays the `X` attribute of a warrior entity and the other displays values from a standalone curve.
+
+*NOTE: Animation below might be laggy because it is stored as .gif.*
+
+<img src="images/replay-file-examples/charts.gif" />
+
+```json5
+{
+    // ... see metadata at the beginning of this 
+    //     guide in chapter "Replay File Metadata"
+    "charts": [
+        // Create a chart that displays 
+        // X and Y attributes of an entity
+        {
+            "type": "Chart",
+            "name": "Entity 1",
+            "series": [
+                {
+                    "name": "x",
+                    "color": "#FF0000",
+                    "curveRef": {
+                        "entityId": "1",
+                        "attribute": "X"
+                    }
+                },
+                {
+                    "name": "y",
+                    "color": "#000000",
+                    "curveRef": {
+                        "entityId": "1",
+                        "attribute": "Y"
+                    }
+                }
+            ]
+        },
+        // Create a chart that displays 
+        // curve with entityId "CURVE_power"
+        {
+            "type": "Chart",
+            "name": "Power",
+            "series": [
+                {
+                    "name": "Power",
+                    "color": "#0000FF",
+                    "curveRef": {
+                        "entityId": "CURVE_power",
+                        "attribute": "NONE"
+                    }
+                }
+            ]
+        }
+    ],
+    "sections": [
+        // Create warrior entity
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "X",
+            "endTime": 0,
+            "endRangeValue": 60
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "Y",
+            "endTime": 0,
+            "endRangeValue": 54
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "WIDTH",
+            "endTime": 0,
+            "endRangeValue": 20
+        },
+        {
+            "type": "TextSection",
+            "entityId": "1",
+            "attribute": "TEXTURE",
+            "endTime": 0,
+            "text": "warrior-1.png"
+        },
+        // Move warrior entity linearly to
+        // new position
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "X",
+            "endTime": 3,
+            "endRangeValue": 140
+        },
+        // Move warrior entity to 
+        // another position
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "X",
+            "endTime": 5,
+            "endRangeValue": 100
+        },
+        // Create a standalone curve with 
+        // fictional power data
+        {
+            "type": "LinearSection",
+            "entityId": "CURVE_power",
+            "attribute": "NONE",
+            "endTime": 0,
+            "endRangeValue": 10
+        },
+                {
+            "type": "LinearSection",
+            "entityId": "CURVE_power",
+            "attribute": "NONE",
+            "endTime": 2,
+            "endRangeValue": 20
+        },
+        {
+            "type": "StepCurve",
+            "entityId": "CURVE_power",
+            "attribute": "NONE",
+            "endTime": 3,
+            "endRangeValue": 10
+        },
+        {
+            "type": "LinearCurve",
+            "entityId": "CURVE_power",
+            "attribute": "NONE",
+            "endTime": 6,
+            "endRangeValue": 5
+        }
+    ]
+}
+```
+
+### Show Entity Path
+
+This example demonstrates how if entity is clicked on it displays a path that it travels throughout the replay.
+
+You can enable and configure this functionality by providing the `showEntityPath` field in `gameDetails`. Check what you can configure [here](writing_replay_files.md#gamedetails).
+
+*NOTE: Animation below might be laggy because it is stored as .gif.*
+
+<img src="images/replay-file-examples/show-entity-path.gif" />
+
+```json5
+{
+    "gameDetails": {
+        // ... 
+        "showEntityPath": {
+            "pathColor": "#FFFFFF",
+            "pathAlpha": 0.6,
+            "clickedEntityTint": "#FF0000",
+            "pathWidth": 0.4,
+            "drawingTimeInterval": 0.2
+        }
+    },
+    // ... see metadata at the beginning of this 
+    //     guide in chapter "Replay File Metadata"
+    "sections": [
+        // Create a warrior an entity that moves 
+        // around the map, just as we are used to.
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "X",
+            "endTime": 0,
+            "endRangeValue": 40
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "Y",
+            "endTime": 0,
+            "endRangeValue": 30
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "WIDTH",
+            "endTime": 0,
+            "endRangeValue": 10
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "ROTATION_DEG",
+            "endTime": 0,
+            "endRangeValue": 0
+        },
+        {
+            "type": "TextSection",
+            "entityId": "1",
+            "attribute": "TEXTURE",
+            "endTime": 0,
+            "text": "warrior-1.png"
+        },
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "X",
+            "endTime": 3,
+            "endRangeValue": 110
+        },
+        {
+            "type": "StepSection",
+            "entityId": "1",
+            "attribute": "ROTATION_DEG",
+            "endTime": 3,
+            "endRangeValue": 0
+        },
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "ROTATION_DEG",
+            "endTime": 5,
+            "endRangeValue": 90
+        },
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "Y",
+            "endTime": 5,
+            "endRangeValue": 30
+        },
+        {
+            "type": "LinearSection",
+            "entityId": "1",
+            "attribute": "Y",
+            "endTime": 7,
+            "endRangeValue": 84
+        }
+    ]
+}
+```
+
+### Match Details
+
+This example demonstrates how to display additional match details besides the match viewer. 
+Note that the first few details in the image below (Bot 1 vs. Bot 2, Duration: 0) are added automatically.
+
+You can see how to configure `matchDetails` field [here](writing_replay_files.md#matchdetails).
+
+*NOTE: Animation below might be laggy because it is stored as .gif.*
+
+<img src="images/replay-file-examples/match-details.png" />
+
+```json5
+{
+    "gameDetails": {
+        "game": "lia-1",
+        "version": "1.0",
+        "backgroundColor": "#333333",
+        "camera": {
+        "width": 176,
+        "height": 99
+        },
+        "showEntityPath": null
+    },
+    "matchDetails": [
+        {
+            "description": "Game seed",
+            "value": 5
+        },
+        {
+            "description": "Map type",
+            "value": "empty"
+        },
+        {
+            "description": "Difficulty",
+            "value": "easy"
+        },
+        {
+            "description": "Some other field",
+            "value": 42
+        }
+    ],
+    "charts": [],
+    "sections": []
+}
+```
+

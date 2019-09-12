@@ -32,7 +32,7 @@ Consider that **each entity** on the map (obstacle, warrior unit, bullet, ...) h
 **Each attribute** is built out of a **list of sections** representing its values in time. 
 
 
-#### Why do we need this?
+#### Why Do We Need This?
 Storing the match data this way makes it really easy for the match viewer to replay it. 
 All it needs to do is to get all currently visible entities on the map and get the values of all of their attributes in current time. 
 Then it displays them using this data.
@@ -59,25 +59,23 @@ Attribute Interpolation
 Controlling Entities
 * [Changing Multiple Attributes](replay_file_examples.md#changing-multiple-attributes)
 * [Multiple Entities](replay_file_examples.md#multiple-entities)
-* Layer Entities
-* Entity Animation
-* Attach Simple
-* Attach Rotation
-* Attach Rotation and Angle
-* Attach No Scale
-* Attach With Scale
+* [Ordering Entities](replay_file_examples.md#ordering-entities)
+* [TextureEntity - Animation](replay_file_examples.md#textureentity---animation)
+* [Attach Simple](replay_file_examples.md#attach-simple)
+* [Attach Rotation](replay_file_examples.md#attach-rotation)
+* [Attach Rotation & Angle](replay_file_examples.md#attach-rotation--angle)
 
 Camera
-* Camera Movement
-* Multiple Cameras
-* HUD Camera Elements
+* [Camera Movement](replay_file_examples.md#camera-movement)
+* [Multiple Cameras](replay_file_examples.md#multiple-cameras)
+* [HUD Elements](replay_file_examples.md#hud-elements)
 
-Other
-* Charts (Statistics)
-* Show Entity Path
-* Match Details
+Other Examples
+* [Charts (Statistics)](replay_file_examples.md#charts-statistics)
+* [Show Entity Path](replay_file_examples.md#show-entity-path)
+* [Match Details](replay_file_examples.md#match-details)
 
-## Replay file format
+## Replay File Format
 
 a replay file (`json` format) includes the parts listed below.
 
@@ -308,7 +306,7 @@ Below are descriptions for currently supported sections (if you are missing a us
     * [Example](TODO)
 
 
-## Entity types
+## Entity Types
 
 A list of all supported entity types that the match viewer knows how to display. 
 Note that they are automatically created out of sections provided in the replay file.
@@ -572,7 +570,7 @@ Note that they are automatically created out of sections provided in the replay 
 
 ## Misc
 
-### Animations format
+### Animations Format
 
 Each [TextureEntity](#textureentity) has a `TEXTURE` attribute/curve that specifies which image will be displayed to represent it.
 If the specified image does NOT include a dot (`.`) sign in its name (it means it has no suffix such as `my_image.png`) it is automatically interpreted to be an animation and thus the animation is loaded.
@@ -613,7 +611,7 @@ You can put images referenced in the `anim.json` file in the same folder as `ani
 </p>
 </details> 
 
-### Particles format
+### Particles Format
 
 [ParticleEntity](#particleentity) can display particle effects on the screen. 
 You can specify a particle effect that will be used by creating a specific `json` file with a unique name (eg `collect_resource_effect.json`) into `assets/particles` directory for your game. Example of a simple explosion particle effect is displayed on the gif below.
