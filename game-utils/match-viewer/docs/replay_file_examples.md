@@ -42,10 +42,10 @@ Controlling Entities
 * [Changing Multiple Attributes](replay_file_examples.md#changing-multiple-attributes)
 * [Multiple Entities](replay_file_examples.md#multiple-entities)
 * [Ordering Entities](replay_file_examples.md#ordering-entities)
-* [TextureEntity - Animation](replay_file_examples.md#textureentity-animation)
+* [TextureEntity - Animation](replay_file_examples.md#textureentity---animation)
 * [Attach Simple](replay_file_examples.md#attach-simple)
 * [Attach Rotation](replay_file_examples.md#attach-rotation)
-* [Attach Rotation & Angle](replay_file_examples.md#attach-rotation-&-angle)
+* [Attach Rotation & Angle](replay_file_examples.md#attach-rotation--angle)
 
 Camera
 * [Camera Movement](replay_file_examples.md#camera-movement)
@@ -53,7 +53,7 @@ Camera
 * [HUD Elements](replay_file_examples.md#hud-elements)
 
 Other Examples
-* [Charts (Statistics)](replay_file_examples.md#charts-(statistics))
+* [Charts (Statistics)](replay_file_examples.md#charts-statistics)
 * [Show Entity Path](replay_file_examples.md#show-entity-path)
 * [Match Details](replay_file_examples.md#match-details)
 
