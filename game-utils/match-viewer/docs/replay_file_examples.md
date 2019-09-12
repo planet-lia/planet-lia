@@ -24,6 +24,39 @@ Assets that will be referenced in examples eg. `"block.png"` will be taken from 
 "charts": [],
 ```
 
+### Examples
+
+Entity Types
+* [TextureEntity](replay_file_examples.md#textureentity)
+* TextEntity ([text](replay_file_examples.md#textentity), [time](replay_file_examples.md#textentity---numeric-text))
+* [ParticleEntity](replay_file_examples.md#particleentity)
+
+Attribute Interpolation
+* [Linear Interpolation](replay_file_examples.md#linear-interpolation)
+* [Step Interpolation](replay_file_examples.md#step-interpolation)
+* [Sine Interpolation](replay_file_examples.md#sine-interpolation)
+* [Circular Interpolation](replay_file_examples.md#circular-interpolation)
+* [Mixed Interpolation](replay_file_examples.md#mixed-interpolation)
+
+Controlling Entities
+* [Changing Multiple Attributes](replay_file_examples.md#changing-multiple-attributes)
+* [Multiple Entities](replay_file_examples.md#multiple-entities)
+* [Ordering Entities](replay_file_examples.md#ordering-entities)
+* [TextureEntity - Animation](replay_file_examples.md#textureentity-animation)
+* [Attach Simple](replay_file_examples.md#attach-simple)
+* [Attach Rotation](replay_file_examples.md#attach-rotation)
+* [Attach Rotation & Angle](replay_file_examples.md#attach-rotation-&-angle)
+
+Camera
+* [Camera Movement](replay_file_examples.md#camera-movement)
+* [Multiple Cameras](replay_file_examples.md#multiple-cameras)
+* [HUD Elements](replay_file_examples.md#hud-elements)
+
+Other Examples
+* [Charts (Statistics)](replay_file_examples.md#charts-(statistics))
+* [Show Entity Path](replay_file_examples.md#show-entity-path)
+* [Match Details](replay_file_examples.md#match-details)
+
 ## Entity Types
 
 ### TextureEntity
