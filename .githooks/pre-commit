@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+# Check which files you have modified and launches the appropriate pre-commit hooks for that project
+
+TOUCHED_BACKEND=false
+
+for file in $(git status --porcelain | awk '($1 $2){print $2}'); do
+    if [[ ${file} =~ ^backend\/.*$ ]]; then
+        TOUCHED_BACKEND=true
+    fi
+done
+
+
+if ${TOUCHED_BACKEND}; then
+    .githooks/pre_commit_backend
+fi
