@@ -9,6 +9,7 @@ Planet Lia is a bot programming platform for beginners and advanced coders alike
 ![Planet Lia](planet-lia-banner.png)
 
 **NOTE:** We are still in the process of rebranding from Lia Game to Planet Lia and some inconsistencies may still be present in this repository.
+You are welcome to open a GitHub issue spotting any inconsistencies so that we do not overlook them.
 
 ## Our Vision
 With Planet Lia we want to build an open and friendly community and hub for bot programming video game competitions. Our goal is to provide the supporting technological as well as community infrastructure so that coders can enjoy in Planet Lia games as well as easily create their own game challenges and share them with others. Our goal is to build a community where programming is a way to connect with people, to bring fun and creativity to programming, have some healthy competition and learn from one another.
