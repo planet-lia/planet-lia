@@ -16,6 +16,7 @@ buildscript {
 }
 
 allprojects {
+    apply plugin: "idea"
 
     version = '1.0'
     ext {
@@ -25,6 +26,7 @@ allprojects {
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.7.0'
         aiVersion = '1.8.0'
+        jCommanderVersion = '1.71'
     }
 
     repositories {
@@ -43,9 +45,10 @@ project(":desktop") {
 
     dependencies {
         implementation project(":core")
-        api "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+        compile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
     }
 }
 
@@ -56,5 +59,6 @@ project(":core") {
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+        compile "com.beust:jcommander:$jCommanderVersion"
     }
 }
