@@ -3,9 +3,9 @@
 #
 # KEEP THIS FILE SORTED. Order is important. Last match takes precedence.
 
-*                   @Svigelj @greenstatic
+*                   @svigelj @greenstatic
 /backend/           @greenstatic
-/cli/               @Svigelj
-/game-utils/        @Svigelj
-/games/             @Svigelj
+/cli/               @svigelj
+/game-utils/        @svigelj
+/games/             @svigelj
 /websites/          @sn3m
