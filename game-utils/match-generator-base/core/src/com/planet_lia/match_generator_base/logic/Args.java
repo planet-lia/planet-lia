@@ -1,4 +1,4 @@
-package com.planet_lia.match_generator_base;
+package com.planet_lia.match_generator_base.logic;
 
 
 import com.planet_lia.match_generator_base.libs.DefaultArgs;

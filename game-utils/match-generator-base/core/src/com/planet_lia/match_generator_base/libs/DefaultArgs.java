@@ -4,7 +4,8 @@ import com.beust.jcommander.Parameter;
 import java.util.ArrayList;
 
 public class DefaultArgs {
-    @Parameter(description = "List of bots with their tokens in a format <bot_1> <token_1> <bot_2> <token_2> ...")
+    @Parameter(description = "List of bots with their tokens in a format <bot_1> <token_1> <bot_2> <token_2> ... "
+            + "Note that bots will connect to the first bot spot that will match their token")
     public ArrayList<String> bots = new ArrayList<>();
 
     @Parameter(names = {"--debug", "-d"}, description = "Run match-generator in debug mode")

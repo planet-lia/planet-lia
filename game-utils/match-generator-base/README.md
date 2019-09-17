@@ -19,3 +19,5 @@ Guide for IntelliJ IDEA:
     - Click *Apply*
 6. Run the application
  
+# Test
+Run `./gradlew test`.

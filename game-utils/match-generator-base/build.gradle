@@ -11,7 +11,6 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-
     }
 }
 
@@ -27,6 +26,7 @@ allprojects {
         ashleyVersion = '1.7.0'
         aiVersion = '1.8.0'
         jCommanderVersion = '1.71'
+        javaWebSocketVersion = '1.4.0'
     }
 
     repositories {
@@ -42,7 +42,6 @@ allprojects {
 project(":desktop") {
     apply plugin: "kotlin"
 
-
     dependencies {
         implementation project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
@@ -55,10 +54,19 @@ project(":desktop") {
 project(":core") {
     apply plugin: "kotlin"
 
+    sourceSets.test.java.srcDirs = ["test/"]
 
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
         compile "com.beust:jcommander:$jCommanderVersion"
+        compile "org.java-websocket:Java-WebSocket:$javaWebSocketVersion"
+
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+    }
+
+    test {
+        useJUnitPlatform()
     }
 }
