@@ -1,0 +1,61 @@
+name: Website Main - pull-request workflow
+on:
+  pull_request:
+    paths:
+      # And they said my half-pyramid print program is going to be useless
+      #
+      # This unfortunately is a hack that is actually the "official" way of
+      # supporting multiple projects in one repo:
+      # https://help.github.com/en/articles/workflow-syntax-for-github-actions#example-matching-paths-in-nested-directories
+      #
+      # This is because the wildcard asterisk '*'' drops the '/' and it is not
+      # possible to overcome this by other means.
+      #
+      # You are welcome to join the rant of this outrageous atrocity:
+      # https://github.community/t5/GitHub-Actions/GitHub-Actions-workflow-not-triggered-with-path/m-p/29872    
+      - 'websites/main/*'
+      - 'websites/main/*/*'
+      - 'websites/main/*/*/*'
+      - 'websites/main/*/*/*/*'
+      - 'websites/main/*/*/*/*/*'
+      - 'websites/main/*/*/*/*/*/*'
+      - 'websites/main/*/*/*/*/*/*/*'
+      - 'websites/main/*/*/*/*/*/*/*/*'
+      - 'websites/main/*/*/*/*/*/*/*/*/*'
+      - 'websites/main/*/*/*/*/*/*/*/*/*/*'
+      - 'websites/main/*/*/*/*/*/*/*/*/*/*/*'
+      - 'websites/main/*/*/*/*/*/*/*/*/*/*/*/*'
+      - 'websites/main/*/*/*/*/*/*/*/*/*/*/*/*/*'
+      - 'websites/main/*/*/*/*/*/*/*/*/*/*/*/*/*/*'
+      - 'websites/main/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*'
+jobs:
+  build:
+    name: Netlify deploy preview
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+      - name: Build main website
+        run: "ls websites/main"  # TODO - build
+      - name: Install Netlify CLI
+        run: "sudo npm install netlify-cli -g"
+        # Removes a netlify-cli warning about not being able to ready a file in .config dir
+      - name: Permission .config
+        run: "sudo chown -R $USER:$(id -gn $USER) /home/runner/.config"
+      - name: Netlify deploy
+        run: "netlify deploy --dir=./websites/main --json --message \"Deploy preview commit: ${GITHUB_SHA}\" | tee _netlify_deploy_response.txt"
+        env:
+          NETLIFY_SITE_ID: 9191587a-240f-43d6-9b25-f0ecc9be1fdf
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      - name: Comment with the deploy preview url
+        uses: actions/github-script@0.2.0
+        if: success()
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const require = global.require || global.process.mainModule.constructor._load;
+            const fs = require("fs");
+            let netlify = await JSON.parse(await fs.readFileSync('_netlify_deploy_response.txt', 'utf-8'));
+            await github.issues.createComment({...context.issue, body: `\[Deploy preview](${netlify.deploy_url}) ready.`});
