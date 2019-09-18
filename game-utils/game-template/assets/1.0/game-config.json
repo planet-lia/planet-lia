@@ -1,0 +1,14 @@
+{
+    "generalConfig": {
+        "ticksPerSecond": 30,
+        "connectingBotsTimeout": 10,
+        "botFirstResponseTimeout": 2,
+        "botResponseTimeout": 1,
+        "maxTimeoutsPerBot": 8,
+        "botResponseTotalDurationMax": 45,
+        "gameUpdatesPerBotsUpdate": 3
+    },
+    "gameName": "game-template",
+    "debugViewWidth": 1440,
+    "debugViewHeight": 810
+}
