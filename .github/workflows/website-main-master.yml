@@ -47,7 +47,7 @@ jobs:
       - name: Permission .config
         run: "sudo chown -R $USER:$(id -gn $USER) /home/runner/.config"
       - name: Netlify deploy
-        run: "netlify deploy --dir=./foo --json --prod --message \"Production commit: ${GITHUB_SHA}\""
+        run: "netlify deploy --dir=./websites/main --json --prod --message \"Production commit: ${GITHUB_SHA}\""
         env:
           NETLIFY_SITE_ID: 9191587a-240f-43d6-9b25-f0ecc9be1fdf
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
