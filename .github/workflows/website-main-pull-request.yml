@@ -38,7 +38,7 @@ jobs:
         with:
           node-version: '10.x'
       - name: Build main website
-        run: "ls foo/"  # TODO - build
+        run: "ls websites/main"  # TODO - build
       - name: Install Netlify CLI
         run: "sudo npm install netlify-cli -g"
         # Removes a netlify-cli warning about not being able to ready a file in .config dir
