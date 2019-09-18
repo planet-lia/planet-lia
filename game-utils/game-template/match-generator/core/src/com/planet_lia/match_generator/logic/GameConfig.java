@@ -5,7 +5,6 @@ import com.planet_lia.match_generator.libs.GeneralConfig;
 
 import java.io.*;
 
-// TODO load from a replay file
 public class GameConfig {
 
     public static final String ASSETS_VERSION = "1.0";

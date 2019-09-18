@@ -4,6 +4,9 @@ import com.beust.jcommander.Parameter;
 import java.util.ArrayList;
 
 public class DefaultArgs {
+    @Parameter(names = { "--help", "-h" }, help = true)
+    public boolean help = false;
+
     @Parameter(description = "List of bots with their tokens in a format <bot_1> <token_1> <bot_2> <token_2> ... "
             + "Note that bots will connect to the first bot spot that will match their token")
     public ArrayList<String> bots = new ArrayList<>();
@@ -18,6 +21,6 @@ public class DefaultArgs {
     @Parameter(names = {"--config", "-c"}, description = "Specify a path to the game configuration file")
     public String config = "";
 
-    @Parameter(names = {"--port", "-p"}, description = "Specify the port on which bots can connect, default is 8887")
+    @Parameter(names = {"--port", "-p"}, description = "Specify the port on which bots can connect")
     public int port = 8887;
 }

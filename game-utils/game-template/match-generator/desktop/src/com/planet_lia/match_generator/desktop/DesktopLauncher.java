@@ -19,10 +19,17 @@ public class DesktopLauncher {
 
         // Parse arguments
         Args parsedArgs = new Args();
-        JCommander.newBuilder()
+        JCommander jCommander = JCommander.newBuilder()
                 .addObject(parsedArgs)
-                .build()
-                .parse(args);
+                .build();
+        jCommander.parse(args);
+
+        if (parsedArgs.help) {
+            jCommander.setProgramName("match-generator.jar");
+            jCommander.usage();
+            return;
+        }
+
 
         GameConfig gameConfig = GameConfig.load();
         MatchGenerator game =  new MatchGenerator(parsedArgs, gameConfig);
