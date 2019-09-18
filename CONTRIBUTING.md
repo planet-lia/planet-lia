@@ -177,13 +177,14 @@ Must be one of the following:
 The scope should be the name of the package affected.
 
 The following is the list of supported scopes:
-
+* **web-docs**
 * **web-main**
 * **web-local**
 * **docs**
 * **backend**
 * **cli**
 * **match-viewer**
+* **game-template**
 * **game-\<game-name\>**
 * we will add more as we go
 
