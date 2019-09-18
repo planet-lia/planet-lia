@@ -108,7 +108,7 @@ A few important style conventions that you need to consider:
 * writing test when appropriate
 * adding comments to your code
 * documenting your changes in project specific docs (usually README.md within the project)
-* **Golang** - before commiting use `gofmt` command to format your code
+* **Golang** - before commiting use `go fmt` command to format your code
 * **Markdown** - put every sentence in a new line as it helps a ton when reviewing changes with git diff
 
 ## Commit Messages
@@ -164,7 +164,7 @@ Must be one of the following:
 * **build**: Changes that affect the build system or external dependencies
 * **ci**: Changes to our CI configuration files and scripts
 * **infra**: Changes to infrastructure and deployment configuration
-* **docs**: Documentation only changes
+* **docs**: Development documentation changes
 * **feat**: A new feature
 * **fix**: A bug fix
 * **perf**: A code change that improves performance
