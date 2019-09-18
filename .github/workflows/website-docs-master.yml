@@ -1,0 +1,53 @@
+name: Website Docs - master branch workflow
+on:
+  push:
+    branches:
+      - master
+    paths:
+      # And they said my half-pyramid print program is going to be useless
+      #
+      # This unfortunately is a hack that is actually the "official" way of
+      # supporting multiple projects in one repo:
+      # https://help.github.com/en/articles/workflow-syntax-for-github-actions#example-matching-paths-in-nested-directories
+      #
+      # This is because the wildcard asterisk '*'' drops the '/' and it is not
+      # possible to overcome this by other means.
+      #
+      # You are welcome to join the rant of this outrageous atrocity:
+      # https://github.community/t5/GitHub-Actions/GitHub-Actions-workflow-not-triggered-with-path/m-p/29872    
+      - 'websites/docs/*'
+      - 'websites/docs/*/*'
+      - 'websites/docs/*/*/*'
+      - 'websites/docs/*/*/*/*'
+      - 'websites/docs/*/*/*/*/*'
+      - 'websites/docs/*/*/*/*/*/*'
+      - 'websites/docs/*/*/*/*/*/*/*'
+      - 'websites/docs/*/*/*/*/*/*/*/*'
+      - 'websites/docs/*/*/*/*/*/*/*/*/*'
+      - 'websites/docs/*/*/*/*/*/*/*/*/*/*'
+      - 'websites/docs/*/*/*/*/*/*/*/*/*/*/*'
+      - 'websites/docs/*/*/*/*/*/*/*/*/*/*/*/*'
+      - 'websites/docs/*/*/*/*/*/*/*/*/*/*/*/*/*'
+      - 'websites/docs/*/*/*/*/*/*/*/*/*/*/*/*/*/*'
+      - 'websites/docs/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*'
+jobs:
+  build:
+    name: Netlify production deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+      - name: Build docs website
+        run: "ls websites/docs"  # TODO - build
+      - name: Install Netlify CLI
+        run: "sudo npm install netlify-cli -g"
+        # Removes a netlify-cli warning about not being able to ready a file in .config dir
+      - name: Permission .config
+        run: "sudo chown -R $USER:$(id -gn $USER) /home/runner/.config"
+      - name: Netlify deploy
+        run: "netlify deploy --dir=./websites/docs --json --prod --message \"Production commit: ${GITHUB_SHA}\""
+        env:
+          NETLIFY_SITE_ID: 02b203ae-f58b-4914-842d-61230f0d64e7
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
