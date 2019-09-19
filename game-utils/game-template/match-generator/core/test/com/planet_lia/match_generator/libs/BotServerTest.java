@@ -19,9 +19,10 @@ class BotServerTest {
     @Test
     void badBotsAndTokens() throws Exception {
         String[] botsAndTokens = new String[]{"b1", "t1", "b2"};
-        int[] allowedNumbersOfBots = new int[]{2};
+        GeneralConfig config = new GeneralConfig();
+        config.allowedNumbersOfBots = new int[]{2};
         assertThrows(Error.class, () ->
-                new BotServer(new GeneralConfig(), new Timer(), 9000, botsAndTokens, allowedNumbersOfBots));
+                new BotServer(config, new Timer(), 9000, botsAndTokens));
     }
 
     @Test
@@ -29,28 +30,32 @@ class BotServerTest {
         GeneralConfig config = new GeneralConfig();
         Timer timer = new Timer();
 
+        config.allowedNumbersOfBots = new int[]{2, 4, 5};
         assertThrows(Error.class, () ->
-                new BotServer(config, timer, 9000, new String[]{"b1", "t1"}, new int[]{2, 4, 5}));
+                new BotServer(config, timer, 9000, new String[]{"b1", "t1"}));
+        config.allowedNumbersOfBots = new int[]{2};
         assertThrows(Error.class, () ->
-                new BotServer(config, timer, 9000, new String[]{"b1", "t1", "b2"}, new int[]{2}));
+                new BotServer(config, timer, 9000, new String[]{"b1", "t1", "b2"}));
+        config.allowedNumbersOfBots = new int[]{1};
         assertThrows(Error.class, () ->
-                new BotServer(config, timer, 9000, new String[]{"b1", "t1", "b2"}, new int[]{1}));
+                new BotServer(config, timer, 9000, new String[]{"b1", "t1", "b2"}));
+        config.allowedNumbersOfBots = new int[]{2};
         assertDoesNotThrow(() ->
-                new BotServer(config, timer, 9000, new String[]{"b1", "t1", "b2", "t2"}, new int[]{2}));
+                new BotServer(config, timer, 9000, new String[]{"b1", "t1", "b2", "t2"}));
+        config.allowedNumbersOfBots = new int[]{2, 4};
         assertDoesNotThrow(() ->
-                new BotServer(config, timer, 9000, new String[]{"b1", "t1", "b2", "t2", "b3", "t3", "b4", "t4"},
-                        new int[]{2, 4}));
+                new BotServer(config, timer, 9000, new String[]{"b1", "t1", "b2", "t2", "b3", "t3", "b4", "t4"}));
     }
 
     @Test
     void botWrongToken() throws Exception {
         String[] botsAndTokens = new String[]{"b1", "t1", "b2", "WRONG_TOKEN"};
-        int[] allowedNumbersOfBots = new int[]{2};
         int port = 9000;
         GeneralConfig config = new GeneralConfig();
         config.connectingBotsTimeout = 2;
+        config.allowedNumbersOfBots = new int[]{2};
 
-        BotServer server = new BotServer(config, new Timer(), port, botsAndTokens, allowedNumbersOfBots);
+        BotServer server = new BotServer(config, new Timer(), port, botsAndTokens);
         server.start();
 
         connectBot(port, "t1");
@@ -63,12 +68,12 @@ class BotServerTest {
     @Test
     void botsSameTokens() throws Exception {
         String[] botsAndTokens = new String[]{"b1", "_", "b2", "_"};
-        int[] allowedNumbersOfBots = new int[]{2};
         int port = 9000;
         GeneralConfig config = new GeneralConfig();
         config.connectingBotsTimeout = 2;
+        config.allowedNumbersOfBots = new int[]{2};
 
-        BotServer server = new BotServer(config, new Timer(), port, botsAndTokens, allowedNumbersOfBots);
+        BotServer server = new BotServer(config, new Timer(), port, botsAndTokens);
         server.start();
 
         connectBot(port, "a");
@@ -85,17 +90,17 @@ class BotServerTest {
     @Test
     void basicFlow() throws Exception {
         String[] botsAndTokens = new String[]{"b1", "t1", "b2", "t2"};
-        int[] allowedNumbersOfBots = new int[]{2};
         int port = 9000;
         GeneralConfig config = new GeneralConfig();
         Timer timer = new Timer();
+        config.allowedNumbersOfBots = new int[]{2};
         config.connectingBotsTimeout = 1;
         config.botFirstResponseTimeout = 0.2f;
         config.botResponseTimeout = 0.2f;
         config.maxTimeoutsPerBot = 2;
         config.botResponseTotalDurationMax = 100;
 
-        BotServer server = new BotServer(config, timer, port, botsAndTokens, allowedNumbersOfBots);
+        BotServer server = new BotServer(config, timer, port, botsAndTokens);
         server.start();
 
         ClientMock bot1 = connectBot(port, "t1");
@@ -123,17 +128,17 @@ class BotServerTest {
     @Test
     void botDisqualificationNumTimeoutsExceeded() throws Exception {
         String[] botsAndTokens = new String[]{"b1", "t1", "b2", "t2"};
-        int[] allowedNumbersOfBots = new int[]{2};
         int port = 9000;
         GeneralConfig config = new GeneralConfig();
         Timer timer = new Timer();
+        config.allowedNumbersOfBots = new int[]{2};
         config.connectingBotsTimeout = 1;
         config.botFirstResponseTimeout = 0.2f;
         config.botResponseTimeout = 0.2f;
         config.maxTimeoutsPerBot = 2;
         config.botResponseTotalDurationMax = 2;
 
-        BotServer server = new BotServer(config, timer, port, botsAndTokens, allowedNumbersOfBots);
+        BotServer server = new BotServer(config, timer, port, botsAndTokens);
         server.start();
 
         ClientMock bot1 = connectBot(port, "t1");
@@ -193,11 +198,11 @@ class BotServerTest {
     @Test
     void botListenerDisabledTest() throws Exception {
         String[] botsAndTokens = new String[]{"b1", "t1", "b2", "t2"};
-        int[] allowedNumbersOfBots = new int[]{2};
         int port = 9000;
         GeneralConfig config = new GeneralConfig();
+        config.allowedNumbersOfBots = new int[]{2};
         Timer timer = new Timer();
-        BotServer server = new BotServer(config, timer, port, botsAndTokens, allowedNumbersOfBots);
+        BotServer server = new BotServer(config, timer, port, botsAndTokens);
 
         assertFalse(server.isBotListenerEnabled());
     }
@@ -205,10 +210,10 @@ class BotServerTest {
     @Test
     void botListenerTest() throws Exception {
         String[] botsAndTokens = new String[]{"b1", "t1", "b2", "t2"};
-        int[] allowedNumbersOfBots = new int[]{2};
         int port = 9000;
         GeneralConfig config = new GeneralConfig();
         Timer timer = new Timer();
+        config.allowedNumbersOfBots = new int[]{2};
         config.connectingBotsTimeout = 1;
         config.botFirstResponseTimeout = 2f;
         config.botResponseTimeout = 2f;
@@ -216,7 +221,7 @@ class BotServerTest {
         config.botResponseTotalDurationMax = 100;
         String botListenerToken = "btt";
 
-        BotServer server = new BotServer(config, timer, port, botsAndTokens, allowedNumbersOfBots, botListenerToken);
+        BotServer server = new BotServer(config, timer, port, botsAndTokens, botListenerToken);
         server.start();
 
         ClientMock bot1 = connectBot(port, "t1");

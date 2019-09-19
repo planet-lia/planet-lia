@@ -33,16 +33,14 @@ public class BotServer {
     public BotServer(GeneralConfig generalConfig,
                      Timer gameTimer,
                      int port,
-                     String[] botsAndTokens,
-                     int[] allowedNumbersOfBots) {
-        this(generalConfig, gameTimer, port, botsAndTokens, allowedNumbersOfBots, DEFAULT_BOT_LISTENER_TOKEN);
+                     String[] botsAndTokens) {
+        this(generalConfig, gameTimer, port, botsAndTokens, DEFAULT_BOT_LISTENER_TOKEN);
     }
 
     public BotServer(GeneralConfig generalConfig,
                      Timer gameTimer,
                      int port,
                      String[] botsAndTokens,
-                     int[] allowedNumbersOfBots,
                      String botListenerToken) {
         this.server = createServer(port);
         this.generalConfig = generalConfig;
@@ -55,10 +53,10 @@ public class BotServer {
 
         int numberOfBots = botsAndTokens.length / 2;
 
-        if (!isNumberOfBotsAllowed(allowedNumbersOfBots, numberOfBots)) {
+        if (!isNumberOfBotsAllowed(generalConfig.allowedNumbersOfBots, numberOfBots)) {
             throw new Error("Number of provided bots is not supported by this game, "
                     + "provided: " + (botsAndTokens.length / 2)
-                    + " allowed: " + Arrays.toString(allowedNumbersOfBots));
+                    + " allowed: " + Arrays.toString(generalConfig.allowedNumbersOfBots));
         }
 
         bots = prepareBotConnection(botsAndTokens, numberOfBots);

@@ -45,4 +45,12 @@ public class GeneralConfig {
      * is set to 3, bots will receive game updates 10 times per second.
      */
     public int gameUpdatesPerBotsUpdate;
+
+    /**
+     * Array of allowed numbers of bots eg. [2,4,8] means that
+     * 2, 4 or 8 bots must be provided to the match-generator
+     * and that this many must connect before the generation
+     * can start
+     */
+    public int[] allowedNumbersOfBots;
 }

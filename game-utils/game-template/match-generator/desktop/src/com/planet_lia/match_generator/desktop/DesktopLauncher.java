@@ -10,6 +10,7 @@ import com.planet_lia.match_generator.logic.Args;
 import com.planet_lia.match_generator.logic.GameConfig;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class DesktopLauncher {
 
