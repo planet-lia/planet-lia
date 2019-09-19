@@ -23,4 +23,9 @@ public class DefaultArgs {
 
     @Parameter(names = {"--port", "-p"}, description = "Specify the port on which bots can connect")
     public int port = 8887;
+
+    @Parameter(names = {"--bot-listener-token"}, description = "Token with which an external service can connect " +
+            "and listen all communications between match-generator and all bots. Disabled if not provided")
+    public String botListenerToken = DEFAULT_BOT_LISTENER_TOKEN;
+    public static final String DEFAULT_BOT_LISTENER_TOKEN  = "";
 }

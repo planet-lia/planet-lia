@@ -1,12 +1,16 @@
 package com.planet_lia.match_generator.libs;
 
+import com.planet_lia.match_generator.libs.BotListener.MessageSender;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.Arrays;
+
+import static com.planet_lia.match_generator.libs.DefaultArgs.DEFAULT_BOT_LISTENER_TOKEN;
 
 /**
  * Creates a WebSocketServer, waits for bots to connect to it
@@ -15,11 +19,15 @@ import java.util.Arrays;
  */
 public class BotServer {
 
+    static final String BOT_LISTENER_TOKEN_HEADER_KEY = "botListenerToken";
+
     private GeneralConfig generalConfig;
     private Timer gameTimer;
     private WebSocketServer server;
 
-    private BotConnection[] bots;
+    private ArrayList<BotConnection> bots;
+    private BotListener botListener;
+
     private int currentRequestIndex = 0;
 
     public BotServer(GeneralConfig generalConfig,
@@ -27,6 +35,15 @@ public class BotServer {
                      int port,
                      String[] botsAndTokens,
                      int[] allowedNumbersOfBots) {
+        this(generalConfig, gameTimer, port, botsAndTokens, allowedNumbersOfBots, DEFAULT_BOT_LISTENER_TOKEN);
+    }
+
+    public BotServer(GeneralConfig generalConfig,
+                     Timer gameTimer,
+                     int port,
+                     String[] botsAndTokens,
+                     int[] allowedNumbersOfBots,
+                     String botListenerToken) {
         this.server = createServer(port);
         this.generalConfig = generalConfig;
         this.gameTimer = gameTimer;
@@ -46,8 +63,18 @@ public class BotServer {
 
         bots = prepareBotConnection(botsAndTokens, numberOfBots);
 
+        // Only create bot listener if botListenerToken is ""
+        if (!botListenerToken.equals(DEFAULT_BOT_LISTENER_TOKEN)) {
+            this.botListener = new BotListener(botListenerToken);
+        }
+    }
+
+    /**
+     * Starts the websocket server
+     */
+    public void start() {
         this.server.start();
-        System.out.println("Bot server started on port " + port);
+        System.out.println("Bot server started on port " + this.server.getPort());
     }
 
     /**
@@ -73,12 +100,12 @@ public class BotServer {
      * @param numberOfBots - number of bots that will play in the match
      * @return array of initialized BotConnection objects without set connections
      */
-    private static BotConnection[] prepareBotConnection(String[] botsAndTokens, int numberOfBots) {
-        BotConnection[] bots = new BotConnection[numberOfBots];
+    private static ArrayList<BotConnection> prepareBotConnection(String[] botsAndTokens, int numberOfBots) {
+        ArrayList<BotConnection> bots = new ArrayList<>(numberOfBots);
         for (int i = 0; i < botsAndTokens.length; i += 2) {
             String botName = botsAndTokens[i];
             String token = botsAndTokens[i + 1];
-            bots[i / 2] = new BotConnection(botName, token);
+            bots.add(new BotConnection(botName, token));
         }
         return bots;
     }
@@ -124,16 +151,28 @@ public class BotServer {
     }
 
     private void onOpen(WebSocket conn, ClientHandshake handshake) {
+        // Connect bot
         String token = handshake.getFieldValue("token");
-
-        for (BotConnection bot : this.bots) {
-            if (bot.token.equals(token) && bot.connection == null) {
-                bot.connection = conn;
-                // Attach bot object to connection so that later we
-                // will know to which bot a connection belongs
-                bot.connection.setAttachment(bot);
-                System.out.printf("Bot '%s' has connected\n", bot.botName);
-                return;
+        if (!token.equals("")) {
+            for (BotConnection bot : this.bots) {
+                if (bot.token.equals(token) && bot.connection == null) {
+                    bot.connection = conn;
+                    // Attach bot object to connection so that later we
+                    // will know to which bot a connection belongs
+                    bot.connection.setAttachment(bot);
+                    System.out.printf("Bot '%s' has connected\n", bot.botName);
+                    return;
+                }
+            }
+        }
+        // Connect bot listener
+        if (this.botListener != null) {
+            token = handshake.getFieldValue(BOT_LISTENER_TOKEN_HEADER_KEY);
+            if (!token.equals("")) {
+                if (this.botListener.token.equals(token) && this.botListener.connection == null) {
+                    this.botListener.connection = conn;
+                    System.out.println("Bot listener has connected");
+                }
             }
         }
     }
@@ -143,7 +182,7 @@ public class BotServer {
      * @param data - data as json string
      */
     public void sendToAll(String data) {
-        for (int i = 0; i < this.bots.length; i++) {
+        for (int i = 0; i < this.bots.size(); i++) {
             send(i, data);
         }
     }
@@ -155,7 +194,7 @@ public class BotServer {
      * @param data - data as json string
      */
     public void send(int botIndex, String data) {
-        BotConnection bot = this.bots[botIndex];
+        BotConnection bot = this.bots.get(botIndex);
         if (bot.disqualified) {
             return;
         }
@@ -165,10 +204,55 @@ public class BotServer {
             return;
         }
 
-        bot.currentRequestIndex = currentRequestIndex;
+        bot.currentRequestIndex = this.currentRequestIndex;
         bot.currentRequestTime = System.currentTimeMillis();
-        bot.waitingResponse = true;
         bot.connection.send(data);
+
+        if (this.botListener != null) {
+            this.botListener.send(MessageSender.MATCH_GENERATOR, botIndex, data);
+        }
+
+        // Set this after sending to botListener for better synchronicity
+        bot.waitingResponse = true;
+    }
+
+    private void onMessage(WebSocket conn, String message) {
+        BotConnection bot;
+
+        try {
+            bot = conn.getAttachment();
+        } catch (Exception e) {
+            // This message belongs to the botListener which we ignore
+            return;
+        }
+
+        if (bot.disqualified) {
+            return;
+        }
+        if (bot.currentRequestIndex != this.currentRequestIndex) {
+            System.out.printf("Bot '%s' sent response too late\n", bot.botName);
+            return;
+        }
+        if (!bot.waitingResponse) {
+            System.out.printf("Bot '%s' already answered to this request\n", bot.botName);
+            return;
+        }
+
+        if (this.botListener != null) {
+            this.botListener.send(MessageSender.BOT, this.bots.indexOf(bot), message);
+        }
+
+        bot.lastResponseData = message;
+        bot.responseTotalDuration += System.currentTimeMillis() - bot.currentRequestTime;
+
+        if (bot.responseTotalDuration >= this.generalConfig.botResponseTotalDurationMax * 1000) {
+            disqualifyBot(bot, "bot used all available time");
+        }
+
+        // Set this after sending to botListener for better synchronicity.
+        // It prevents from waitForBotsToRespond to finish before the
+        // data was sent to botListener
+        bot.waitingResponse = false;
     }
 
     /**
@@ -176,31 +260,31 @@ public class BotServer {
      *         were provided as arguments to the program
      */
     public String[] getBotNames() {
-        String[] botNames = new String[this.bots.length];
-        for (int i = 0; i < this.bots.length; i++) {
-            botNames[i] = this.bots[i].botName;
+        String[] botNames = new String[this.bots.size()];
+        for (int i = 0; i < this.bots.size(); i++) {
+            botNames[i] = this.bots.get(i).botName;
         }
         return botNames;
     }
 
     public int getNumberOfTimeouts(int botIndex) {
-        return this.bots[botIndex].numberOfTimeouts;
+        return this.bots.get(botIndex).numberOfTimeouts;
     }
 
     public boolean isDisqualified(int botIndex) {
-        return this.bots[botIndex].disqualified;
+        return this.bots.get(botIndex).disqualified;
     }
 
     public float getDisqualificationTime(int botIndex) {
-        return this.bots[botIndex].disqualificationTime;
+        return this.bots.get(botIndex).disqualificationTime;
     }
 
     public String getDisqualificationReason(int botIndex) {
-        return this.bots[botIndex].disqualificationReason;
+        return this.bots.get(botIndex).disqualificationReason;
     }
 
     public String getLastResponseData(int botIndex) {
-        return this.bots[botIndex].lastResponseData;
+        return this.bots.get(botIndex).lastResponseData;
     }
 
     public boolean allBotsDisqualified() {
@@ -248,7 +332,7 @@ public class BotServer {
                 bot.botName, bot.numberOfTimeouts);
 
         if (bot.numberOfTimeouts >= generalConfig.maxTimeoutsPerBot) {
-            disqualifyBot(bot, "Bot timed out to many times");
+            disqualifyBot(bot, "bot timed out to many times");
         }
     }
 
@@ -257,6 +341,7 @@ public class BotServer {
         bot.disqualified = true;
         bot.lastResponseData = null;
         bot.disqualificationReason = reason;
+        System.out.printf("Bot '%s' disqualified for the reason: %s\n", bot.botName, reason);
     }
 
     /**
@@ -279,33 +364,18 @@ public class BotServer {
         System.out.printf("Connection for bot '%s' closed\n", bot.botName);
     }
 
-    private void onMessage(WebSocket conn, String message) {
-        BotConnection bot = conn.getAttachment();
-        if (bot.disqualified) {
-            return;
-        }
-        if (bot.currentRequestIndex != this.currentRequestIndex) {
-            System.out.printf("Bot '%s' sent response too late\n", bot.botName);
-            return;
-        }
-        if (!bot.waitingResponse) {
-            System.out.printf("Bot '%s' already answered to this request\n", bot.botName);
-            return;
-        }
-
-        bot.waitingResponse = false;
-        bot.lastResponseData = message;
-        bot.responseTotalDuration += System.currentTimeMillis() - bot.currentRequestTime;
-
-        if (bot.responseTotalDuration >= this.generalConfig.botResponseTotalDurationMax) {
-            disqualifyBot(bot, "Bot used all available time");
-        }
-    }
-
     private void onError(WebSocket conn, Exception ex) {
         BotConnection bot = conn.getAttachment();
         System.err.printf("Connection for bot '%s' threw an Exception\n", bot.botName);
         ex.printStackTrace();
+    }
+
+    public boolean isBotListenerEnabled() {
+        return this.botListener != null;
+    }
+
+    public boolean isBotListenerConnected() {
+        return this.botListener.connection != null;
     }
 
     /**

@@ -30,7 +30,6 @@ public class DesktopLauncher {
             return;
         }
 
-
         GameConfig gameConfig = GameConfig.load();
         MatchGenerator game =  new MatchGenerator(parsedArgs, gameConfig);
 
