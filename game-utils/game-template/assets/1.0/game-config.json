@@ -6,7 +6,8 @@
         "botResponseTimeout": 1,
         "maxTimeoutsPerBot": 8,
         "botResponseTotalDurationMax": 45,
-        "gameUpdatesPerBotsUpdate": 3
+        "gameUpdatesPerBotsUpdate": 3,
+        "allowedNumbersOfBots": [2,4]
     },
     "gameName": "game-template",
     "debugViewWidth": 1440,
