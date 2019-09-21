@@ -1,10 +1,184 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Planet Lia</title>
-        <meta http-equiv="refresh" content="0; url=https://liagame.com/" />
-    </head>
-    <body>
-        New site under construction. Please visit <a href="https://liagame.com/">old site</a>.
-    </body>
+
+<head>
+    
+    <meta charset="UTF-8">
+
+    <title>Planet Lia</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto|Exo+2" rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="styles.css">
+
+    <script type="text/javascript" src="index.js"></script>
+
+</head>
+
+<body>
+
+    <h1 class="text-center">Planet Lia</h1>
+    <div id="container-banner">
+        <div class="container">
+            <div id="banner"></div>
+        </div>
+        <div id="overlay-banner"></div>
+    </div>
+
+    <div class="section shadow-sm">
+        <h2 class="red-title text-center">Stay tuned for Spring 2020!</h2>
+    </div>
+
+    <div class="section" id="section-content">
+        <div class="container">
+            <div id="content">
+
+                <div class="sub-section">
+                    <h3>We are currently in process of upgrading our platform.</h3>
+                    <p>
+                        You can still access our old website at
+                        <a href="https://www.liagame.com/" target="_blank" rel="noopener noreferrer">www.liagame.com</a>
+                        or you can check out the following:
+                    </p>
+                    <div class="row text-center" id="container-links">
+                        <div class="col-lg-6 col-md-12">
+                            <a href="https://www.liagame.com/editor" target="_blank" rel="noopener noreferrer" class="btn btn-lg custom-btn">Try out our old game</a>
+                        </div>
+                        <div class="col-lg-6 col-md-12">
+                            <a href="https://www.liagame.com/tournament" target="_blank" rel="noopener noreferrer" class="btn btn-lg custom-btn">Tournament SLT 2019</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-section">
+                    <h3 id="title-update">Want to get updates about the project?</h3>
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12">
+                            <div id="container-form-subscription" class="shadow-sm">
+                                <h5 class="title-updates">Subscribe to our news</h5>
+                                <form action="https://liagame.us19.list-manage.com/subscribe/post" method="POST"
+                                    target="_blank" noValidate>
+                                    <input type="hidden" name="u" value="93687b28d61c7cec37fd5237e" readOnly />
+                                    <input type="hidden" name="id" value="63276b2aa1" readOnly />
+                                    <div class="form-row align-items-center justify-content-center">
+                                        <div class="col-auto">
+                                            <input 
+                                                type="email" 
+                                                name="EMAIL" 
+                                                id="MERGE0" 
+                                                class="form-control" 
+                                                value="" 
+                                                autoCapitalize="off" 
+                                                autoCorrect="off"
+                                                placeholder="you@example.com" 
+                                            />
+                                        </div>
+                                        <div class="col-auto">
+                                            <input 
+                                                type="submit"
+                                                value="Subscribe"
+                                                name="subscribe"
+                                                id="mc-embedded-subscribe"
+                                                class="btn custom-btn"
+                                                disabled
+                                            />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="checkbox" htmlFor="gdpr_11997">
+                                            <div class="form-row align-items-center justify-content-center">
+                                                <div class="col-auto">
+                                                    <input 
+                                                        id="gdpr_11997"
+                                                        name="gdpr[11997]"
+                                                        value="Y"
+                                                        type="checkbox"
+                                                        onclick="onConsentClick(event)"
+                                                    />
+                                                </div>
+                                                <div class="col-auto sub-chk-text">
+                                                    I would like to subscribe to the Lia
+                                                    newsletter to receive the latest news.
+                                                </div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <div 
+                                        style="position: absolute; left: -5000px" 
+                                        aria-hidden='true'
+                                        aria-label="Please leave the following three fields empty"
+                                    >
+                                        <label htmlFor="b_name">Name: </label>
+                                        <input 
+                                            type="text"
+                                            name="b_name"
+                                            tabIndex="-1" 
+                                            value=""
+                                            placeholder="Freddie" 
+                                            id="b_name" 
+                                            onChange="()=>{}" 
+                                        />
+
+                                        <label htmlFor="b_email">Email: </label>
+                                        <input 
+                                            type="email"
+                                            name="b_email"
+                                            tabIndex="-1"
+                                            value=""
+                                            placeholder="youremail@gmail.com"
+                                            id="b_email"
+                                            onChange="()=>{}"
+                                        />
+
+                                        <label htmlFor="b_comment">Comment: </label>
+                                        <textarea
+                                            name="b_comment"
+                                            tabIndex="-1"
+                                            placeholder="Please comment"
+                                            id="b_comment"
+                                            onChange="()=>{}"
+                                        ></textarea>
+                                    </div>
+                                </form>
+                            
+                                <p class="sub-footnote">
+                                    We use Mailchimp as our marketing platform. By clicking below to
+                                    subscribe, you acknowledge that your information will be transferred
+                                    to Mailchimp for processing. Learn more about Mailchimp's privacy
+                                    practices 
+                                    <a href="https://mailchimp.com/legal/" target="_blank" rel="noopener noreferrer">here</a>.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-12">
+                            <div id="container-github" class="text-center shadow-sm">
+                                <h5 class="title-updates">Follow our development</h5>
+                                <a href="https://github.com/planet-lia/" target="_blank" rel="noopener noreferrer">
+                                    <img id="github" src="img/GitHub_Logo.png" alt="GitHub" />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sub-section"></div>
+                <h3> What is Planet Lia?</h3>
+                <p>
+                    Planet Lia is a bot programming platform for beginners
+                    and advanced coders alike, where you can use your coding
+                    skills to develop a bot for our video games and battle with
+                    it against other enthusiastic coders. Improve your coding
+                    skills, join the community and have fun!
+                </p>
+            </div>
+
+        </div>
+    </div>
+    </div>
+</body>
+
+</body>
+
 </html>
