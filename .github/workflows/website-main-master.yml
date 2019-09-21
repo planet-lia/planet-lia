@@ -45,7 +45,7 @@ jobs:
         run: "sudo npm install netlify-cli -g"
         # Removes a netlify-cli warning about not being able to ready a file in .config dir
       - name: Netlify deploy
-        run: "netlify deploy --auth ${NETLIFY_AUTH_TOKEN} --site ${NETLIFY_SITE_ID} --dir=./websites/main --prod --json --message \"Production commit: ${GITHUB_SHA}\""
+        run: "netlify deploy -a ${NETLIFY_AUTH_TOKEN} -s ${NETLIFY_SITE_ID} --dir=./websites/main --prod --json --message \"Production commit: ${GITHUB_SHA}\""
         env:
           NETLIFY_SITE_ID: 9191587a-240f-43d6-9b25-f0ecc9be1fdf
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
