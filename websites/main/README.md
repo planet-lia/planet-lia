@@ -1,5 +1,7 @@
 # Official Planet Lia Website
 
+Currently we are serving the placeholder landing page.
+
 Source of [planetlia.com](https://planetlia.com).
 
 The master branch gets automatically build and deployed to our webserver hosted on [Netlify](https://www.netlify.com/).

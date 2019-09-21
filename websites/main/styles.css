@@ -2,14 +2,6 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
-h1 {
-    font-family: 'Exo 2';
-    background: #1c1c1a;
-    margin: 0;
-    padding: 1.5rem 0;
-    color: #ddd;
-}
-
 h3 {
     font-family: 'Exo 2';
 }
@@ -26,6 +18,17 @@ a:hover {
 
 input:disabled {
     cursor: not-allowed;
+}
+
+#logo {
+    font-family: 'Exo 2';
+    background: #ffffff;
+    padding: 1.5rem 0;
+    text-align: center;
+}
+
+#logo img {
+  height: 4rem;
 }
 
 .custom-btn,
@@ -164,7 +167,7 @@ a.custom-btn:hover {
     cursor: pointer;
 }
 
-@media (max-width: 991.98px) { 
+@media (max-width: 991.98px) {
     #container-links a:first-child {
         margin-bottom: 1rem;
     }
