@@ -36,7 +36,7 @@ We are a small team behind this project and we really appreciate all the help fr
 
 * [:bug: Submit bugs and :star2: feature request](CONTRIBUTING.md#bug-report-bug-or-feature-request-star2)
 * [:books: Help with the documentation](CONTRIBUTING.md#improve-documentation-closed_book) - we have large amounts of documentation that take a lot of time and effort for us to write and curate. Help is greatly appreciated!
-* [:wrench: Help with the platform](CONTRIBUTING.md#join-the-development-wrench) - let's build the core Planet Lia platform together
+* [:wrench: Contribute code](CONTRIBUTING.md#contribute-code-wrench) - let's build the core Planet Lia platform together
 * **:video_game: Create your own game (WIP)** - you will be able to code your own game and publish it on Planet Lia platform where others will be able to compete in it. If you want to learn more then come and chat with us on [Discord](https://discord.gg/weXRxyU) where we will gladly tell you more.
 
 **Learn how to contribute in our [Contributing Guide](CONTRIBUTING.md).**
