@@ -2,11 +2,22 @@
 
 :+1: First off, thank you for contributing to Planet Lia. It's awesome people like you that make our journey worthwhile!
 
-**New to contributing to Open Source?** You can check this free series, [How to Contribute to an Open Source Project on GitHub](https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github). Feel free to ask for help, everyone is a beginner at first!
+**New to contributing to Open Source?** 
+Don't be scared by the length of this guide, we know you are already experienced enough to contribute and we need your help! :smile: 
+You can check this free series, [How to Contribute to an Open Source Project on GitHub](https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github), they will get you started in no time. Feel free to ask for help, everyone is a beginner at first!
 
 Following this guidelines will make it easier for the maintainers of the project to better understand your contribution, help you write a more consistent code with the project and make it much more likely that it will be accepted and merged into the project.
 
 All members of our community are expected to follow our [Code of Conduct](CODE_OF_CONDUCT.md). Please make sure you are welcoming and friendly.
+
+Table of content:
+- [Finding Things to Work On](#finding-things-to-work-on)
+- [Bug Reports](#bug-reports)
+- [Feature Requests](#feature-requests)
+- [Improve Documentation](#improve-documentation-closed_book)
+- [Contribute Code](#contribute-code)
+- [Style Guide](#style-guide)
+- [Commit Messages](#commit-messages)
 
 
 ## Finding Things to Work On
@@ -16,7 +27,6 @@ Find something that you think you can complete and comment below the issue that 
 Once you get a green light you are ready [to dig in](#join-the-development).
 
 Of course, feel free to submit a new issue if you think something needs to be added or fixed.
-
 
 
 ## Bug Report :bug: or Feature Request :star2:?
@@ -44,49 +54,51 @@ We have large amounts of documentation that take a lot of time and effort for us
 * fixing outdated information
 * adding new content in form of context clarifications, adding tutorials or new documentation sections 
 
-:warning: **Adding new content** - if you will be adding new content please first open a [feature request](https://github.com/planet-lia/planet-lia/issues/new?labels=enhancement&template=feature_request.md) with the changes you have in mind so that we can discuss them and see if they align with the goals of the project.
+:warning: **Adding new content** - if you will be adding new content please first [open an issue](https://github.com/planet-lia/planet-lia/issues/new?labels=documentation&template=documentation_improvement.md) with the changes you have in mind so that we can discuss them and see if they align with the goals of the project.
 
 **A few documentation pages that you can help us with:**
 * [How to write replay files guide](game-utils/match-viewer/docs/writing_replay_files.md)
 * We will add more soon
 
-## Join the Development :wrench:
+## Contribute Code :wrench:
 
-:warning: **Fixing existing issues** - if you are planning to tackle an existing issue please do write a comment on that issue so that there will not be multiple people working on it at the same time
+***NOTE** - We are following a standard contributing workflow for Github open source projects. You can check this free series for more details, [How to Contribute to an Open Source Project on GitHub](https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github).*
 
-1. #### Trivial Changes
+How to contribute code:
 
-    To contribute small changes you don't need to create an issue but you can directly submit your pull request. As a rule of thumb, a small changes are the ones that introduce obvious fixes and don't introduce new functionality. Some examples might be:
-    * Spelling / grammar fixes
-    * Typo corrections, bad formatting fixes
-    * Improving clarity in documentation
-    * Improvement to error code messages
-    * Configuration changes
-
-    When you **commit** your changes, make sure to follow our [commit messages guidelines](#commit-messages). :bangbang: 
-
-2. #### Bigger changes
-
-    Follow the workflow below:
-    * **Open an issue** with a suggested change and wait for it to be **approved**
-    * **Fork and clone** this repository
-    * Create a **branch**
-    * **Implement your changes**
-    * Make sure to include **tests when appropriate**
+1. **Fork** this repository
+2. **Clone** your fork
+    * `git clone <SSH_OR_HTTPS_LINK_TO_YOUR_FORK>` 
+3. Follow changes in original repo 
+    * `git remote add upstream https://github.com/planet-lia/planet-lia`
+    * `git branch --set-upstream-to=upstream/master` 
+4. Configure git hooks that will automatically check the quality of your commit message
+    * `git config core.hooksPath .githooks`
+5. Decide what to work on
+    * :small_red_triangle: **Fix existing issue** but first write a comment on that issue to let others know so that there will not be multiple people working on it at the same time
+    * :small_blue_diamond: **Open a new issue** with a suggested change and wait for it to be approved
+    * :small_orange_diamond: **Contribute small changes** where you don't need to create an issue before starting to code. As a rule of thumb, a small changes are the ones that introduce obvious fixes and don't introduce new functionality. Some examples might be *spelling / grammar fixes, typos, bad formatting, improving clarity in documentation, improvement to error code messages, etc.*.
+6. Create a new **branch** with a name relevant to the change you are making
+    * `git checkout -b <NAME_OF_YOUR_BRANCH>`
+7. **Implement your changes**
+    * Make sure to **write test** when appropriate
     * Make sure all **tests run successfully**
-    * Add a short description of the change in [corresponding CHANGELOG](#changelog-messages)
-    * **Commit** your changes, make sure to follow our [commit messages guidelines](#commit-messages) :bangbang: 
-    * **Push** changes to your fork
-    * Create a **pull request** to `planet-lia:master`
-    * **Iterate** until accepted
-    * **Get merged** to Planet Lia repo! :heavy_check_mark:
+8. **Commit** your changes
+    * :bangbang: Check our [commit messages guidelines](#commit-messages)
+9. **Push** changes to your fork
+    * `git push origin <NAME_OF_YOUR_BRANCH>`
+10. Create a **pull request** to `planet-lia:master` through GitHub website
+11. **Iterate** your solution until accepted
+    * If maintainers request additional changes simply implement them in your local branch, push it again to master and the pull request will get updated automatically
+11. **Get merged** to Planet Lia repo! :heavy_check_mark:
+12. **Delete your local branch**
+    * `git checkout master`
+    * `git branch -D <NAME_OF_YOUR_BRANCH>`
+13. To start working on new feature
+    * `git pull origin master`
+    * Jump back to **step 5**
 
-    Don't worry if maintainers request that you improve your pull request.
-    Sometimes this is necessary in order to keep the code standard high.
-
-    **Before you start coding** - make sure to first open an issue with the changes that you want to introduce and only start working on your pull request when the changes are approved.
-
-    Here is a great collection of useful [git tricks](https://github.com/k88hudson/git-flight-rules) if sometimes you don't know how to do something.
+Here is a great collection of useful [git tricks](https://github.com/k88hudson/git-flight-rules) to help you use git more efficiently.
 
 ### What We Don't Accept
     
@@ -218,8 +230,8 @@ Closes #105"
 ```
 
 ## Changelog Messages
-Each larger part of Planet Lia platform has its own CHANGELOG.md file. 
-When you are contributing the code with a pull request please add a short description of your feature to related CHANGELOG within your PR. We are following the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
+Each larger part of Planet Lia platform has its own CHANGELOG.md file (or will have in the future). 
+When you are contributing the code with a pull request please add a short description of your feature to related CHANGELOG. We are following the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
 
 <hr/>
 
