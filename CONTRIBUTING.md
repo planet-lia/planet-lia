@@ -3,8 +3,7 @@
 :+1: First off, thank you for contributing to Planet Lia. It's awesome people like you that make our journey worthwhile!
 
 **New to contributing to Open Source?** 
-Don't be scared by the length of this guide, we know you are already experienced enough to contribute and we need your help! :smile: 
-You can check this free series, [How to Contribute to an Open Source Project on GitHub](https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github), they will get you started in no time. Feel free to ask for help, everyone is a beginner at first!
+Don't be scared by the length of this guide, we know you are already experienced enough to contribute and we really need your help! :smile: Feel free to ask questions, everyone is a beginner at first!
 
 Following this guidelines will make it easier for the maintainers of the project to better understand your contribution, help you write a more consistent code with the project and make it much more likely that it will be accepted and merged into the project.
 
@@ -62,7 +61,7 @@ We have large amounts of documentation that take a lot of time and effort for us
 
 ## Contribute Code :wrench:
 
-***NOTE** - We are following a standard contributing workflow for Github open source projects. You can check this free series for more details, [How to Contribute to an Open Source Project on GitHub](https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github).*
+***NOTE** - We are following a standard contributing workflow for GitHub open source projects. You can check this free series for more details on the workflow used below, [How to Contribute to an Open Source Project on GitHub](https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github).*
 
 How to contribute code:
 
@@ -75,9 +74,9 @@ How to contribute code:
 4. Configure git hooks that will automatically check the quality of your commit message
     * `git config core.hooksPath .githooks`
 5. Decide what to work on
-    * :small_red_triangle: **Fix existing issue** but first write a comment on that issue to let others know so that there will not be multiple people working on it at the same time
-    * :small_blue_diamond: **Open a new issue** with a suggested change and wait for it to be approved
-    * :small_orange_diamond: **Contribute small changes** where you don't need to create an issue before starting to code. As a rule of thumb, a small changes are the ones that introduce obvious fixes and don't introduce new functionality. Some examples might be *spelling / grammar fixes, typos, bad formatting, improving clarity in documentation, improvement to error code messages, etc.*.
+    * :large_orange_diamond: **Fix existing issue** but first let others know that you are working on it by commenting on that issue
+    * :large_orange_diamond: **Open a new issue** with a suggested change and wait for it to be approved
+    * :large_orange_diamond: **Contribute small changes** where you don't need to create an issue before starting to code. As a rule of thumb, a small changes are the ones that introduce obvious fixes and don't introduce new functionality. Some examples might be *spelling / grammar fixes, typos, bad formatting, improving clarity in documentation, improvement to error code messages, etc.*.
 6. Create a new **branch** with a name relevant to the change you are making
     * `git checkout -b <NAME_OF_YOUR_BRANCH>`
 7. **Implement your changes**
@@ -130,13 +129,11 @@ Parts of the following description are copied directly from Angular guidelines w
 We have very precise rules over how our git commit messages can be formatted.  This leads to **more
 readable messages** that are easy to follow when looking through the **project history**.
 
-:warning: Add a commit message validation hook that checks your commit message format when you try to commit your changes. Run `git config core.hooksPath .githooks` within your cloned repository and make sure all scripts within `.githooks` directory are executable. If you really need to omit triggering hooks use flag `--no-verify` flag with `git commit` command.
-
 Bonus: If you sign your commits with your GPG key, you will impress the maintainers :sunglasses:.
 Checkout this [post](https://git-scm.com/book/en/v2/Git-Tools-Signing-Your-Work).
 ### Commit Message Format
-Each commit message consists of a **header**, a **body** and a **footer**.  The header has a special
-format that includes a **type**, a **scope** and a **subject**:
+Each commit message consists of a **header**, a [**body**](#body) (optional) and a [**footer**](#footer) (optional). The footer should contain a [closing reference to an issue](https://help.github.com/articles/closing-issues-via-commit-messages/) if any. The header has a special
+format that includes a [**type**](#type), a [**scope**](#scope) (optional) and a [**subject**](#subject):
 
 ```
 <type>(<scope>): <subject>
@@ -146,12 +143,8 @@ format that includes a **type**, a **scope** and a **subject**:
 <footer>
 ```
 
-The **header** is mandatory and the **scope** of the header is optional.
-
-Any line of the commit message cannot be longer 100 characters! 
+Any line of the commit message should not be longer than 100 characters! 
 This allows the message to be easier to read on GitHub as well as in various git tools.
-
-The footer should contain a [closing reference to an issue](https://help.github.com/articles/closing-issues-via-commit-messages/) if any.
 
 Samples: 
 
@@ -163,12 +156,6 @@ fix(cli): command line colors not displayed correctly
 
 Specific colors are not displayed correctly. This make it hard to read the printed messages.
 ```
-
-### Revert
-***NOTE** - If you are not a maintainer you can skip this section as you will most likely never need to revert within a Pull Request.*
-
-Use revert when a bad commit was pushed to production. 
-If the commit reverts a previous commit, it should begin with `revert: `, followed by the header of the reverted commit. In the body it should say: `This reverts commit <hash>.`, where the hash is the SHA of the commit being reverted.
 
 ### Type
 Must be one of the following:
@@ -192,7 +179,6 @@ The following is the list of supported scopes:
 * **web-docs**
 * **web-main**
 * **web-local**
-* **docs**
 * **backend**
 * **cli**
 * **match-viewer**
@@ -229,9 +215,15 @@ BREAKING CHANGE: User achievements field rename in user info endpoint.
 Closes #105"
 ```
 
-## Changelog Messages
+### Revert
+***NOTE** - If you are not a maintainer you can skip this section as you will most likely never need to revert within a Pull Request.*
+
+Use revert when a bad commit was pushed to production. 
+If the commit reverts a previous commit, it should begin with `revert: `, followed by the header of the reverted commit. In the body it should say: `This reverts commit <hash>.`, where the hash is the SHA of the commit being reverted.
+
+<!-- ## Changelog Messages
 Each larger part of Planet Lia platform has its own CHANGELOG.md file (or will have in the future). 
-When you are contributing the code with a pull request please add a short description of your feature to related CHANGELOG. We are following the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention.
+When you are contributing the code with a pull request please add a short description of your feature to related CHANGELOG. We are following the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) convention. -->
 
 <hr/>
 
