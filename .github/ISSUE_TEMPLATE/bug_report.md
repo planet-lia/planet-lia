@@ -18,10 +18,6 @@ about: Create a report to help us improve
 <!--- How has this issue affected you? What are you trying to accomplish? -->
 <!--- Providing context helps us come up with a solution that is most useful for our users -->
 
-## Possible solution
-<!--- Not obligatory, but suggest a fix/reason for the bug or ideas how to implement the addition or change -->
-<!--- If you don't have an idea, remove this section from the report -->
-
 ## Steps to reproduce
 <!--- Provide a link to a live example, or an unambiguous set of steps to -->
 <!--- reproduce this bug. Include code to reproduce, if relevant -->
@@ -33,3 +29,7 @@ about: Create a report to help us improve
 ## Your environment
 <!--- Include as many relevant details about the environment you experienced the bug in -->
 <!--- such as operating system, browser version, Planet Lia tools versions etc. -->
+
+## Possible solution
+<!--- Not obligatory, but suggest a fix/reason for the bug or ideas how to implement the addition or change -->
+<!--- If you don't have an idea, remove this section from the report -->
