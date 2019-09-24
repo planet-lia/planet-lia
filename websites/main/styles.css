@@ -145,7 +145,8 @@ a.custom-btn:hover {
 
 .sub-footnote {
     font-size: 0.6rem;
-    text-align: center;
+    text-align: left;
+    padding-top: 1rem;
     margin: 0;
 }
 
@@ -191,4 +192,37 @@ a.custom-btn:hover {
     #overlay-banner {
         background: none;
     }
+}
+
+/* Mailchimp style */
+#mc_embed_signup {
+    clear:left;
+}
+#mc-embedded-subscribe-form input[type=checkbox] {
+    display: inline;
+    width: auto;
+    margin-right: 10px;
+}
+#mergeRow-gdpr {
+    margin-top: 20px;
+}
+#mc-embedded-subscribe-form .mc_fieldset {
+    border:none;
+    min-height: 0px;
+    padding-bottom:0px;
+}
+#mc-embedded-subscribe {
+    margin: 1em 0 1em;
+}
+
+#mc_embed_signup div.response {
+    color: #000;
+    font-family: 'Exo 2';
+    font-weight: normal;
+    font-size: 0.8rem;
+}
+#mc_embed_signup div#mce-responses {
+    margin: 0%;
+    padding: 0;
+    width: 100%;
 }

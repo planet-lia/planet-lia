@@ -9,12 +9,16 @@
 
     <link href="https://fonts.googleapis.com/css?family=Roboto|Exo+2" rel="stylesheet" />
 
+    <!-- Mailchimp style -->
+    <link href="//cdn-images.mailchimp.com/embedcode/classic-10_7.css" rel="stylesheet" type="text/css">
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="styles.css">
 
-    <script type="text/javascript" src="index.js"></script>
+    <link rel="shortcut icon" type="image/png" href="img/favicon.png"/>
 
+    <script type="text/javascript" src="index.js"></script>
 </head>
 
 <body>
@@ -39,7 +43,7 @@
                 <div class="sub-section">
                     <h3>We are currently in process of upgrading our platform.</h3>
                     <p>
-                        You can still access our old website at
+                        You can still access our <b>old website at</b>
                         <a href="https://www.liagame.com/" target="_blank" rel="noopener noreferrer">www.liagame.com</a>
                         or you can check out the following:
                     </p>
@@ -58,105 +62,81 @@
                     <div class="row">
                         <div class="col-lg-6 col-md-12">
                             <div id="container-form-subscription" class="shadow-sm">
+
                                 <h5 class="title-updates">Subscribe to our news</h5>
-                                <form action="https://liagame.us19.list-manage.com/subscribe/post" method="POST"
-                                    target="_blank" noValidate>
-                                    <input type="hidden" name="u" value="93687b28d61c7cec37fd5237e" readOnly />
-                                    <input type="hidden" name="id" value="63276b2aa1" readOnly />
-                                    <div class="form-row align-items-center justify-content-center">
-                                        <div class="col-auto">
+                                <div id="mc_embed_signup">
+                                    <form action="https://planetlia.us19.list-manage.com/subscribe/post?u=93687b28d61c7cec37fd5237e&amp;id=6f86b6b15f"
+                                          method="post"
+                                          id="mc-embedded-subscribe-form"
+                                          name="mc-embedded-subscribe-form"
+                                          class="validate"
+                                          target="_blank"
+                                          novalidate>
+
+                                        <div class="mc-field-group ">
                                             <input
-                                                type="email"
-                                                name="EMAIL"
-                                                id="MERGE0"
-                                                class="form-control"
-                                                value=""
-                                                autoCapitalize="off"
-                                                autoCorrect="off"
-                                                placeholder="you@example.com"
-                                            />
+                                                    autoCapitalize="off"
+                                                    autoCorrect="off"
+                                                    placeholder="you@example.com"
+                                                    type="email"
+                                                    value=""
+                                                    name="EMAIL"
+                                                    class="required email form-control"
+                                                    id="mce-EMAIL"
+                                            >
                                         </div>
-                                        <div class="col-auto">
-                                            <input
-                                                type="submit"
-                                                value="Subscribe"
-                                                name="subscribe"
-                                                id="mc-embedded-subscribe"
-                                                class="btn custom-btn"
-                                                disabled
-                                            />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label class="checkbox" htmlFor="gdpr_11997">
-                                            <div class="form-row align-items-center justify-content-center">
-                                                <div class="col-auto">
-                                                    <input
-                                                        id="gdpr_11997"
-                                                        name="gdpr[11997]"
-                                                        value="Y"
-                                                        type="checkbox"
-                                                        onclick="onConsentClick(event)"
-                                                    />
-                                                </div>
-                                                <div class="col-auto sub-chk-text">
-                                                    I would like to subscribe to the Lia
-                                                    newsletter to receive the latest news.
-                                                </div>
+                                        <div id="mergeRow-gdpr" class="mergeRow gdpr-mergeRow content__gdprBlock mc-field-group ">
+                                            <div class="content__gdpr">
+                                                <fieldset class="mc_fieldset gdprRequired mc-field-group" name="interestgroup_field">
+                                                    <label class="checkbox subfield" for="gdpr_26841">
+                                                        <input
+                                                                type="checkbox"
+                                                                id="gdpr_26841"
+                                                                name="gdpr[26841]"
+                                                                value="Y"
+                                                                class="av-checkbox"
+                                                                onclick="onConsentClick(event)"
+                                                        >
+                                                        <span>Subscribe me to the Planet Lia
+                                                            newsletter</span>
+                                                    </label>
+                                                </fieldset>
                                             </div>
-                                        </label>
-                                    </div>
-                                    <div
-                                        style="position: absolute; left: -5000px"
-                                        aria-hidden='true'
-                                        aria-label="Please leave the following three fields empty"
-                                    >
-                                        <label htmlFor="b_name">Name: </label>
-                                        <input
-                                            type="text"
-                                            name="b_name"
-                                            tabIndex="-1"
-                                            value=""
-                                            placeholder="Freddie"
-                                            id="b_name"
-                                            onChange="()=>{}"
-                                        />
-
-                                        <label htmlFor="b_email">Email: </label>
-                                        <input
-                                            type="email"
-                                            name="b_email"
-                                            tabIndex="-1"
-                                            value=""
-                                            placeholder="youremail@gmail.com"
-                                            id="b_email"
-                                            onChange="()=>{}"
-                                        />
-
-                                        <label htmlFor="b_comment">Comment: </label>
-                                        <textarea
-                                            name="b_comment"
-                                            tabIndex="-1"
-                                            placeholder="Please comment"
-                                            id="b_comment"
-                                            onChange="()=>{}"
-                                        ></textarea>
-                                    </div>
-                                </form>
-
-                                <p class="sub-footnote">
-                                    We use Mailchimp as our marketing platform. By clicking below to
-                                    subscribe, you acknowledge that your information will be transferred
-                                    to Mailchimp for processing. Learn more about Mailchimp's privacy
-                                    practices
-                                    <a href="https://mailchimp.com/legal/" target="_blank" rel="noopener noreferrer">here</a>.
-                                </p>
+                                            <div class="content__gdprLegal">
+                                                <p class="sub-footnote">We use Mailchimp as our marketing platform.
+                                                    By clicking below to subscribe, you acknowledge that your
+                                                    information will be transferred to Mailchimp for processing.
+                                                    <a href="https://mailchimp.com/legal/" target="_blank">
+                                                        Learn more about Mailchimp's privacy practices here.
+                                                    </a>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div id="mce-responses" class="clear">
+                                            <div class="response" id="mce-error-response" style="display:none"></div>
+                                            <div class="response" id="mce-success-response" style="display:none"></div>
+                                        </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+                                        <div style="position: absolute; left: -5000px;" aria-hidden="true">
+                                            <input type="text" name="b_93687b28d61c7cec37fd5237e_6f86b6b15f" tabindex="-1" value="">
+                                        </div>
+                                        <div class="clear">
+                                            <input
+                                                    type="submit"
+                                                    value="Subscribe"
+                                                    name="subscribe"
+                                                    id="mc-embedded-subscribe"
+                                                    class="btn custom-btn"
+                                                    disabled
+                                            />
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-12">
                             <div id="container-github" class="text-center shadow-sm">
                                 <h5 class="title-updates">Follow our development</h5>
-                                <a href="https://github.com/planet-lia/" target="_blank" rel="noopener noreferrer">
+                                <a href="https://github.com/planet-lia/planet-lia" target="_blank" rel="noopener noreferrer">
                                     <img id="github" src="img/GitHub_Logo.png" alt="GitHub" />
                                 </a>
                             </div>
@@ -178,8 +158,10 @@
         </div>
     </div>
     </div>
-</body>
 
+    <!-- Mailchimp scripts -->
+    <script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script>
+    <script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
 </body>
 
 </html>
