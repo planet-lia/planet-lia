@@ -9,6 +9,6 @@
 <!-- How did you implement the solution? -->
 <!-- Did you provide any tests? -->
 
-## Issue that it solves
+## Issue That It Solves
 <!-- Reference to the issue that this PR is solving (eg. #2) -->
 Solves #ISSUE_NUMBER
