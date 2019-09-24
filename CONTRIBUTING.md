@@ -83,7 +83,7 @@ How to contribute code:
     * Make sure to **write test** when appropriate
     * Make sure all **tests run successfully**
 8. **Commit** your changes
-    * :bangbang: Check our [Commit Message Guide](.github/commit_message_guidelines.md)
+    * :bangbang: Check our [Commit Message Guidelines](.github/commit_message_guidelines.md)
 9. **Push** changes to your fork
     * `git push origin <NAME_OF_YOUR_BRANCH>`
 10. Create a **pull request** to `planet-lia:master` through GitHub website
@@ -124,7 +124,7 @@ A few important style conventions that you need to consider:
 
 ## Commit Messages
 
-Check our [Commit Message Guide](.github/commit_message_guidelines.md) for more details.
+Check our [Commit Message Guidelines](.github/commit_message_guidelines.md) for more details.
 
 
 <!-- ## Changelog Messages
