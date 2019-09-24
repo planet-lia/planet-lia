@@ -6,7 +6,32 @@ Hook taken from https://gist.github.com/eyarz/64770d343b9cab442b257869f497af9e a
 import sys
 import re
 
-REGEX = '^(revert: )?(feat|fix|docs|style|refactor|perf|build|test|ci|infra|chore)(\(.+\))?\:\s(.{3,})' 
+types = [
+    "feat",
+    "fix",
+    "docs",
+    "style",
+    "refactor",
+    "perf",
+    "build",
+    "test",
+    "ci",
+    "infra",
+    "chore"
+]
+
+scopes = [
+    "web-docs",
+    "web-main",
+    "web-local",
+    "backend",
+    "cli",
+    "match-viewer",
+    "game-template",
+    "game-.+"
+]
+
+REGEX = '^(revert: )?(' + '|'.join(types) + ')(\((' + '|'.join(scopes) + ')\))?\:\s(.{3,})'
 
 GUIDELINE_LINK = 'https://github.com/planet-lia/planet-lia/blob/master/CONTRIBUTING.md#commit-messages' 
 
