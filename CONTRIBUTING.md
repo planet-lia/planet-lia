@@ -9,7 +9,7 @@ Following this guidelines will make it easier for the maintainers of the project
 
 All members of our community are expected to follow our [Code of Conduct](CODE_OF_CONDUCT.md). Please make sure you are welcoming and friendly.
 
-Table of content:
+Table of contents:
 - [Finding Things to Work On](#finding-things-to-work-on)
 - [Bug Reports](#bug-reports)
 - [Feature Requests](#feature-requests)
