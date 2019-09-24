@@ -9,7 +9,7 @@ readable messages** that are easy to follow when looking through the **project h
 Bonus: If you sign your commits with your GPG key, you will impress the maintainers :sunglasses:.
 Checkout this [post](https://git-scm.com/book/en/v2/Git-Tools-Signing-Your-Work).
 
-### Commit Message Format
+## Commit Message Format
 Each commit message consists of a **header**, a [**body**](#body) (optional) and a [**footer**](#footer) (optional). The footer should contain a [closing reference to an issue](https://help.github.com/articles/closing-issues-via-commit-messages/) if any. The header has a special
 format that includes a [**type**](#type), a [**scope**](#scope) (optional) and a [**subject**](#subject):
 
@@ -99,7 +99,7 @@ Closes #105"
 Use revert when a bad commit was pushed to production. 
 If the commit reverts a previous commit, it should begin with `revert: `, followed by the header of the reverted commit. In the body it should say: `This reverts commit <hash>.`, where the hash is the SHA of the commit being reverted.
 
-## Automatic Commit Message Checks
+## Verify Your Commit Message
 
 Add a commit message validation hook that automatically checks your commit message format when you try to commit your changes. Run the command below and make sure all scripts within `.githooks` directory are executable.
 ```
