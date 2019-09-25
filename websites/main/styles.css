@@ -194,6 +194,17 @@ a.custom-btn:hover {
     }
 }
 
+.cont-contacts {
+    padding: 20px;
+}
+
+a.contacts-logo {
+    color: #AAA;
+    font-size: 1.8em;
+    cursor: pointer;
+    padding: 5px;
+}
+
 /* Mailchimp style */
 #mc_embed_signup {
     clear:left;
