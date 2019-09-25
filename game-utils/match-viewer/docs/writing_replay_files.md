@@ -248,7 +248,7 @@ Below are descriptions for currently supported sections (if you are missing a us
         * `attribute`: string
         * `endTime`: number
         * `endRangeValue`: number
-    * [Example](TODO)
+    * [Example](replay_file_examples.md#step-interpolation)
 * #### LinearSection
     * **Interpolation:** when queried for a value in time between `t0` and `t1` it returns a value based on the linear function that goes through values at times `t0` and `t1`
     * **Values type:** `number`
@@ -257,7 +257,7 @@ Below are descriptions for currently supported sections (if you are missing a us
         * `attribute`: string
         * `endTime`: number
         * `endRangeValue`: number
-    * [Example](TODO)
+    * [Example](replay_file_examples.md#linear-interpolation)
 * #### SineSection
     * **Interpolation:** when queried for a value in time between `t0` and `t1` it returns a value based on the sine sine function `A + r * sin(B * (t - t0) + C)`
     * **Values type:** `number`
@@ -270,7 +270,7 @@ Below are descriptions for currently supported sections (if you are missing a us
         * `r`: number
         * `B`: number
         * `C`: number
-    * [Example](TODO)
+    * [Example](replay_file_examples.md#sine-interpolation)
 * #### TextSection
     * **Interpolation:** when queried for a value in time between `t0` and `t1` it returns a value at time `t0`
     * **Values type:** `string`
@@ -279,7 +279,6 @@ Below are descriptions for currently supported sections (if you are missing a us
         * `attribute`: string
         * `endTime`: number
         * `endRangeValue`: string
-    * [Example](TODO)
 * #### BooleanSection
     * **Interpolation:** when queried for a value in time between `t0` and `t1` it returns a value at time `t0`
     * **Values type:** `boolean`
@@ -288,7 +287,6 @@ Below are descriptions for currently supported sections (if you are missing a us
         * `attribute`: string
         * `endTime`: number
         * `endRangeValue`: boolean
-    * [Example](TODO)
 * #### AttachSection
     * **Interpolation:** when queried for a value in time between `t0` and `t1` it returns a value at time `t0`
     * **Values type:** `Attach` - stores parameters described below
@@ -303,7 +301,7 @@ Below are descriptions for currently supported sections (if you are missing a us
         * `attachAngle`: boolean - if set to true, the angle of the attached entity will be added the angle of the base entity (it will rotate around its own center together with the base entity)
         * `attachScale`: boolean - if set to true, the attached entity will scale together with the base entity. x and y coordinates will also scale.
         * `attachVisibility`: boolean - if set to true, the attached entity will use the visibility of the base entity.
-    * [Example](TODO)
+    * Examples [1](replay_file_examples.md#attach-simple), [2](replay_file_examples.md##attach-rotation), [3](replay_file_examples.md#attach-rotation--angle)
 
 
 ## Entity Types
