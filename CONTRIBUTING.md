@@ -61,7 +61,7 @@ We have large amounts of documentation that take a lot of time and effort for us
 
 ## Contribute Code :wrench:
 
-***NOTE** - We are following a standard contributing workflow for GitHub open source projects. You can check this free series for more details on the workflow used below, [How to Contribute to an Open Source Project on GitHub](https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github).*
+***NOTE** - We are following a standard contributing workflow for GitHub open source projects. You can check this free video series for more details on the workflow used below, [How to Contribute to an Open Source Project on GitHub](https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github), or you can read a [shorter written version](https://www.freecodecamp.org/news/a-simple-git-guide-and-cheat-sheet-for-open-source-contributors/) by freeCodeCamp.*
 
 How to contribute code:
 
