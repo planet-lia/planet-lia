@@ -56,6 +56,10 @@ project(":core") {
 
     sourceSets.test.java.srcDirs = ["test/"]
 
+    test {
+        useJUnitPlatform()
+    }
+
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
@@ -65,9 +69,5 @@ project(":core") {
 
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
         testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
-    }
-
-    test {
-        useJUnitPlatform()
     }
 }

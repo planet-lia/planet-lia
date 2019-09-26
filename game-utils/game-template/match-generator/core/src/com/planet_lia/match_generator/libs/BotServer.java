@@ -1,5 +1,6 @@
 package com.planet_lia.match_generator.libs;
 
+import com.google.gson.Gson;
 import com.planet_lia.match_generator.libs.BotListener.MessageSender;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -33,33 +34,26 @@ public class BotServer {
     public BotServer(GeneralConfig generalConfig,
                      Timer gameTimer,
                      int port,
-                     String[] botsAndTokens) {
-        this(generalConfig, gameTimer, port, botsAndTokens, DEFAULT_BOT_LISTENER_TOKEN);
+                     BotDetailsAdvanced[] botsDetails) {
+        this(generalConfig, gameTimer, port, botsDetails, DEFAULT_BOT_LISTENER_TOKEN);
     }
 
     public BotServer(GeneralConfig generalConfig,
                      Timer gameTimer,
                      int port,
-                     String[] botsAndTokens,
+                     BotDetailsAdvanced[] botsDetails,
                      String botListenerToken) {
         this.server = createServer(port);
         this.generalConfig = generalConfig;
         this.gameTimer = gameTimer;
 
-        // For each bot a token needs to be provided
-        if (botsAndTokens.length % 2 != 0) {
-            throw new Error("More bots provided than tokens");
-        }
-
-        int numberOfBots = botsAndTokens.length / 2;
-
-        if (!isNumberOfBotsAllowed(generalConfig.allowedNumbersOfBots, numberOfBots)) {
+        if (!isNumberOfBotsAllowed(generalConfig.allowedNumbersOfBots, botsDetails.length)) {
             throw new Error("Number of provided bots is not supported by this game, "
-                    + "provided: " + (botsAndTokens.length / 2)
+                    + "provided: " + (botsDetails.length)
                     + " allowed: " + Arrays.toString(generalConfig.allowedNumbersOfBots));
         }
 
-        bots = prepareBotConnection(botsAndTokens, numberOfBots);
+        this.bots = prepareBotConnections(botsDetails);
 
         // Only create bot listener if botListenerToken is ""
         if (!botListenerToken.equals(DEFAULT_BOT_LISTENER_TOKEN)) {
@@ -94,16 +88,13 @@ public class BotServer {
     /**
      * Create BotConnection objects from an array of botNames and tokens.
      *
-     * @param botsAndTokens - array of bots and tokens for this match
-     * @param numberOfBots - number of bots that will play in the match
+     * @param botsDetails - array details of all provided bots
      * @return array of initialized BotConnection objects without set connections
      */
-    private static ArrayList<BotConnection> prepareBotConnection(String[] botsAndTokens, int numberOfBots) {
-        ArrayList<BotConnection> bots = new ArrayList<>(numberOfBots);
-        for (int i = 0; i < botsAndTokens.length; i += 2) {
-            String botName = botsAndTokens[i];
-            String token = botsAndTokens[i + 1];
-            bots.add(new BotConnection(botName, token));
+    private static ArrayList<BotConnection> prepareBotConnections(BotDetailsAdvanced[] botsDetails) {
+        ArrayList<BotConnection> bots = new ArrayList<>(botsDetails.length);
+        for (BotDetailsAdvanced details : botsDetails) {
+            bots.add(new BotConnection(details));
         }
         return bots;
     }
@@ -126,7 +117,7 @@ public class BotServer {
             if (timeoutMillis <= 0) {
                 for (BotConnection bot : this.bots) {
                     if (bot.connection == null) {
-                        System.err.printf("Bot with name '%s' did not connect in time\n", bot.botName);
+                        System.err.printf("Bot with name '%s' did not connect in time\n", bot.details.botName);
                     }
                 }
                 throw new Error("Some bots failed to connect in time");
@@ -153,12 +144,12 @@ public class BotServer {
         String token = handshake.getFieldValue("token");
         if (!token.equals("")) {
             for (BotConnection bot : this.bots) {
-                if (bot.token.equals(token) && bot.connection == null) {
+                if (bot.details.token.equals(token) && bot.connection == null) {
                     bot.connection = conn;
                     // Attach bot object to connection so that later we
                     // will know to which bot a connection belongs
                     bot.connection.setAttachment(bot);
-                    System.out.printf("Bot '%s' has connected\n", bot.botName);
+                    System.out.printf("Bot '%s' has connected\n", bot.details.botName);
                     return;
                 }
             }
@@ -179,9 +170,9 @@ public class BotServer {
      * Send data to all bots
      * @param data - data as json string
      */
-    public void sendToAll(String data) {
+    public void sendToAll(String data, BotMessageType type) {
         for (int i = 0; i < this.bots.size(); i++) {
-            send(i, data);
+            send(i, data, type);
         }
     }
 
@@ -190,17 +181,30 @@ public class BotServer {
      * @param botIndex - the index based on where it was provided to
      *                 the match-generator as a program argument
      * @param data - data as json string
+     * @param type - what type of message is being sent
      */
-    public void send(int botIndex, String data) {
+    public void send(int botIndex, String data, BotMessageType type) {
         BotConnection bot = this.bots.get(botIndex);
+
         if (bot.disqualified) {
             return;
         }
+        if (type == BotMessageType.INITIAL) {
+            if (!bot.initialMessageSent) {
+                bot.initialMessageSent = true;
+            }
+            else {
+                throw new Error(String.format("Bot '%s' already received initial message\n", bot.details.botName));
+            }
+        }
         if (bot.currentRequestIndex == this.currentRequestIndex) {
             System.err.printf("Can't send new message to bot '%s' " +
-                    "because it already received its update this turn\n", bot.botName);
+                    "because it already received its update this turn\n", bot.details.botName);
             return;
         }
+
+        BotDetails[] botsDetails = (type == BotMessageType.INITIAL) ? getBotsDetails() : null;
+        data = injectGeneralFieldsToJsonData(data, type, botsDetails);
 
         bot.currentRequestIndex = this.currentRequestIndex;
         bot.currentRequestTime = System.currentTimeMillis();
@@ -228,11 +232,11 @@ public class BotServer {
             return;
         }
         if (bot.currentRequestIndex != this.currentRequestIndex) {
-            System.out.printf("Bot '%s' sent response too late\n", bot.botName);
+            System.out.printf("Bot '%s' sent response too late\n", bot.details.botName);
             return;
         }
         if (!bot.waitingResponse) {
-            System.out.printf("Bot '%s' already answered to this request\n", bot.botName);
+            System.out.printf("Bot '%s' already answered to this request\n", bot.details.botName);
             return;
         }
 
@@ -254,15 +258,34 @@ public class BotServer {
     }
 
     /**
-     * @return - bot names of all connected bots in order they
-     *         were provided as arguments to the program
+     * Injects __type field as well as __competitionMatchDetails field if the bot message is
+     * of INITIAL type.
+     * @param data - json data as string
+     * @param type - type of the message
+     * @param botsDetails - list of BotDetails, if null the field will be skipped
+     * @return json data string with injected fields
      */
-    public String[] getBotNames() {
-        String[] botNames = new String[this.bots.size()];
+    static String injectGeneralFieldsToJsonData(String data, BotMessageType type, BotDetails[] botsDetails) {
+        return data.substring(0, data.length() - 1)
+                + ((type != null)
+                    ? ",\"__type\":" + "\"" + type.toString() + "\""
+                    : "")
+                + ((botsDetails != null)
+                    ? ",\"__competitionMatchDetails\":"  + (new Gson()).toJson(botsDetails)
+                    : "")
+                + "}";
+    }
+
+    /**
+     * @return - bot details inorder they were provided as arguments to the program
+     */
+    public BotDetails[] getBotsDetails() {
+        BotDetails[] botDetails = new BotDetails[this.bots.size()];
         for (int i = 0; i < this.bots.size(); i++) {
-            botNames[i] = this.bots.get(i).botName;
+            BotDetailsAdvanced details = this.bots.get(i).details;
+            botDetails[i] = new BotDetails(details.botName, details.teamIndex, details.optional.rank);
         }
-        return botNames;
+        return botDetails;
     }
 
     public int getNumberOfTimeouts(int botIndex) {
@@ -327,7 +350,7 @@ public class BotServer {
     private void handleBotNotResponded(BotConnection bot) {
         bot.numberOfTimeouts++;
         System.out.printf("Bot '%s' failed to return response in time, number of timeouts: %d\n",
-                bot.botName, bot.numberOfTimeouts);
+                bot.details.botName, bot.numberOfTimeouts);
 
         if (bot.numberOfTimeouts >= generalConfig.maxTimeoutsPerBot) {
             disqualifyBot(bot, "bot timed out to many times");
@@ -339,7 +362,7 @@ public class BotServer {
         bot.disqualified = true;
         bot.lastResponseData = null;
         bot.disqualificationReason = reason;
-        System.out.printf("Bot '%s' disqualified for the reason: %s\n", bot.botName, reason);
+        System.out.printf("Bot '%s' disqualified for the reason: %s\n", bot.details.botName, reason);
     }
 
     /**
@@ -359,12 +382,17 @@ public class BotServer {
 
     private void onClose(WebSocket conn, int code, String reason, boolean remote) {
         BotConnection bot = conn.getAttachment();
-        System.out.printf("Connection for bot '%s' closed\n", bot.botName);
+        System.out.printf("Connection for bot '%s' closed\n", bot.details.botName);
     }
 
     private void onError(WebSocket conn, Exception ex) {
-        BotConnection bot = conn.getAttachment();
-        System.err.printf("Connection for bot '%s' threw an Exception\n", bot.botName);
+        if (conn == null) {
+            System.err.println("Websocket connection is null on onError call");
+        }
+        else {
+            BotConnection bot = conn.getAttachment();
+            System.err.printf("Connection for bot '%s' threw an Exception\n", bot.details.botName);
+        }
         ex.printStackTrace();
     }
 
