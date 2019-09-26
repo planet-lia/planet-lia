@@ -1,4 +1,4 @@
-# Match Generator Base
+# Match Generator Base (WIP)
 
 Base framework for match generators for Planet Lia games. 
 It provides a basic game structure, support for debugging view as well as other useful libraries.

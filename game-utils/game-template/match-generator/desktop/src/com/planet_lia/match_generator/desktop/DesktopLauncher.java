@@ -17,7 +17,7 @@ public class DesktopLauncher {
 
     public static void main (String[] arg) throws Exception {
         // TODO replace with real arguments
-        String[] args = new String[]{"-d", "b1", "t1", "{}", "b2", "t2", "{}"};
+        String[] args = new String[]{"b1", "t1", "{}", "b2", "t2", "{}"};
 
         // Parse arguments
         Args parsedArgs = new Args();
