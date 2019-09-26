@@ -4,8 +4,8 @@ import org.java_websocket.WebSocket;
 
 class BotConnection {
 
-    String botName;
-    String token;
+    BotDetailsAdvanced details;
+
     WebSocket connection;
     String lastResponseData;
 
@@ -17,9 +17,9 @@ class BotConnection {
     float disqualificationTime = -1f;
     float responseTotalDuration = 0f;
     String disqualificationReason = "";
+    boolean initialMessageSent = false;
 
-    BotConnection(String botName, String token) {
-        this.botName = botName;
-        this.token = token;
+    public BotConnection(BotDetailsAdvanced details) {
+        this.details = details;
     }
 }

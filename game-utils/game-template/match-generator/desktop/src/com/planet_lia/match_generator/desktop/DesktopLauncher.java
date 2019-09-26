@@ -6,11 +6,11 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.beust.jcommander.JCommander;
 import com.planet_lia.match_generator.MatchGenerator;
+import com.planet_lia.match_generator.libs.GeneralConfig;
 import com.planet_lia.match_generator.logic.Args;
 import com.planet_lia.match_generator.logic.GameConfig;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 public class DesktopLauncher {
 
@@ -34,12 +34,14 @@ public class DesktopLauncher {
         GameConfig gameConfig = GameConfig.load();
         MatchGenerator game =  new MatchGenerator(parsedArgs, gameConfig);
 
+        GeneralConfig generalConfig = gameConfig.generalConfig;
+
         if (parsedArgs.debug) {
             // Run debug view
             Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-            config.setWindowedMode(gameConfig.debugViewWidth, gameConfig.debugViewHeight);
+            config.setWindowedMode(generalConfig.debugViewWidth, generalConfig.debugViewHeight);
             config.useVsync(false);
-            config.setTitle(gameConfig.gameName);
+            config.setTitle(generalConfig.gameNamePretty);
             config.setResizable(false);
             new Lwjgl3Application(game, config);
         } else {

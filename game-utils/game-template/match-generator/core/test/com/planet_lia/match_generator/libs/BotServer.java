@@ -1,5 +1,6 @@
 package com.planet_lia.match_generator.libs;
 
+import com.planet_lia.match_generator.libs.BotListener.MessageSender;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.junit.jupiter.api.Test;
@@ -7,22 +8,22 @@ import org.junit.jupiter.api.Test;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.planet_lia.match_generator.libs.BotListener.MessageSender.BOT;
 import static com.planet_lia.match_generator.libs.BotListener.MessageSender.MATCH_GENERATOR;
+import static com.planet_lia.match_generator.libs.BotMessageType.INITIAL;
+import static com.planet_lia.match_generator.libs.BotMessageType.UPDATE;
 import static com.planet_lia.match_generator.libs.BotServer.BOT_LISTENER_TOKEN_HEADER_KEY;
+import static com.planet_lia.match_generator.libs.BotServer.injectGeneralFieldsToJsonData;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BotServerTest {
     @Test
-    void badBotsAndTokens() throws Exception {
-        String[] botsAndTokens = new String[]{"b1", "t1", "b2"};
-        GeneralConfig config = new GeneralConfig();
-        config.allowedNumbersOfBots = new int[]{2};
-        assertThrows(Error.class, () ->
-                new BotServer(config, new Timer(), 9000, botsAndTokens));
+    void badBotParameters() {
+        assertThrows(Error.class, () -> DefaultArgs.parseBotDetails(Arrays.asList("b1", "t1", "{}", "b2")));
     }
 
     @Test
@@ -32,30 +33,31 @@ class BotServerTest {
 
         config.allowedNumbersOfBots = new int[]{2, 4, 5};
         assertThrows(Error.class, () ->
-                new BotServer(config, timer, 9000, new String[]{"b1", "t1"}));
+                new BotServer(config, timer, 9000, parametersToBotDetails("b1", "t1", "{}")));
         config.allowedNumbersOfBots = new int[]{2};
         assertThrows(Error.class, () ->
-                new BotServer(config, timer, 9000, new String[]{"b1", "t1", "b2"}));
+                new BotServer(config, timer, 9000, parametersToBotDetails("b1", "t1", "{}", "b2", "t2")));
         config.allowedNumbersOfBots = new int[]{1};
         assertThrows(Error.class, () ->
-                new BotServer(config, timer, 9000, new String[]{"b1", "t1", "b2"}));
+                new BotServer(config, timer, 9000, parametersToBotDetails("b1", "t1", "{}", "b2")));
         config.allowedNumbersOfBots = new int[]{2};
         assertDoesNotThrow(() ->
-                new BotServer(config, timer, 9000, new String[]{"b1", "t1", "b2", "t2"}));
+                new BotServer(config, timer, 9000, parametersToBotDetails("b1", "t1",  "{}", "b2", "t2", "{}")));
         config.allowedNumbersOfBots = new int[]{2, 4};
         assertDoesNotThrow(() ->
-                new BotServer(config, timer, 9000, new String[]{"b1", "t1", "b2", "t2", "b3", "t3", "b4", "t4"}));
+                new BotServer(config, timer, 9000, parametersToBotDetails(
+                        "b1", "t1", "{}", "b2", "t2", "{}", "b3", "t3", "{}", "b4", "t4", "{}")));
     }
 
     @Test
     void botWrongToken() throws Exception {
-        String[] botsAndTokens = new String[]{"b1", "t1", "b2", "WRONG_TOKEN"};
+        BotDetailsAdvanced[] botsDetails = parametersToBotDetails("b1", "t1", "{}", "b2", "WRONG_TOKEN", "{}");
         int port = 9000;
         GeneralConfig config = new GeneralConfig();
         config.connectingBotsTimeout = 2;
         config.allowedNumbersOfBots = new int[]{2};
 
-        BotServer server = new BotServer(config, new Timer(), port, botsAndTokens);
+        BotServer server = new BotServer(config, new Timer(), port, botsDetails);
         server.start();
 
         connectBot(port, "t1");
@@ -67,13 +69,13 @@ class BotServerTest {
 
     @Test
     void botsSameTokens() throws Exception {
-        String[] botsAndTokens = new String[]{"b1", "_", "b2", "_"};
+        BotDetailsAdvanced[] botsDetails = parametersToBotDetails("b1", "_", "{}", "b2", "_", "{}");
         int port = 9000;
         GeneralConfig config = new GeneralConfig();
         config.connectingBotsTimeout = 2;
         config.allowedNumbersOfBots = new int[]{2};
 
-        BotServer server = new BotServer(config, new Timer(), port, botsAndTokens);
+        BotServer server = new BotServer(config, new Timer(), port, botsDetails);
         server.start();
 
         connectBot(port, "a");
@@ -89,7 +91,7 @@ class BotServerTest {
 
     @Test
     void basicFlow() throws Exception {
-        String[] botsAndTokens = new String[]{"b1", "t1", "b2", "t2"};
+        BotDetailsAdvanced[] botsDetails = parametersToBotDetails("b1", "t1", "{}", "b2", "t2", "{}");
         int port = 9000;
         GeneralConfig config = new GeneralConfig();
         Timer timer = new Timer();
@@ -100,7 +102,7 @@ class BotServerTest {
         config.maxTimeoutsPerBot = 2;
         config.botResponseTotalDurationMax = 100;
 
-        BotServer server = new BotServer(config, timer, port, botsAndTokens);
+        BotServer server = new BotServer(config, timer, port, botsDetails);
         server.start();
 
         ClientMock bot1 = connectBot(port, "t1");
@@ -109,7 +111,7 @@ class BotServerTest {
         // Test if bots connect
         assertDoesNotThrow(server::waitForBotsToConnect);
 
-        server.sendToAll("request");
+        server.sendToAll("request", INITIAL);
         bot1.send("response1");
         bot2.send("response2");
 
@@ -127,7 +129,7 @@ class BotServerTest {
 
     @Test
     void botDisqualificationNumTimeoutsExceeded() throws Exception {
-        String[] botsAndTokens = new String[]{"b1", "t1", "b2", "t2"};
+        BotDetailsAdvanced[] botsDetails = parametersToBotDetails("b1", "t1", "{}", "b2", "t2", "{}");
         int port = 9000;
         GeneralConfig config = new GeneralConfig();
         Timer timer = new Timer();
@@ -138,7 +140,7 @@ class BotServerTest {
         config.maxTimeoutsPerBot = 2;
         config.botResponseTotalDurationMax = 2;
 
-        BotServer server = new BotServer(config, timer, port, botsAndTokens);
+        BotServer server = new BotServer(config, timer, port, botsDetails);
         server.start();
 
         ClientMock bot1 = connectBot(port, "t1");
@@ -148,7 +150,7 @@ class BotServerTest {
         server.waitForBotsToConnect();
 
         // Should timeout
-        server.sendToAll("request");
+        server.sendToAll("request", INITIAL);
         server.waitForBotsToRespond();
 
         assertNull(server.getLastResponseData(0));
@@ -160,7 +162,7 @@ class BotServerTest {
 
         // Bot 2 should be disqualified
         timer.time += 1;
-        server.sendToAll("request");
+        server.sendToAll("request", UPDATE);
         bot1.send("response1");
         // This send should be ignored
         bot1.send("response3");
@@ -179,7 +181,7 @@ class BotServerTest {
 
         // Both bots disqualified
         timer.time += 1;
-        server.sendToAll("request");
+        server.sendToAll("request", UPDATE);
         server.waitForBotsToRespond();
 
         assertNull(server.getLastResponseData(0));
@@ -197,19 +199,19 @@ class BotServerTest {
 
     @Test
     void botListenerDisabledTest() throws Exception {
-        String[] botsAndTokens = new String[]{"b1", "t1", "b2", "t2"};
+        BotDetailsAdvanced[] botsDetails = parametersToBotDetails("b1", "t1", "{}", "b2", "t2", "{}");
         int port = 9000;
         GeneralConfig config = new GeneralConfig();
         config.allowedNumbersOfBots = new int[]{2};
         Timer timer = new Timer();
-        BotServer server = new BotServer(config, timer, port, botsAndTokens);
+        BotServer server = new BotServer(config, timer, port, botsDetails);
 
         assertFalse(server.isBotListenerEnabled());
     }
 
     @Test
     void botListenerTest() throws Exception {
-        String[] botsAndTokens = new String[]{"b1", "t1", "b2", "t2"};
+        BotDetailsAdvanced[] botsDetails = parametersToBotDetails("b1", "t1", "{}", "b2", "t2", "{}");
         int port = 9000;
         GeneralConfig config = new GeneralConfig();
         Timer timer = new Timer();
@@ -221,7 +223,7 @@ class BotServerTest {
         config.botResponseTotalDurationMax = 100;
         String botListenerToken = "btt";
 
-        BotServer server = new BotServer(config, timer, port, botsAndTokens, botListenerToken);
+        BotServer server = new BotServer(config, timer, port, botsDetails, botListenerToken);
         server.start();
 
         ClientMock bot1 = connectBot(port, "t1");
@@ -232,38 +234,82 @@ class BotServerTest {
         assertTrue(server.isBotListenerEnabled());
         assertFalse(server.isBotListenerConnected());
 
-        ClientMock botListener = connectClient(port, BOT_LISTENER_TOKEN_HEADER_KEY, botListenerToken);
+        ClientMock listener = connectClient(port, BOT_LISTENER_TOKEN_HEADER_KEY, botListenerToken);
         Thread.sleep(100);
         assertTrue(server.isBotListenerConnected());
 
         // First exchange
-        server.sendToAll("request1");
-        bot1.send("response1");
-        bot2.send("response2");
+        server.sendToAll("{\"a\":\"request1\"}", INITIAL);
+        bot1.send("{\"a\":\"response1\"}");
+        bot2.send("{\"a\":\"response2\"}");
         server.waitForBotsToRespond();
 
         // Second exchange
-        server.sendToAll("request2");
-        bot1.send("response3");
-        bot2.send("response4");
+        server.sendToAll("{\"a\":\"request2\"}", UPDATE);
+        bot1.send("{\"a\":\"response3\"}");
+        bot2.send("{\"a\":\"response4\"}");
         server.waitForBotsToRespond();
 
+        assertBotListenerContains(
+                listener, "{\"a\":\"request1\"}", MATCH_GENERATOR, 0, INITIAL, server.getBotsDetails());
+        assertBotListenerContains(
+                listener, "{\"a\":\"request1\"}", MATCH_GENERATOR, 1, INITIAL, server.getBotsDetails());
+        assertBotListenerContains(
+                listener, "{\"a\":\"response1\"}", BOT, 0, null, null);
+        assertBotListenerContains(
+                listener, "{\"a\":\"response2\"}", BOT, 1, null, null);
+        assertBotListenerContains(
+                listener, "{\"a\":\"request2\"}", MATCH_GENERATOR, 0, UPDATE, null);
+        assertBotListenerContains(
+                listener, "{\"a\":\"request2\"}", MATCH_GENERATOR, 1, UPDATE, null);
+        assertBotListenerContains(
+                listener, "{\"a\":\"response3\"}", BOT, 0, null, null);
+        assertBotListenerContains(
+                listener, "{\"a\":\"response4\"}", BOT, 1, null, null);
+
+        server.stop();
+    }
+
+    private void assertBotListenerContains(ClientMock botListener,
+                                           String msg,
+                                           MessageSender sender,
+                                           int botIndex,
+                                           BotMessageType msgType,
+                                           BotDetails[] botsDetails) {
         assertTrue(botListener.receivedData.contains(
-                BotListener.createMessage(MATCH_GENERATOR, 0, "request1")));
-        assertTrue(botListener.receivedData.contains(
-                BotListener.createMessage(MATCH_GENERATOR, 1, "request1")));
-        assertTrue(botListener.receivedData.contains(
-                BotListener.createMessage(BOT, 0, "response1")));
-        assertTrue(botListener.receivedData.contains(
-                BotListener.createMessage(BOT, 1, "response2")));
-        assertTrue(botListener.receivedData.contains(
-                BotListener.createMessage(MATCH_GENERATOR, 0, "request2")));
-        assertTrue(botListener.receivedData.contains(
-                BotListener.createMessage(MATCH_GENERATOR, 1, "request2")));
-        assertTrue(botListener.receivedData.contains(
-                BotListener.createMessage(BOT, 0, "response3")));
-        assertTrue(botListener.receivedData.contains(
-                BotListener.createMessage(BOT, 1, "response4")));
+                BotListener.createMessage(
+                        sender,
+                        botIndex,
+                        injectGeneralFieldsToJsonData(msg, msgType, botsDetails))));
+    }
+
+    @Test
+    void onlyOneInitialMessageAllowed() throws Exception {
+        BotDetailsAdvanced[] botsDetails = parametersToBotDetails("b1", "t1", "{}", "b2", "t2", "{}");
+        int port = 9000;
+        GeneralConfig config = new GeneralConfig();
+        Timer timer = new Timer();
+        config.allowedNumbersOfBots = new int[]{2};
+        config.connectingBotsTimeout = 1;
+        config.botFirstResponseTimeout = 0.2f;
+        config.botResponseTimeout = 0.2f;
+        config.maxTimeoutsPerBot = 2;
+        config.botResponseTotalDurationMax = 100;
+
+        BotServer server = new BotServer(config, timer, port, botsDetails);
+        server.start();
+
+        ClientMock bot1 = connectBot(port, "t1");
+        ClientMock bot2 = connectBot(port, "t2");
+
+        // Test if bots connect
+        assertDoesNotThrow(server::waitForBotsToConnect);
+
+        server.sendToAll("request", INITIAL);
+        bot1.send("response1");
+        bot2.send("response2");
+
+        assertThrows(Error.class, () -> server.sendToAll("request2", INITIAL));
 
         server.stop();
     }
@@ -279,8 +325,11 @@ class BotServerTest {
         client.connect();
         return client;
     }
-}
 
+    BotDetailsAdvanced[] parametersToBotDetails(String... parameters) {
+        return DefaultArgs.parseBotDetails(Arrays.asList(parameters));
+    }
+}
 
 class ClientMock extends WebSocketClient {
 

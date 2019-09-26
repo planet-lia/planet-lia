@@ -1,5 +1,9 @@
 {
     "generalConfig": {
+        "gameNamePretty": "Game Template",
+        "gameName": "game-template",
+        "debugViewWidth": 1440,
+        "debugViewHeight": 810,
         "ticksPerSecond": 30,
         "connectingBotsTimeout": 10,
         "botFirstResponseTimeout": 2,
@@ -7,9 +11,10 @@
         "maxTimeoutsPerBot": 8,
         "botResponseTotalDurationMax": 45,
         "gameUpdatesPerBotsUpdate": 3,
-        "allowedNumbersOfBots": [2,4]
-    },
-    "gameName": "game-template",
-    "debugViewWidth": 1440,
-    "debugViewHeight": 810
+        "allowedNumbersOfBots": [2,4],
+        "allowedTeamFormats": [
+            {"format": "1:1", "weight": 0.8},
+            {"format": "1:1:1:1", "weight": 0.2}
+        ]
+    }
 }

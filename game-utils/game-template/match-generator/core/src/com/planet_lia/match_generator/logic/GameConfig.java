@@ -11,10 +11,10 @@ public class GameConfig {
     public static final String PATH_TO_ASSETS = "assets/" + ASSETS_VERSION;
     public static final String PATH_TO_GAME_CONFIG = PATH_TO_ASSETS + "/game-config.json";
 
-    public String gameName;
-    public int debugViewWidth;
-    public int debugViewHeight;
     public GeneralConfig generalConfig;
+
+    // Here you can add other configuration fields that will
+    // load from a game-config.json
 
     public static GameConfig load() throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(PATH_TO_GAME_CONFIG));

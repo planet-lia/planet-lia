@@ -2,6 +2,28 @@ package com.planet_lia.match_generator.libs;
 
 public class GeneralConfig {
     /**
+     * A name of the game that will display on top of debug viewer.
+     * Eg. Game Template
+     */
+    public String gameNamePretty;
+
+    /**
+     * A name of the game that corresponds to the name of the folder
+     * eg. game-template
+     */
+    public String gameName;
+
+    /**
+     * Width of the debug view that is displayed while the match is generating
+     */
+    public int debugViewWidth;
+
+    /**
+     * Height  of the debug view that is displayed while the match is generating
+     */
+    public int debugViewHeight;
+
+    /**
      * How many game logic updates happen per second
      */
     public int ticksPerSecond;
