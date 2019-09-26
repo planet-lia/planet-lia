@@ -1,5 +1,8 @@
 package com.planet_lia.match_generator.libs;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 public class GeneralConfig {
     /**
      * A name of the game that will display on top of debug viewer.
@@ -69,10 +72,60 @@ public class GeneralConfig {
     public int gameUpdatesPerBotsUpdate;
 
     /**
-     * Array of allowed numbers of bots eg. [2,4,8] means that
-     * 2, 4 or 8 bots must be provided to the match-generator
-     * and that this many must connect before the generation
-     * can start
+     * List of allowed team formats that specify how many
+     * bots can be in one match and how they are split in teams.
      */
-    public int[] allowedNumbersOfBots;
+    public TeamFormat[] allowedTeamFormats;
+
+    /**
+     * Returns ArrayList of allowed numbers of bots
+     * Eg. [2,4,8] means that 2, 4 or 8 bots must be provided
+     * to the match-generator and that this many must connect
+     * before the generation can start
+     */
+    public boolean isNumberOfBotsAllowed(int numberOfBots) {
+        for (TeamFormat format : allowedTeamFormats) {
+            if (numberOfBots == format.getNumberOfBots()) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+class TeamFormat {
+    /**
+     * Defines a format in which bots can be split in teams.
+     * Eg. if game supports 5 bots, this are valid formats:
+     * - 1:1:1:1:1
+     * - 2:3
+     * - 1,1,1:2
+     * - ...
+     * Format 2:3 means that first 2 bots will be in team 0
+     * and next 3 bots in team 1
+     */
+    public String format;
+
+    /**
+     * Weight with which you want this format to be chosen.
+     * This is used on Planet Lia servers to pick a format
+     * and with that numbers of bots to play the match.
+     */
+    public int weight;
+
+    TeamFormat(String format, int weight) {
+        this.format = format;
+        this.weight = weight;
+    }
+
+    int getNumberOfBots() {
+        int numberOfBots = 0;
+
+        String[] teams = this.format.split(":");
+        for (String team : teams) {
+            numberOfBots += Integer.parseInt(team);
+        }
+
+        return numberOfBots;
+    }
 }

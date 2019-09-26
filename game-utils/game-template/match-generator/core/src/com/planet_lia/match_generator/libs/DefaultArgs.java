@@ -4,7 +4,6 @@ import com.beust.jcommander.Parameter;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class DefaultArgs {
     @Parameter(names = { "--help", "-h" }, help = true)
@@ -17,7 +16,8 @@ public class DefaultArgs {
 
     @Parameter(names = {"--teams", "-t"}, description = "Specify the teams for the bots in a format x:y:z:... " +
             "which means that first x provided bots belongs to the team 0, next y bots to team 1, " +
-            "next z to team 3 etc. Note that the teams format must be supported by the game in order to work")
+            "next z to team 3 etc. Note that the teams format must be supported by the game in order to work. " +
+            "If the parameter is not provided, the teams are set up automatically depending on the game.")
     private String teams = null;
 
     @Parameter(names = {"--debug", "-d"}, description = "Run match-generator in debug mode")
@@ -39,12 +39,53 @@ public class DefaultArgs {
     public static final String DEFAULT_BOT_LISTENER_TOKEN  = "";
 
     /**
+     * Sets up BotDetails for each bot and assigns them to teams.
+     * @return list of BotDetails objects
+     */
+    public BotDetails[] getBotsDetails(GeneralConfig generalConfig) {
+        // For each bot a token and details need to be provided
+        if (this.bots.size() % 3 != 0) {
+            throw new Error("Not all bots have token and details provided as parameters");
+        }
+
+        int numberOfBots = this.bots.size() / 3;
+        BotDetails[] botsDetails = new BotDetails[numberOfBots];
+
+        try {
+            for (int i = 0; i < this.bots.size(); i += 3) {
+                String botName = this.bots.get(i);
+                String token = this.bots.get(i + 1);
+                BotDetailsAdditional optional = (new Gson()).fromJson(this.bots.get(i + 2), BotDetailsAdditional.class);
+                botsDetails[i / 3] = new BotDetails(botName, token, optional);
+            }
+        }
+        catch (Exception e) {
+            System.err.println("Failed to parse bots parameters, check that you have provided bots, " +
+                    "tokens and optional parameters for each bot");
+            throw e;
+        }
+
+        // Check if numbers of bots is allowed
+        if (!generalConfig.isNumberOfBotsAllowed(botsDetails.length)) {
+            throw new Error("Number of provided bots " + botsDetails.length +
+                    " is not supported by this game");
+        }
+
+        // Assign bots to teams
+        int[] teamSizes = this.getTeamSizes(generalConfig, numberOfBots);
+        DefaultArgs.setTeams(teamSizes, botsDetails);
+
+        return botsDetails;
+    }
+
+
+    /**
      * Parses teams argument to array of team sizes.
      * @return array of team sizes or null if argument not provided
      */
-    public int[] getTeamSizes() {
+    private int[] getTeamSizes(GeneralConfig generalConfig, int numberOfBots) {
         if (this.teams == null) {
-            return null;
+                this.teams = createDefaultTeams(generalConfig, numberOfBots);
         }
 
         // Parse teams argument
@@ -63,11 +104,22 @@ public class DefaultArgs {
     }
 
     /**
-     * Assign bots to teams, this modifies teamIndex field in BotDetails
-     * @param teamSizes
-     * @param botsDetails
+     * Returns a first format provided in general config that
+     * fits the provided numbers of bots
      */
-    public static void setTeams(int[] teamSizes, BotDetailsAdvanced[] botsDetails) {
+    private String createDefaultTeams(GeneralConfig generalConfig, int numberOfBots) {
+        for (TeamFormat format : generalConfig.allowedTeamFormats) {
+            if (format.getNumberOfBots() == numberOfBots) {
+                return format.format;
+            }
+        }
+        throw new Error("Provided number of bots (" + numberOfBots + ") does not fit any supported teams formats");
+    }
+
+    /**
+     * Assign bots to teams, this modifies teamIndex field in BotDetails
+     */
+    private static void setTeams(int[] teamSizes, BotDetails[] botsDetails) {
         if (teamSizes == null) {
             throw new Error("teamSizes is null, provide a --teams flag with parameters or specify custom teamSizes");
         }
@@ -99,36 +151,18 @@ public class DefaultArgs {
     }
 
     /**
-     * Parses bots with their tokens and optional details.
-     * @return array of BotDetails
+     * This method checks if the number of provided bots is allowed by the game.
+     *
+     * @param allowedNumbersOfBots - how many bots does a game allow in one match
+     * @param numberOfBots - number of bots that will play in this match
+     * @return if the number of bots is allowed by the game
      */
-    public BotDetailsAdvanced[] getBotsDetails() {
-        return parseBotDetails(this.bots);
-    }
-
-    static BotDetailsAdvanced[] parseBotDetails(List<String> parameters) {
-        // For each bot a token and details need to be provided
-        if (parameters.size() % 3 != 0) {
-            throw new Error("Not all bots have token and details provided as parameters");
-        }
-
-        int numberOfBots = parameters.size() / 3;
-        BotDetailsAdvanced[] botsDetails = new BotDetailsAdvanced[numberOfBots];
-
-        try {
-            for (int i = 0; i < parameters.size(); i += 3) {
-                String botName = parameters.get(i);
-                String token = parameters.get(i + 1);
-                BotDetailsOptional optional = (new Gson()).fromJson(parameters.get(i + 2), BotDetailsOptional.class);
-                botsDetails[i / 3] = new BotDetailsAdvanced(botName, token, optional);
+    private static boolean isNumberOfBotsAllowed(ArrayList<Integer> allowedNumbersOfBots, int numberOfBots) {
+        for (int allowedNumber : allowedNumbersOfBots) {
+            if (numberOfBots == allowedNumber) {
+                return true;
             }
         }
-        catch (Exception e) {
-            System.err.println("Failed to parse bots parameters, check that you have provided bots, tokens and " +
-                    "optional parameters for each bot");
-            throw e;
-        }
-
-        return botsDetails;
+        return false;
     }
 }

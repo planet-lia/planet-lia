@@ -4,7 +4,7 @@ import org.java_websocket.WebSocket;
 
 class BotConnection {
 
-    BotDetailsAdvanced details;
+    BotDetails details;
 
     WebSocket connection;
     String lastResponseData;
@@ -19,7 +19,7 @@ class BotConnection {
     String disqualificationReason = "";
     boolean initialMessageSent = false;
 
-    public BotConnection(BotDetailsAdvanced details) {
+    public BotConnection(BotDetails details) {
         this.details = details;
     }
 }

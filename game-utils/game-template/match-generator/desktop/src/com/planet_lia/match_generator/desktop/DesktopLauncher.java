@@ -6,6 +6,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.beust.jcommander.JCommander;
 import com.planet_lia.match_generator.MatchGenerator;
+import com.planet_lia.match_generator.libs.BotDetails;
 import com.planet_lia.match_generator.libs.GeneralConfig;
 import com.planet_lia.match_generator.logic.Args;
 import com.planet_lia.match_generator.logic.GameConfig;
@@ -14,9 +15,9 @@ import java.io.IOException;
 
 public class DesktopLauncher {
 
-    public static void main (String[] arg) throws IOException {
+    public static void main (String[] arg) throws Exception {
         // TODO replace with real arguments
-        String[] args = new String[]{"-d", "b1", "t1", "b2", "t2"};
+        String[] args = new String[]{"-d", "b1", "t1", "{}", "b2", "t2", "{}"};
 
         // Parse arguments
         Args parsedArgs = new Args();
@@ -32,7 +33,9 @@ public class DesktopLauncher {
         }
 
         GameConfig gameConfig = GameConfig.load();
-        MatchGenerator game =  new MatchGenerator(parsedArgs, gameConfig);
+        BotDetails[] botsDetails = parsedArgs.getBotsDetails(gameConfig.generalConfig);
+
+        MatchGenerator game =  new MatchGenerator(parsedArgs, gameConfig, botsDetails);
 
         GeneralConfig generalConfig = gameConfig.generalConfig;
 

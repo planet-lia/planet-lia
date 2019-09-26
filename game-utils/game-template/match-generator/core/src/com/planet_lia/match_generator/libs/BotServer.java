@@ -9,7 +9,6 @@ import org.java_websocket.server.WebSocketServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static com.planet_lia.match_generator.libs.DefaultArgs.DEFAULT_BOT_LISTENER_TOKEN;
 
@@ -24,6 +23,7 @@ public class BotServer {
 
     private GeneralConfig generalConfig;
     private Timer gameTimer;
+    private BotDetails[] botsDetails;
     private WebSocketServer server;
 
     private ArrayList<BotConnection> bots;
@@ -34,24 +34,19 @@ public class BotServer {
     public BotServer(GeneralConfig generalConfig,
                      Timer gameTimer,
                      int port,
-                     BotDetailsAdvanced[] botsDetails) {
+                     BotDetails[] botsDetails) {
         this(generalConfig, gameTimer, port, botsDetails, DEFAULT_BOT_LISTENER_TOKEN);
     }
 
     public BotServer(GeneralConfig generalConfig,
                      Timer gameTimer,
                      int port,
-                     BotDetailsAdvanced[] botsDetails,
+                     BotDetails[] botsDetails,
                      String botListenerToken) {
         this.server = createServer(port);
         this.generalConfig = generalConfig;
         this.gameTimer = gameTimer;
-
-        if (!isNumberOfBotsAllowed(generalConfig.allowedNumbersOfBots, botsDetails.length)) {
-            throw new Error("Number of provided bots is not supported by this game, "
-                    + "provided: " + (botsDetails.length)
-                    + " allowed: " + Arrays.toString(generalConfig.allowedNumbersOfBots));
-        }
+        this.botsDetails = botsDetails;
 
         this.bots = prepareBotConnections(botsDetails);
 
@@ -69,21 +64,6 @@ public class BotServer {
         System.out.println("Bot server started on port " + this.server.getPort());
     }
 
-    /**
-     * This method checks if the number of provided bots is allowed by the game.
-     *
-     * @param allowedNumbersOfBots - how many bots does a game allow in one match
-     * @param numberOfBots - number of bots that will play in this match
-     * @return if the number of bots is allowed by the game
-     */
-    private static boolean isNumberOfBotsAllowed(int[] allowedNumbersOfBots, int numberOfBots) {
-        for (int allowedNumber : allowedNumbersOfBots) {
-            if (numberOfBots == allowedNumber) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * Create BotConnection objects from an array of botNames and tokens.
@@ -91,9 +71,9 @@ public class BotServer {
      * @param botsDetails - array details of all provided bots
      * @return array of initialized BotConnection objects without set connections
      */
-    private static ArrayList<BotConnection> prepareBotConnections(BotDetailsAdvanced[] botsDetails) {
+    private static ArrayList<BotConnection> prepareBotConnections(BotDetails[] botsDetails) {
         ArrayList<BotConnection> bots = new ArrayList<>(botsDetails.length);
-        for (BotDetailsAdvanced details : botsDetails) {
+        for (BotDetails details : botsDetails) {
             bots.add(new BotConnection(details));
         }
         return bots;
@@ -203,7 +183,7 @@ public class BotServer {
             return;
         }
 
-        BotDetails[] botsDetails = (type == BotMessageType.INITIAL) ? getBotsDetails() : null;
+        BotDetails[] botsDetails = (type == BotMessageType.INITIAL) ? this.botsDetails : null;
         data = injectGeneralFieldsToJsonData(data, type, botsDetails);
 
         bot.currentRequestIndex = this.currentRequestIndex;
@@ -274,18 +254,6 @@ public class BotServer {
                     ? ",\"__competitionMatchDetails\":"  + (new Gson()).toJson(botsDetails)
                     : "")
                 + "}";
-    }
-
-    /**
-     * @return - bot details inorder they were provided as arguments to the program
-     */
-    public BotDetails[] getBotsDetails() {
-        BotDetails[] botDetails = new BotDetails[this.bots.size()];
-        for (int i = 0; i < this.bots.size(); i++) {
-            BotDetailsAdvanced details = this.bots.get(i).details;
-            botDetails[i] = new BotDetails(details.botName, details.teamIndex, details.optional.rank);
-        }
-        return botDetails;
     }
 
     public int getNumberOfTimeouts(int botIndex) {

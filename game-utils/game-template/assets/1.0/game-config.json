@@ -11,10 +11,9 @@
         "maxTimeoutsPerBot": 8,
         "botResponseTotalDurationMax": 45,
         "gameUpdatesPerBotsUpdate": 3,
-        "allowedNumbersOfBots": [2,4],
         "allowedTeamFormats": [
-            {"format": "1:1", "weight": 0.8},
-            {"format": "1:1:1:1", "weight": 0.2}
+            {"format": "1:1", "weight": 3},
+            {"format": "1:1:1:1", "weight": 1}
         ]
     }
 }

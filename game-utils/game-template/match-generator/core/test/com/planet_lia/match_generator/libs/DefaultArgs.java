@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DefaultArgsTest {
     @Test
-    void botsAndTeams() {
+    void botsTeamsAndDetails() {
         String[] args = new String[]{
                 "--teams", "1:3:1",
                 "b1", "t1", "{}",
@@ -23,27 +23,16 @@ class DefaultArgsTest {
                 .build();
         jCommander.parse(args);
 
-        // Test botsDetails
-        BotDetailsAdvanced[] botsDetails = parsedArgs.getBotsDetails();
-        assertBotDetails(botsDetails[0], "b1", "t1", -1);
-        assertBotDetails(botsDetails[1], "b2", "t2", -1);
-        assertBotDetails(botsDetails[2], "b3", "t3", 2);
-        assertBotDetails(botsDetails[3], "b4", "t4", -1);
-        assertBotDetails(botsDetails[4], "b5", "t5", -1);
+        GeneralConfig config = new GeneralConfig();
+        config.allowedTeamFormats = new TeamFormat[] {new TeamFormat("1:3:1", 1)};
 
-        // Test team sizes
-        int[] teamSizes = parsedArgs.getTeamSizes();
-        assertEquals(teamSizes[0], 1);
-        assertEquals(teamSizes[1], 3);
-        assertEquals(teamSizes[2], 1);
+        BotDetails[] botsDetails = parsedArgs.getBotsDetails(config);
 
-        // Test assigning bots to teams
-        DefaultArgs.setTeams(teamSizes, botsDetails);
-        assertEquals(0, botsDetails[0].teamIndex);
-        assertEquals(1, botsDetails[1].teamIndex);
-        assertEquals(1, botsDetails[2].teamIndex);
-        assertEquals(1, botsDetails[3].teamIndex);
-        assertEquals(2, botsDetails[4].teamIndex);
+        assertBotDetailsAdvanced(botsDetails[0], "b1", "t1", 0, -1);
+        assertBotDetailsAdvanced(botsDetails[1], "b2", "t2", 1,-1);
+        assertBotDetailsAdvanced(botsDetails[2], "b3", "t3", 1, 2);
+        assertBotDetailsAdvanced(botsDetails[3], "b4", "t4", 1,-1);
+        assertBotDetailsAdvanced(botsDetails[4], "b5", "t5", 2,-1);
     }
 
     @Test
@@ -66,18 +55,18 @@ class DefaultArgsTest {
                     .build();
             jCommander.parse(args);
 
-            BotDetailsAdvanced[] botsDetails = parsedArgs.getBotsDetails();
-            int[] teamSizes = parsedArgs.getTeamSizes();
 
-            // Test assigning bots to teams
-            assertThrows(Error.class, () -> DefaultArgs.setTeams(teamSizes, botsDetails));
+            GeneralConfig config = new GeneralConfig();
+            config.allowedTeamFormats = new TeamFormat[] {new TeamFormat("1:3", 1)};
+
+            assertThrows(Error.class, () -> parsedArgs.getBotsDetails(config));
         }
     }
 
-    void assertBotDetails(BotDetailsAdvanced details, String botName, String token, int rank) {
-        assertEquals(details.botName, botName);
-        assertEquals(details.token, token);
-        assertEquals(details.optional.rank, rank);
+    void assertBotDetailsAdvanced(BotDetails details, String botName, String token, int teamIndex, int rank) {
+        assertEquals(botName, details.botName);
+        assertEquals(token, details.token);
+        assertEquals(teamIndex, details.teamIndex);
+        assertEquals(rank, details.additional.rank);
     }
-
 }
