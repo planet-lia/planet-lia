@@ -25,3 +25,10 @@ For production builds run:
 ```bash
 make build
 ```
+
+### Enable Feature Flags
+To enable feature flags while developing locally, do the following:
+1. Copy `.env` file and name it `.env.local` (**do not add it to git!**)
+2. Set chosen flags to `true`
+3. Start/restart the server
+ 
