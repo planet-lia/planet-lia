@@ -4,29 +4,11 @@ import "./style.css";
 import {Image} from "react-bootstrap";
 
 interface Props {}
-interface State {
-    subscribeButtonEnabled: boolean
-}
+interface State {}
 
 export class Placeholder extends Component<Props, State> {
 
-    state: State = {
-        // If uncommenting (and fixing!) the integrated form
-        // in placeholder website then set this to false
-        subscribeButtonEnabled: true
-    };
-
-    onConsentClick = (event) => {
-        if (event.target.checked) {
-            this.setState({subscribeButtonEnabled: true})
-        } else {
-            this.setState({subscribeButtonEnabled: false})
-        }
-    };
-
     render() {
-        const subscribeButtonEnabled = this.state.subscribeButtonEnabled;
-
         return (
             <div>
                 <div id="logo">
@@ -111,7 +93,6 @@ export class Placeholder extends Component<Props, State> {
                                 skills, join the community and have fun!
                             </p>
                         </div>
-
                     </div>
                 </div>
             </div>
