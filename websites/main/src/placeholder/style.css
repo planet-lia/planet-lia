@@ -28,7 +28,7 @@ input:disabled {
 }
 
 #logo img {
-  height: 4rem;
+    height: 4rem;
 }
 
 .custom-btn,
@@ -49,7 +49,7 @@ a.custom-btn,
 a.custom-btn:active,
 a.custom-btn:focus,
 a.custom-btn:hover {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 #container-banner {
@@ -87,7 +87,7 @@ a.custom-btn:hover {
     width: 100%;
     height: 15rem;
     background-color: #333;
-    background-image: url(img/website-banner.png);
+    background-image: url("/placeholder/website-banner.png");
     background-position: 50%;
     background-repeat: no-repeat;
     background-size: cover;
@@ -151,7 +151,7 @@ a.custom-btn:hover {
 }
 
 #container-github {
-    min-height: 200px;
+    min-height: 100px;
     position: relative;
     top: 0;
     left: 0;
@@ -160,7 +160,14 @@ a.custom-btn:hover {
 }
 
 #github {
-    height: 4rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+}
+
+#subscribe {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -203,37 +210,4 @@ a.contacts-logo {
     font-size: 1.8em;
     cursor: pointer;
     padding: 5px;
-}
-
-/* Mailchimp style */
-#mc_embed_signup {
-    clear:left;
-}
-#mc-embedded-subscribe-form input[type=checkbox] {
-    display: inline;
-    width: auto;
-    margin-right: 10px;
-}
-#mergeRow-gdpr {
-    margin-top: 20px;
-}
-#mc-embedded-subscribe-form .mc_fieldset {
-    border:none;
-    min-height: 0px;
-    padding-bottom:0px;
-}
-#mc-embedded-subscribe {
-    margin: 1em 0 1em;
-}
-
-#mc_embed_signup div.response {
-    color: #000;
-    font-family: 'Exo 2';
-    font-weight: normal;
-    font-size: 0.8rem;
-}
-#mc_embed_signup div#mce-responses {
-    margin: 0%;
-    padding: 0;
-    width: 100%;
 }
