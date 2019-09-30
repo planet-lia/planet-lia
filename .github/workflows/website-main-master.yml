@@ -39,17 +39,15 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '12.x'
-      - name: Move into the dir of main website
-        run: "cd websites/main"
       - name: Install dependencies of main website
-        run: "make install"
+        run: "make -C ./websites/main install"
       - name: Build main website
-        run: "make build"
+        run: "make -C ./websites/main build"
       - name: Install Netlify CLI
         run: "sudo npm install netlify-cli -g"
         # Removes a netlify-cli warning about not being able to ready a file in .config dir
       - name: Netlify deploy
-        run: "netlify deploy -a ${NETLIFY_AUTH_TOKEN} -s ${NETLIFY_SITE_ID} --dir=./build --prod --json --message \"Production commit: ${GITHUB_SHA}\""
+        run: "netlify deploy -a ${NETLIFY_AUTH_TOKEN} -s ${NETLIFY_SITE_ID} --dir=./websites/main/build --prod --json --message \"Production commit: ${GITHUB_SHA}\""
         env:
           NETLIFY_SITE_ID: 9191587a-240f-43d6-9b25-f0ecc9be1fdf
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
