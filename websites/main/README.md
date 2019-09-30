@@ -10,7 +10,7 @@ The master branch gets automatically build and deployed to our webserver hosted 
 
 All pull-requests are build as well and our GitHub bot publishes deploy previews on the associated pull-request.
 ## Dependencies
-* Node.js (v10+)
+* Node.js (v12+)
 * npm (v6.10+)
 * GNU Make
 
