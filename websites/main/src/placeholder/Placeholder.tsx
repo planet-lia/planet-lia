@@ -29,7 +29,7 @@ export class Placeholder extends Component<Props, State> {
                            target="_blank" rel="noopener noreferrer"><i className="fab fa-github-square"/></a>
                         <a className="contacts-logo clr-dc" href="https://discord.gg/weXRxyU" target="_blank"
                            rel="noopener noreferrer"><i className="fab fa-discord"></i></a>
-                        <a className="contacts-logo clr-fb" href="https://www.facebook.com/liagame/" target="_blank"
+                        <a className="contacts-logo clr-fb" href="https://www.facebook.com/planetlia.official/" target="_blank"
                            rel="noopener noreferrer"><i className="fab fa-facebook-square"></i></a>
                         <a className="contacts-logo clr-em" href="mailto:info@planetlia.com" target="_self"
                            rel="noopener noreferrer"><i className="fas fa-envelope-square"></i></a>
@@ -43,10 +43,10 @@ export class Placeholder extends Component<Props, State> {
                             <div className="sub-section">
                                 <h3>We are currently in process of upgrading our platform.</h3>
                                 <p>
-                                    You can still access our <b>previous website at</b>
+                                    You can still access our <b>previous website at </b>
                                     <a href="https://www.liagame.com/" target="_blank"
                                        rel="noopener noreferrer">www.liagame.com</a>
-                                    or you can check out the following:
+                                    &nbsp;or you can check out the following:
                                 </p>
                                 <div className="row text-center" id="container-links">
                                     <div className="col-lg-6 col-md-12">
