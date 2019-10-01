@@ -44,7 +44,7 @@ jobs:
       - name: Install Netlify CLI
         run: "sudo npm install netlify-cli -g"
       - name: Netlify deploy
-        run: "netlify deploy -a ${NETLIFY_AUTH_TOKEN} -s ${NETLIFY_SITE_ID} --dir=./websites/main/build --json --message \"Deploy preview commit: ${GITHUB_SHA}\" | tee _netlify_deploy_response.txt"
+        run: "NETLIFY_AUTH_TOKEN=${NETLIFY_AUTH_TOKEN} NETLIFY_SITE_ID=${NETLIFY_SITE_ID} netlify deploy --dir=./websites/main/build --json --message=\"Deploy preview commit: ${GITHUB_SHA}\" | tee _netlify_deploy_response.txt"
         env:
           NETLIFY_SITE_ID: 9191587a-240f-43d6-9b25-f0ecc9be1fdf
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
