@@ -1,5 +1,4 @@
 # Official Planet Lia Website
-
 Currently we are serving the placeholder landing page.
 
 Source of [planetlia.com](https://planetlia.com).
