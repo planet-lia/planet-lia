@@ -69,8 +69,10 @@ How to contribute code:
 2. **Clone** your fork
     * `git clone <SSH_OR_HTTPS_LINK_TO_YOUR_FORK>` 
 3. Follow changes in original repo 
+    * `cd planet-lia`
     * `git remote add upstream https://github.com/planet-lia/planet-lia`
-    * `git branch --set-upstream-to=upstream/master` 
+    * `git fetch upstream`
+    * `git branch --set-upstream-to=upstream/master master` 
 4. Configure git hooks that will automatically check the quality of your commit message
     * `git config core.hooksPath .githooks`
 5. Decide what to work on
@@ -94,7 +96,7 @@ How to contribute code:
     * `git checkout master`
     * `git branch -D <NAME_OF_YOUR_BRANCH>`
 13. To start working on new feature
-    * `git pull origin master`
+    * `git pull upstream master`
     * Jump back to **step 5**
 
 Here is a great collection of useful [git tricks](https://github.com/k88hudson/git-flight-rules) to help you use git more efficiently.
