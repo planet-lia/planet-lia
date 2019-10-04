@@ -1,6 +1,5 @@
 # Planet Lia 
 
-[![Subreddit subscribers](https://img.shields.io/reddit/subreddit-subscribers/liagame?logo=reddit)](https://www.reddit.com/r/liagame/)
 [![Discord](https://img.shields.io/discord/476711845995085824?logo=Discord)](https://discord.gg/weXRxyU)
 ![GitHub](https://img.shields.io/github/license/planet-lia/planet-lia)
 
