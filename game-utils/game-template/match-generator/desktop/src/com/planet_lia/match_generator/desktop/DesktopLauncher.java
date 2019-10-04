@@ -1,5 +1,6 @@
 package com.planet_lia.match_generator.desktop;
 
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
@@ -11,13 +12,11 @@ import com.planet_lia.match_generator.libs.GeneralConfig;
 import com.planet_lia.match_generator.logic.Args;
 import com.planet_lia.match_generator.logic.GameConfig;
 
-import java.io.IOException;
-
 public class DesktopLauncher {
 
     public static void main (String[] arg) throws Exception {
         // TODO replace with real arguments
-        String[] args = new String[]{"b1", "t1", "{}", "b2", "t2", "{}"};
+        String[] args = new String[]{"-d", "b1", "t1", "{}", "b2", "t2", "{}", "b3", "t3", "{}", "b4", "t4", "{}"};
 
         // Parse arguments
         Args parsedArgs = new Args();
@@ -26,23 +25,36 @@ public class DesktopLauncher {
                 .build();
         jCommander.parse(args);
 
+        // If --help flag is provided, display help
         if (parsedArgs.help) {
             jCommander.setProgramName("match-generator.jar");
             jCommander.usage();
             return;
         }
 
+        // Load configs
         GameConfig gameConfig = GameConfig.load();
-        BotDetails[] botsDetails = parsedArgs.getBotsDetails(gameConfig.generalConfig);
-
-        MatchGenerator game =  new MatchGenerator(parsedArgs, gameConfig, botsDetails);
-
         GeneralConfig generalConfig = gameConfig.generalConfig;
 
+        // Setup match generator
+        BotDetails[] botsDetails = parsedArgs.getBotsDetails(gameConfig.generalConfig);
+        MatchGenerator game =  new MatchGenerator(parsedArgs, gameConfig, botsDetails);
+
         if (parsedArgs.debug) {
-            // Run debug view
+            // Run with debug view
+
+            // Get monitor width and height
+            Graphics.Monitor primary = Lwjgl3ApplicationConfiguration.getPrimaryMonitor();
+            Graphics.DisplayMode mode = Lwjgl3ApplicationConfiguration.getDisplayMode(primary);
+            int monitorHeight = mode.height;
+
+            // Configure debug window size
+            float windowToMonitorRatio = parsedArgs.debugWindowToScreen;
+            int windowHeight = (int) (monitorHeight * windowToMonitorRatio);
+
+            // Run with debug window
             Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-            config.setWindowedMode(generalConfig.debugViewWidth, generalConfig.debugViewHeight);
+            config.setWindowedMode(generalConfig.debugWindow.getWindowWidth(windowHeight), windowHeight);
             config.useVsync(false);
             config.setTitle(generalConfig.gameNamePretty);
             config.setResizable(false);

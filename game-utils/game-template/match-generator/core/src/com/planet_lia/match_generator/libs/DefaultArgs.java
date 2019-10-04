@@ -38,24 +38,28 @@ public class DefaultArgs {
     public String botListenerToken = DEFAULT_BOT_LISTENER_TOKEN;
     public static final String DEFAULT_BOT_LISTENER_TOKEN  = "";
 
+    @Parameter(names = {"--window-to-screen", "-w"}, description = "Specify the ratio between debug window " +
+            "(if --debug flag is enabled) and the size of the monitor")
+    public float debugWindowToScreen = 0.7f;
+
     /**
      * Sets up BotDetails for each bot and assigns them to teams.
      * @return list of BotDetails objects
      */
     public BotDetails[] getBotsDetails(GeneralConfig generalConfig) {
         // For each bot a token and details need to be provided
-        if (this.bots.size() % 3 != 0) {
+        if (bots.size() % 3 != 0) {
             throw new Error("Not all bots have token and details provided as parameters");
         }
 
-        int numberOfBots = this.bots.size() / 3;
+        int numberOfBots = bots.size() / 3;
         BotDetails[] botsDetails = new BotDetails[numberOfBots];
 
         try {
-            for (int i = 0; i < this.bots.size(); i += 3) {
-                String botName = this.bots.get(i);
-                String token = this.bots.get(i + 1);
-                BotDetailsAdditional optional = (new Gson()).fromJson(this.bots.get(i + 2), BotDetailsAdditional.class);
+            for (int i = 0; i < bots.size(); i += 3) {
+                String botName = bots.get(i);
+                String token = bots.get(i + 1);
+                BotDetailsAdditional optional = (new Gson()).fromJson(bots.get(i + 2), BotDetailsAdditional.class);
                 botsDetails[i / 3] = new BotDetails(botName, token, optional);
             }
         }
@@ -72,7 +76,7 @@ public class DefaultArgs {
         }
 
         // Assign bots to teams
-        int[] teamSizes = this.getTeamSizes(generalConfig, numberOfBots);
+        int[] teamSizes = getTeamSizes(generalConfig, numberOfBots);
         DefaultArgs.setTeams(teamSizes, botsDetails);
 
         return botsDetails;
@@ -84,13 +88,13 @@ public class DefaultArgs {
      * @return array of team sizes or null if argument not provided
      */
     private int[] getTeamSizes(GeneralConfig generalConfig, int numberOfBots) {
-        if (this.teams == null) {
-                this.teams = createDefaultTeams(generalConfig, numberOfBots);
+        if (teams == null) {
+                teams = createDefaultTeams(generalConfig, numberOfBots);
         }
 
         // Parse teams argument
         try {
-            String[] teamSizesStr = this.teams.split(":");
+            String[] teamSizesStr = teams.split(":");
             int[] teamSizes = new int[teamSizesStr.length];
             for (int i = 0; i < teamSizesStr.length; i++) {
                 teamSizes[i] = Integer.parseInt(teamSizesStr[i]);

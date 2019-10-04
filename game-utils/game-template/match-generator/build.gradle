@@ -27,6 +27,9 @@ allprojects {
         aiVersion = '1.8.0'
         jCommanderVersion = '1.71'
         javaWebSocketVersion = '1.4.0'
+        gsonVersion = '2.8.5'
+        visuiVersion = '1.4.2'
+        junitVersion = '5.3.1'
     }
 
     repositories {
@@ -65,9 +68,10 @@ project(":core") {
         api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
         compile "com.beust:jcommander:$jCommanderVersion"
         compile "org.java-websocket:Java-WebSocket:$javaWebSocketVersion"
-        implementation 'com.google.code.gson:gson:2.8.5'
+        implementation "com.google.code.gson:gson:$gsonVersion"
+        compile "com.kotcrab.vis:vis-ui:$visuiVersion"
 
-        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
-        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+        testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
     }
 }
