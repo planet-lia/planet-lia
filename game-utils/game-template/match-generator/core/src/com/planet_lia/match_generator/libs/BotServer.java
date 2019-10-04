@@ -28,6 +28,7 @@ public class BotServer {
 
     private ArrayList<BotConnection> bots;
     private BotListener botListener;
+    private LogsStage logsStage;
 
     private int currentRequestIndex = 0;
 
@@ -43,16 +44,16 @@ public class BotServer {
                      int port,
                      BotDetails[] botsDetails,
                      String botListenerToken) {
-        this.server = createServer(port);
+        server = createServer(port);
         this.generalConfig = generalConfig;
         this.gameTimer = gameTimer;
         this.botsDetails = botsDetails;
 
-        this.bots = prepareBotConnections(botsDetails);
+        bots = prepareBotConnections(botsDetails);
 
         // Only create bot listener if botListenerToken is ""
         if (!botListenerToken.equals(DEFAULT_BOT_LISTENER_TOKEN)) {
-            this.botListener = new BotListener(botListenerToken);
+            botListener = new BotListener(botListenerToken);
         }
     }
 
@@ -60,10 +61,13 @@ public class BotServer {
      * Starts the websocket server
      */
     public void start() {
-        this.server.start();
-        System.out.println("Bot server started on port " + this.server.getPort());
+        server.start();
+        System.out.println("Bot server started on port " + server.getPort());
     }
 
+    public void setLogsStage(LogsStage logsStage) {
+        this.logsStage = logsStage;
+    }
 
     /**
      * Create BotConnection objects from an array of botNames and tokens.
@@ -88,14 +92,14 @@ public class BotServer {
     public void waitForBotsToConnect() throws Exception {
         System.out.println("Waiting for bots to connect");
 
-        long timeoutMillis = Math.round(this.generalConfig.connectingBotsTimeout * 1000);
+        long timeoutMillis = Math.round(generalConfig.connectingBotsTimeout * 1000);
         long checkPeriodMillis = 10L;
 
         while (!areAllBotsConnected()) {
             Thread.sleep(checkPeriodMillis);
             timeoutMillis -= checkPeriodMillis;
             if (timeoutMillis <= 0) {
-                for (BotConnection bot : this.bots) {
+                for (BotConnection bot : bots) {
                     if (bot.connection == null) {
                         System.err.printf("Bot with name '%s' did not connect in time\n", bot.details.botName);
                     }
@@ -111,7 +115,7 @@ public class BotServer {
      * @return true if all bots are connected to the bot server else false
      */
     private boolean areAllBotsConnected() {
-        for (BotConnection bot : this.bots) {
+        for (BotConnection bot : bots) {
             if (bot.connection == null) {
                 return false;
             }
@@ -123,7 +127,7 @@ public class BotServer {
         // Connect bot
         String token = handshake.getFieldValue("token");
         if (!token.equals("")) {
-            for (BotConnection bot : this.bots) {
+            for (BotConnection bot : bots) {
                 if (bot.details.token.equals(token) && bot.connection == null) {
                     bot.connection = conn;
                     // Attach bot object to connection so that later we
@@ -135,11 +139,11 @@ public class BotServer {
             }
         }
         // Connect bot listener
-        if (this.botListener != null) {
+        if (botListener != null) {
             token = handshake.getFieldValue(BOT_LISTENER_TOKEN_HEADER_KEY);
             if (!token.equals("")) {
-                if (this.botListener.token.equals(token) && this.botListener.connection == null) {
-                    this.botListener.connection = conn;
+                if (botListener.token.equals(token) && botListener.connection == null) {
+                    botListener.connection = conn;
                     System.out.println("Bot listener has connected");
                 }
             }
@@ -151,7 +155,7 @@ public class BotServer {
      * @param data - data as json string
      */
     public void sendToAll(String data, BotMessageType type) {
-        for (int i = 0; i < this.bots.size(); i++) {
+        for (int i = 0; i < bots.size(); i++) {
             send(i, data, type);
         }
     }
@@ -164,7 +168,7 @@ public class BotServer {
      * @param type - what type of message is being sent
      */
     public void send(int botIndex, String data, BotMessageType type) {
-        BotConnection bot = this.bots.get(botIndex);
+        BotConnection bot = bots.get(botIndex);
 
         if (bot.disqualified) {
             return;
@@ -177,7 +181,7 @@ public class BotServer {
                 throw new Error(String.format("Bot '%s' already received initial message\n", bot.details.botName));
             }
         }
-        if (bot.currentRequestIndex == this.currentRequestIndex) {
+        if (bot.currentRequestIndex == currentRequestIndex) {
             System.err.printf("Can't send new message to bot '%s' " +
                     "because it already received its update this turn\n", bot.details.botName);
             return;
@@ -186,12 +190,15 @@ public class BotServer {
         BotDetails[] botsDetails = (type == BotMessageType.INITIAL) ? this.botsDetails : null;
         data = injectGeneralFieldsToJsonData(data, type, botsDetails);
 
-        bot.currentRequestIndex = this.currentRequestIndex;
+        bot.currentRequestIndex = currentRequestIndex;
         bot.currentRequestTime = System.currentTimeMillis();
         bot.connection.send(data);
 
-        if (this.botListener != null) {
-            this.botListener.send(MessageSender.MATCH_GENERATOR, botIndex, data);
+        if (botListener != null) {
+            botListener.send(MessageSender.MATCH_GENERATOR, botIndex, data);
+        }
+        if (logsStage != null) {
+            logsStage.addLog(botIndex, MessageSender.MATCH_GENERATOR, data);
         }
 
         // Set this after sending to botListener for better synchronicity
@@ -211,7 +218,7 @@ public class BotServer {
         if (bot.disqualified) {
             return;
         }
-        if (bot.currentRequestIndex != this.currentRequestIndex) {
+        if (bot.currentRequestIndex != currentRequestIndex) {
             System.out.printf("Bot '%s' sent response too late\n", bot.details.botName);
             return;
         }
@@ -220,14 +227,18 @@ public class BotServer {
             return;
         }
 
-        if (this.botListener != null) {
-            this.botListener.send(MessageSender.BOT, this.bots.indexOf(bot), message);
+        if (botListener != null) {
+            botListener.send(MessageSender.BOT, bots.indexOf(bot), message);
+        }
+
+        if (logsStage != null) {
+            logsStage.addLog(bots.indexOf(bot), MessageSender.BOT, message);
         }
 
         bot.lastResponseData = message;
         bot.responseTotalDuration += System.currentTimeMillis() - bot.currentRequestTime;
 
-        if (bot.responseTotalDuration >= this.generalConfig.botResponseTotalDurationMax * 1000) {
+        if (bot.responseTotalDuration >= generalConfig.botResponseTotalDurationMax * 1000) {
             disqualifyBot(bot, "bot used all available time");
         }
 
@@ -257,27 +268,27 @@ public class BotServer {
     }
 
     public int getNumberOfTimeouts(int botIndex) {
-        return this.bots.get(botIndex).numberOfTimeouts;
+        return bots.get(botIndex).numberOfTimeouts;
     }
 
     public boolean isDisqualified(int botIndex) {
-        return this.bots.get(botIndex).disqualified;
+        return bots.get(botIndex).disqualified;
     }
 
     public float getDisqualificationTime(int botIndex) {
-        return this.bots.get(botIndex).disqualificationTime;
+        return bots.get(botIndex).disqualificationTime;
     }
 
     public String getDisqualificationReason(int botIndex) {
-        return this.bots.get(botIndex).disqualificationReason;
+        return bots.get(botIndex).disqualificationReason;
     }
 
     public String getLastResponseData(int botIndex) {
-        return this.bots.get(botIndex).lastResponseData;
+        return bots.get(botIndex).lastResponseData;
     }
 
     public boolean allBotsDisqualified() {
-        for (BotConnection bot : this.bots) {
+        for (BotConnection bot : bots) {
             if (!bot.disqualified) {
                 return false;
             }
@@ -293,8 +304,8 @@ public class BotServer {
     public void waitForBotsToRespond() throws InterruptedException {
         long startTime = System.currentTimeMillis();
         float timeout = (currentRequestIndex == 0)
-                ? this.generalConfig.botFirstResponseTimeout
-                : this.generalConfig.botResponseTimeout;
+                ? generalConfig.botFirstResponseTimeout
+                : generalConfig.botResponseTimeout;
         long timeoutMillis = (long) (timeout * 1000);
 
         // Wait for all bots to respond or timeout
@@ -306,13 +317,13 @@ public class BotServer {
         }
 
         // Handle bots that timed out
-        for (BotConnection bot : this.bots) {
+        for (BotConnection bot : bots) {
             if (!bot.disqualified && bot.waitingResponse) {
                 handleBotNotResponded(bot);
             }
         }
 
-        this.currentRequestIndex++;
+        currentRequestIndex++;
     }
 
     private void handleBotNotResponded(BotConnection bot) {
@@ -326,7 +337,7 @@ public class BotServer {
     }
 
     private void disqualifyBot(BotConnection bot, String reason) {
-        bot.disqualificationTime = this.gameTimer.time;
+        bot.disqualificationTime = gameTimer.time;
         bot.disqualified = true;
         bot.lastResponseData = null;
         bot.disqualificationReason = reason;
@@ -337,8 +348,8 @@ public class BotServer {
      * @return - if all bots that received a request in this turn have already responded
      */
     private boolean allBotsResponded() {
-        for (BotConnection bot : this.bots) {
-            if (bot.disqualified || bot.currentRequestIndex != this.currentRequestIndex) {
+        for (BotConnection bot : bots) {
+            if (bot.disqualified || bot.currentRequestIndex != currentRequestIndex) {
                 continue;
             }
             if (bot.waitingResponse) {
@@ -365,11 +376,11 @@ public class BotServer {
     }
 
     public boolean isBotListenerEnabled() {
-        return this.botListener != null;
+        return botListener != null;
     }
 
     public boolean isBotListenerConnected() {
-        return this.botListener.connection != null;
+        return botListener.connection != null;
     }
 
     /**
@@ -378,7 +389,7 @@ public class BotServer {
      * @throws InterruptedException
      */
     public void stop() throws IOException, InterruptedException {
-        this.server.stop();
+        server.stop();
     }
 
     /**

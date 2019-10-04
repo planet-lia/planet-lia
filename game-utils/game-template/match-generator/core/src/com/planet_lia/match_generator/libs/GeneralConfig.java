@@ -1,8 +1,5 @@
 package com.planet_lia.match_generator.libs;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 public class GeneralConfig {
     /**
      * A name of the game that will display on top of debug viewer.
@@ -17,14 +14,9 @@ public class GeneralConfig {
     public String gameName;
 
     /**
-     * Width of the debug view that is displayed while the match is generating
+     * Configuration for debug window if it is enabled
      */
-    public int debugViewWidth;
-
-    /**
-     * Height  of the debug view that is displayed while the match is generating
-     */
-    public int debugViewHeight;
+    public DebugWindowConfig debugWindow;
 
     /**
      * How many game logic updates happen per second
@@ -34,7 +26,7 @@ public class GeneralConfig {
     /**
      * How long do bots have to connect (in seconds)
      * before being disqualified. Measured form the
-     * time the bot server has started.
+     * time the bot server has started
      */
     public float connectingBotsTimeout;
 
@@ -52,28 +44,28 @@ public class GeneralConfig {
 
     /**
      * How many times can a bot not respond in time
-     * until it is disqualified.
+     * until it is disqualified
      */
     public int maxTimeoutsPerBot;
 
     /**
      * Limit to how much time does the bot have to respond
-     * to all requests in a match.
+     * to all requests in a match
      */
     public float botResponseTotalDurationMax;
 
     /**
      * How many game logic updates happen before one
-     * update to all bots is sent.
+     * update to all bots is sent
      *
      * If ticksPerSecond is set to 30 and gameUpdatesPerBotsUpdate
-     * is set to 3, bots will receive game updates 10 times per second.
+     * is set to 3, bots will receive game updates 10 times per second
      */
     public int gameUpdatesPerBotsUpdate;
 
     /**
      * List of allowed team formats that specify how many
-     * bots can be in one match and how they are split in teams.
+     * bots can be in one match and how they are split in teams
      */
     public TeamFormat[] allowedTeamFormats;
 
@@ -109,7 +101,7 @@ class TeamFormat {
     /**
      * Weight with which you want this format to be chosen.
      * This is used on Planet Lia servers to pick a format
-     * and with that numbers of bots to play the match.
+     * and with that numbers of bots to play the match
      */
     public int weight;
 
@@ -129,3 +121,4 @@ class TeamFormat {
         return numberOfBots;
     }
 }
+

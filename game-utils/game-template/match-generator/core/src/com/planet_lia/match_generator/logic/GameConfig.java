@@ -15,6 +15,8 @@ public class GameConfig {
 
     // Here you can add other configuration fields that will
     // load from a game-config.json
+    public int mapWidth;
+    public int mapHeight;
 
     public static GameConfig load() throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(PATH_TO_GAME_CONFIG));
