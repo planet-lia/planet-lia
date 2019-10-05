@@ -5,7 +5,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-
 var queryType = graphql.NewObject(graphql.ObjectConfig{
 	Name: "Query",
 	Fields: graphql.Fields{

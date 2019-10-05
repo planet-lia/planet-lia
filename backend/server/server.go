@@ -14,17 +14,16 @@ import (
 
 const (
 	serverWriteTimeout = 30 * time.Second
-	serverReadTimeout = 30 * time.Second
+	serverReadTimeout  = 30 * time.Second
 )
 
 func Start(shutdown chan bool) {
 
 	graphqlHandler := handler.New(&handler.Config{
-		Schema: &graphql.Schema,
-		Pretty: true,
+		Schema:   &graphql.Schema,
+		Pretty:   true,
 		GraphiQL: viper.GetBool("graphiql"),
 	})
-
 
 	r := mux.NewRouter()
 	r.StrictSlash(true) // accepts requests with trailing slash
@@ -33,12 +32,10 @@ func Start(shutdown chan bool) {
 	r.HandleFunc("/health", healthHandler).Methods("GET")
 	r.Handle("/graphql", graphqlMiddleware(graphqlHandler))
 
-
 	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 
 	r.Use(requestIdMiddleware)
 	r.Use(loggingMiddleware)
-
 
 	bind := net.JoinHostPort(viper.GetString("http-bind"), viper.GetString("port"))
 

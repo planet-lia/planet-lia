@@ -10,19 +10,19 @@ import (
 
 var aboutObject = graphql.NewObject(
 	graphql.ObjectConfig{
-		Name: "About",
+		Name:        "About",
 		Description: "Basic information about the backend system.",
 		Fields: graphql.Fields{
 			"name": &graphql.Field{
 				Description: "Name of service.",
-				Type: graphql.String,
+				Type:        graphql.String,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					return "planet-lia-backend", nil
 				},
 			},
 			"url": &graphql.Field{
 				Description: "URL of the service",
-				Type: graphql.String,
+				Type:        graphql.String,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					return viper.GetString("url"), nil
 				},
@@ -46,14 +46,14 @@ var aboutObject = graphql.NewObject(
 						},
 						"commit": &graphql.Field{
 							Description: "Commit ID",
-							Type: graphql.String,
+							Type:        graphql.String,
 							Resolve: func(_ graphql.ResolveParams) (interface{}, error) {
 								return version.Ver.Commit, nil
 							},
 						},
 						"full": &graphql.Field{
 							Description: "Full version string",
-							Type: graphql.String,
+							Type:        graphql.String,
 							Resolve: func(_ graphql.ResolveParams) (interface{}, error) {
 								return version.Ver.String(), nil
 							},
@@ -66,21 +66,21 @@ var aboutObject = graphql.NewObject(
 			},
 			"buildDate": &graphql.Field{
 				Description: "Date when the service was built.",
-				Type: graphql.DateTime,
+				Type:        graphql.DateTime,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					return version.Ver.BuildDate, nil
 				},
 			},
 			"repo": &graphql.Field{
 				Description: "URL of repository.",
-				Type: graphql.String,
+				Type:        graphql.String,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					return "https://github.com/planet-lia/planet-lia", nil
 				},
 			},
 			"datetime": &graphql.Field{
 				Description: "Current datetime of service (useful to see if cache is in the way).",
-				Type: graphql.DateTime,
+				Type:        graphql.DateTime,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					return time.Now().UTC(), nil
 				},
@@ -90,9 +90,9 @@ var aboutObject = graphql.NewObject(
 )
 
 var aboutField = graphql.Field{
-	Name: "About",
+	Name:        "About",
 	Description: "Basic information about service.",
-	Type: aboutObject,
+	Type:        aboutObject,
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 		logging.Debug(p.Context, "Creating GraphQL about object", logging.EmptyFields)
 		return p, nil

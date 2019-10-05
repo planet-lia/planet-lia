@@ -12,7 +12,7 @@ import (
 var queryErrFailedToExec = errors.New("failed to execute graphql operation")
 
 // Query the schema like an external request.
-func Query(ctx context.Context, query string) (map[string]interface{}, error){
+func Query(ctx context.Context, query string) (map[string]interface{}, error) {
 	params := graphql.Params{Schema: Schema, RequestString: query, Context: ctx}
 	res := graphql.Do(params)
 	if len(res.Errors) > 0 {

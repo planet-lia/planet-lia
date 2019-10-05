@@ -53,7 +53,7 @@ func init() {
 	const defaultPort = 8080
 	rootCmd.Flags().IntVarP(&port, "port", "p", defaultPort, "HTTP Server Port")
 	rootCmd.Flags().IPVarP(&bindIP, "http-bind", "b", net.IPv4(0, 0, 0, 0), "bind HTTP server to IP")
-	rootCmd.Flags().String("url", "http://127.0.0.1:" + strconv.Itoa(defaultPort), "")
+	rootCmd.Flags().String("url", "http://127.0.0.1:"+strconv.Itoa(defaultPort), "")
 
 	rootCmd.Flags().Bool("graphiql", true, "Enable GraphiQL (GraphQL web IDE)")
 
