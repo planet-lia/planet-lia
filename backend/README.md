@@ -7,6 +7,11 @@ The master branch gets automatically deployed.
 
 [Docker hub repository](https://hub.docker.com/r/planetlia/backend)
 
+## Root Endpoints
+Production: `https://api.production.cloud.planetlia.com`
+
+GraphQL endpoint: `/graphql`
+
 ## Development
 The project uses [Go Modules](https://github.com/golang/go/wiki/Modules) therefore it is not necessary to place the repository into your $GOPATH.
 
