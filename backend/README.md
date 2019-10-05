@@ -1,9 +1,11 @@
 # Backend
 Complete backend infrastructure for Planet Lia platform.
 
-WIP 
+WIP
 
 The main backend component named `planet-lia-backend` is entirely written in [Go](https://golang.org/).
+
+The master branch gets automatically deployed.
 
 ## Development
 The project uses [Go Modules](https://github.com/golang/go/wiki/Modules) therefore it is not necessary to place the repository into your $GOPATH.
