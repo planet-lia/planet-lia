@@ -65,7 +65,7 @@ jobs:
         mv image-patch.yaml.tmp image-patch.yaml
     - name: Git commit and push
       run: |
-        cd ./argocd-test
+        cd ./infrastructure
         git config --global user.email "webmaster@planetlia.com"
         git config --global user.name "planet-lia ci/cd"
         git add --all
