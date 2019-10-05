@@ -55,7 +55,7 @@ var aboutObject = graphql.NewObject(
 							Description: "Full version string",
 							Type:        graphql.String,
 							Resolve: func(_ graphql.ResolveParams) (interface{}, error) {
-								return version.Ver.String(), nil
+								return version.Ver.Full(), nil
 							},
 						},
 					},
@@ -66,7 +66,7 @@ var aboutObject = graphql.NewObject(
 			},
 			"buildDate": &graphql.Field{
 				Description: "Date when the service was built.",
-				Type:        graphql.DateTime,
+				Type:        graphql.String,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					return version.Ver.BuildDate, nil
 				},
