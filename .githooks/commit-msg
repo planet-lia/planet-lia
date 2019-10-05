@@ -33,7 +33,7 @@ scopes = [
 
 REGEX = '^(revert: )?(' + '|'.join(types) + ')(\((' + '|'.join(scopes) + ')\))?\:\s(.{3,})'
 
-GUIDELINE_LINK = 'https://github.com/planet-lia/planet-lia/blob/master/CONTRIBUTING.md#commit-messages' 
+GUIDELINE_LINK = 'https://github.com/planet-lia/planet-lia/blob/master/.github/commit_message_guidelines.md'
 
 with open(sys.argv[1]) as commit:
     lines = commit.readlines()
