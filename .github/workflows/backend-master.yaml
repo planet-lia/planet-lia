@@ -1,0 +1,73 @@
+name: Backend - master branch workflow
+on:
+  push:
+    branches:
+    - master
+    paths:
+    # And they said my half-pyramid print program is going to be useless
+    #
+    # This unfortunately is a hack that is actually the "official" way of
+    # supporting multiple projects in one repo:
+    # https://help.github.com/en/articles/workflow-syntax-for-github-actions#example-matching-paths-in-nested-directories
+    #
+    # This is because the wildcard asterisk '*'' drops the '/' and it is not
+    # possible to overcome this by other means.
+    #
+    # You are welcome to join the rant of this outrageous atrocity:
+    # https://github.community/t5/GitHub-Actions/GitHub-Actions-workflow-not-triggered-with-path/m-p/29872
+    - 'backend/*'
+    - 'backend/*/*'
+    - 'backend/*/*/*'
+    - 'backend/*/*/*/*'
+    - 'backend/*/*/*/*/*'
+    - 'backend/*/*/*/*/*/*'
+    - 'backend/*/*/*/*/*/*/*'
+    - 'backend/*/*/*/*/*/*/*/*'
+    - 'backend/*/*/*/*/*/*/*/*/*'
+    - 'backend/*/*/*/*/*/*/*/*/*/*'
+    - 'backend/*/*/*/*/*/*/*/*/*/*/*'
+    - 'backend/*/*/*/*/*/*/*/*/*/*/*/*'
+    - 'backend/*/*/*/*/*/*/*/*/*/*/*/*/*'
+    - 'backend/*/*/*/*/*/*/*/*/*/*/*/*/*/*'
+    - 'backend/*/*/*/*/*/*/*/*/*/*/*/*/*/*/*'
+jobs:
+  deploy:
+    name: Backend Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Build Docker Image
+      run: make -C ./backend docker
+    - name: Docker login
+      run: docker login --username greenstatic --password ${DOCKER_PASSWORD}  # TODO - replace with planetlia account
+      env:
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Write docker image tag to temp file
+      run: echo -n $(docker images | grep "planetlia/backend" | awk '{print $1 ":" $2}' | head -n 1) > ~/_backend_docker_image_name.txt
+    - name: Docker push
+      run: |
+        docker push $(cat ~/_backend_docker_image_name.txt)
+        docker push $(cat ~/_backend_docker_image_name.txt | awk -F ":" '{print $1}'):latest
+    - name: Git SSH key
+      run: |
+        mkdir -p ~/.ssh
+        touch ~/.ssh/id_rsa
+        echo -n ${INFRASTRUCTURE_GIT_REPO_SSH_KEY} | base64 -d > ~/.ssh/id_rsa
+        chmod 400 ~/.ssh/id_rsa
+      env:
+        INFRASTRUCTURE_GIT_REPO_SSH_KEY: ${{ secrets.INFRASTRUCTURE_GIT_REPO_SSH_KEY }}
+    - name: Git clone infrastructure
+      run: GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa -o "StrictHostKeyChecking=no"' git clone git@github.com:planet-lia/infrastructure.git
+    - name: Change docker image in production deployment
+      run: |
+        cd ./infrastructure/overlays/production/planetlia_platform/backend
+        sed "s#\(value\:\\)\(.*\)#\1\ $(cat ~/_backend_docker_image_name.txt)#" < image-patch.yaml > image-patch.yaml.tmp
+        mv image-patch.yaml.tmp image-patch.yaml
+    - name: Git commit and push
+      run: |
+        cd ./argocd-test
+        git config --global user.email "webmaster@planetlia.com"
+        git config --global user.name "planet-lia ci/cd"
+        git add --all
+        git commit -m "Update image $(cat ~/_backend_docker_image_name.txt)"
+        GIT_SSH_COMMAND='ssh -i ~/.ssh/id_rsa -o "StrictHostKeyChecking=no"' git push
