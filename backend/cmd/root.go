@@ -1,12 +1,16 @@
 package cmd
 
 import (
+	"github.com/planet-lia/planet-lia/backend/server"
 	"github.com/planet-lia/planet-lia/backend/version"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"net"
+	"os"
+	"os/signal"
+	"strconv"
 	"strings"
 )
 
@@ -23,18 +27,35 @@ var rootCmd = &cobra.Command{
 	Long:  `Backend for the Planet Lia Platform`,
 	Run: func(cmd *cobra.Command, args []string) {
 		checkVerbose()
-		logrus.Info("Running Planet Lia Backend v:", version.Ver.String())
+		logrus.WithField("version", version.Ver.String()).Info("Running Planet Lia Backend")
 		logrus.WithFields(viper.AllSettings()).Info("Config")
 
-		// TODO - Start HTTP Server
+		serverShutdown := make(chan bool)
+
+		sig := make(chan os.Signal, 1)
+		signal.Notify(sig, os.Interrupt)
+		go func() {
+			for range sig {
+				logrus.Info("Shutting down server")
+				serverShutdown <- true
+			}
+		}()
+
+		// Start HTTP server
+		server.Start(serverShutdown)
 	},
 }
 
 func init() {
-	rootCmd.Flags().IntVarP(&port, "port", "p", 8080, "HTTP Server Port")
-	rootCmd.Flags().IPVarP(&bindIP, "http-bind", "b", net.IPv4(0, 0, 0, 0), "bind HTTP server to IP")
 	rootCmd.Flags().BoolVar(&verbose, "verbose", false, "verbose logging")
-	rootCmd.Flags().BoolVar(&verbose, "log-json", true, "log output will be formatted in JSON")
+	rootCmd.Flags().BoolVar(&logJson, "log-json", true, "log output will be formatted in JSON")
+
+	const defaultPort = 8080
+	rootCmd.Flags().IntVarP(&port, "port", "p", defaultPort, "HTTP Server Port")
+	rootCmd.Flags().IPVarP(&bindIP, "http-bind", "b", net.IPv4(0, 0, 0, 0), "bind HTTP server to IP")
+	rootCmd.Flags().String("url", "http://127.0.0.1:" + strconv.Itoa(defaultPort), "")
+
+	rootCmd.Flags().Bool("graphiql", true, "Enable GraphiQL (GraphQL web IDE)")
 
 	envPrefix := "LIA"
 	viper.SetEnvPrefix(envPrefix)
