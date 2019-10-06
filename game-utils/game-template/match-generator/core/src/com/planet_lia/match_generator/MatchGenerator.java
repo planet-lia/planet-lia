@@ -2,6 +2,7 @@ package com.planet_lia.match_generator;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -22,16 +23,23 @@ public class MatchGenerator extends ApplicationAdapter {
     Timer timer = new Timer();
     BotServer server;
 
+    // Will make sure that the debug view will run
+    // with appropriate frame rate
+    FPSLimiter fpsLimiter = new FPSLimiter();
     boolean isFirstUpdate = true;
-    FPSLimiter fpsLimiter;
 
-    Camera gameCamera;
+    Camera gameCamera = new OrthographicCamera();
+    Camera logsCamera  = new OrthographicCamera();
+    Camera controlsCamera  = new OrthographicCamera();
+
     Viewport gameViewport;
-    Camera logsCamera;
     Viewport logsViewport;
+    Viewport controlsViewport;
 
     LogsStage logsStage;
-    Game game;
+    ControlsStage controlsStage;
+
+    GameLogic gameLogic;
 
     public MatchGenerator(Args args, GameConfig gameConfig, BotDetails[] botsDetails) {
         this.args = args;
@@ -42,7 +50,7 @@ public class MatchGenerator extends ApplicationAdapter {
         server = new BotServer(generalConfig, timer, args.port, botsDetails);
         //server.waitForBotsToConnect();
 
-        game = new Game(args, gameConfig, botsDetails, server);
+        gameLogic = new GameLogic(args, gameConfig, botsDetails, server);
     }
 
     @Override
@@ -51,44 +59,64 @@ public class MatchGenerator extends ApplicationAdapter {
             VisUI.load();
 
             // Create game camera and viewport
-            gameCamera = new OrthographicCamera();
             gameViewport = new FitViewport(gameConfig.mapWidth, gameConfig.mapHeight, gameCamera);
-            gameCamera.position.x = gameViewport.getWorldWidth() * 0.5f;
-            gameCamera.position.y = gameViewport.getWorldHeight() * 0.5f;
+            centerCamera(gameCamera, gameViewport);
 
             // Create logs camera and viewport
-            logsCamera = new OrthographicCamera();
-            logsViewport = new FitViewport(
-                    getLogsViewWidth(),
-                    Gdx.graphics.getHeight(),
-                    logsCamera);
-            logsCamera.position.x = logsViewport.getWorldWidth() * 0.5f;
-            logsCamera.position.y = logsViewport.getWorldHeight() * 0.5f;
+            logsViewport = new FitViewport(getLogsViewWidth(), Gdx.graphics.getHeight(), logsCamera);
+            centerCamera(logsCamera, logsViewport);
 
-            logsStage = new LogsStage(logsViewport, timer, botsDetails);
-            Gdx.input.setInputProcessor(logsStage);
+            // Create controls camera and viewport
+            controlsViewport = new FitViewport(getGameViewWidth(), getControlsViewHeight(), controlsCamera);
+            centerCamera(controlsCamera, controlsViewport);
 
-            // Will make sure that the debug view will run
-            // with appropriate frame rate
-            fpsLimiter = new FPSLimiter();
+            logsStage = new LogsStage(logsViewport, botsDetails);
+            controlsStage = new ControlsStage(controlsViewport, timer);
 
-            game.setupGraphics();
+            // Set input processor
+            InputMultiplexer mx = new InputMultiplexer(logsStage, controlsStage);
+            Gdx.input.setInputProcessor(mx);
+
+            gameLogic.setupGraphics();
 
             server.setLogsStage(logsStage);
         }
     }
 
+    private void centerCamera(Camera camera, Viewport viewport) {
+        camera.position.x = viewport.getWorldWidth() * 0.5f;
+        camera.position.y = viewport.getWorldHeight() * 0.5f;
+    }
+
+    float carry = 0;
+
     @Override
     public void render() {
         float delta = getDelta();
 
-        timer.time += delta;
-        game.update(timer, delta);
-
-        // Only render to screen when debug view is enabled
         if (args.debug) {
-           draw();
-            fpsLimiter.sync(generalConfig.ticksPerSecond);
+            float logicFps = generalConfig.ticksPerSecond * controlsStage.getSpeed();
+            float drawFps = generalConfig.debugWindow.framesPerSecond;
+            float updatesPerDraw = logicFps / drawFps;
+
+            // Adjust how many times update logic is called based on the
+            // default ticks per second of the match, taking in consideration
+            // custom speed of the game and interval of drawing match to the screen
+            for (int i = 1; i <= updatesPerDraw + carry; i++) {
+                timer.time += delta;
+                gameLogic.update(timer, delta);
+            }
+            carry = updatesPerDraw + carry - (int) updatesPerDraw;
+            carry -= (int) carry;
+
+            // Render the scene every render call
+            draw();
+            controlsStage.setTime(timer.time);
+            fpsLimiter.sync(generalConfig.debugWindow.framesPerSecond);
+        }
+        else {
+            timer.time += delta;
+            gameLogic.update(timer, delta);
         }
     }
 
@@ -98,6 +126,14 @@ public class MatchGenerator extends ApplicationAdapter {
 
     private int getGameViewWidth() {
         return gameConfig.generalConfig.debugWindow.getGameViewWidth(Gdx.graphics.getHeight());
+    }
+
+    private int getControlsViewHeight() {
+        return gameConfig.generalConfig.debugWindow.getControlsViewHeight(Gdx.graphics.getHeight());
+    }
+
+    private int getGameViewHeight() {
+        return gameConfig.generalConfig.debugWindow.getGameViewHeight(Gdx.graphics.getHeight());
     }
 
     private float getDelta() {
@@ -114,25 +150,34 @@ public class MatchGenerator extends ApplicationAdapter {
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-        // Render game
+        // Draw game
         gameCamera.update();
         gameViewport.apply();
-        game.draw(gameCamera, gameViewport);
+        gameLogic.draw(gameCamera, gameViewport);
 
-        // Render logs view
+        // Draw logs view
         logsCamera.update();
         logsViewport.apply();
         logsStage.act();
         logsStage.draw();
+
+        // Draw controls
+        controlsCamera.update();
+        controlsViewport.apply();
+        controlsStage.act();
+        controlsStage.draw();
     }
 
     @Override
     public void resize(int width, int height) {
         super.resize(width, height);
         if (args.debug) {
-            gameViewport.update(getGameViewWidth(), height);
+            gameViewport.update(getGameViewWidth(), getGameViewHeight());
+            gameViewport.setScreenY(getControlsViewHeight());
+            controlsViewport.update(getGameViewWidth(), getControlsViewHeight());
             logsViewport.update(getLogsViewWidth(), height);
             logsViewport.setScreenX(getGameViewWidth());
+
         }
     }
 

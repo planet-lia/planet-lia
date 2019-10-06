@@ -3,9 +3,11 @@
         "gameNamePretty": "Game Template",
         "gameName": "game-template",
         "debugWindow": {
-            "logsToGameRatio": 0.3
+            "framesPerSecond": 30,
+            "logsToGameRatio": 0.3,
+            "controlsToWindowHeightRatio": 0.08
         },
-        "ticksPerSecond": 30,
+        "ticksPerSecond": 10,
         "connectingBotsTimeout": 10,
         "botFirstResponseTimeout": 2,
         "botResponseTimeout": 1,

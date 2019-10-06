@@ -17,26 +17,24 @@ import java.util.ArrayList;
 
 public class LogsStage extends Stage {
 
-    private VisTable mainTable;
-    private VisTable tabsTable;
+    private VisTable mainTable = new VisTable();
+    private VisTable tabsTable = new VisTable();
 
     private ArrayList<TabButton> toBots = new ArrayList<>();
     private ArrayList<TabButton> fromBots = new ArrayList<>();
 
+    private VisTable content = new VisTable();
     private TabButton activeButton;
-    private VisTable content;
 
-    public LogsStage(Viewport viewport, Timer timer, BotDetails[] botsDetails) {
+    public LogsStage(Viewport viewport, BotDetails[] botsDetails) {
         super(viewport);
 
         // Create main wrapper
-        mainTable = new VisTable();
         mainTable.setFillParent(true);
         mainTable.pad(10).defaults().expandX().fillX().space(4);
         addActor(mainTable);
 
         // Add tabs for all bots
-        tabsTable = new VisTable();
         tabsTable.defaults().pad(5);
         for (int i = 0; i < botsDetails.length; i++) {
             toBots.add(new TabButton(this, "to " + botsDetails[i].botName  + " (" + i + ")"));
@@ -52,7 +50,6 @@ public class LogsStage extends Stage {
         scrollPane.setFadeScrollBars(false);
         mainTable.add(scrollPane).spaceTop(8).growX().row();
 
-        content = new VisTable();
         mainTable.add(content).grow();
 
         setActiveButton(toBots.get(0));

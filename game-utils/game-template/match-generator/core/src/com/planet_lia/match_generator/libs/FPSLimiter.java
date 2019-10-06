@@ -11,9 +11,9 @@ public class FPSLimiter {
     private long variableYieldTime = 0;
     private long lastTime = 0;
 
-    public void sync(long fps) {
+    public void sync(double fps) {
         // Nanoseconds to sleep this frame
-        long sleepTime = (1000000000 / fps);
+        long sleepTime = (long) (1000000000 / fps);
 
         // yieldTime + remainder micro & nano seconds if smaller than sleepTime
         long yieldTime = Math.min(sleepTime, variableYieldTime + sleepTime % (1000 * 1000));
