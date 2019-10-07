@@ -27,7 +27,7 @@ public class MyBot implements Bot {
     // time you receive the current match state and can use
     // response object to issue your commands.
     @Override
-    public void update(MatchState data, Response response) {
+    public void update(MatchState state, Response response) {
         // TODO
         // This is the default Java bot version that is not
         // configured for any specific game.
