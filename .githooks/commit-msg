@@ -28,6 +28,7 @@ scopes = [
     "cli",
     "match-viewer",
     "game-template",
+    "game-utils",
     "game-.+"
 ]
 

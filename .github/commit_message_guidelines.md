@@ -61,6 +61,7 @@ The following is the list of supported scopes:
 * **cli**
 * **match-viewer**
 * **game-template**
+* **game-utils**
 * **game-\<game-name\>**
 * we will add more as we go
 
