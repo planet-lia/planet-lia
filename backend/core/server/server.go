@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/gorilla/mux"
 	"github.com/graphql-go/handler"
-	"github.com/planet-lia/planet-lia/backend/graphql"
+	"github.com/planet-lia/planet-lia/backend/core/graphql"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"net"

@@ -3,7 +3,7 @@ package server
 import (
 	"bytes"
 	"context"
-	"github.com/planet-lia/planet-lia/backend/logging"
+	"github.com/planet-lia/planet-lia/backend/core/logging"
 	"github.com/satori/go.uuid"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"

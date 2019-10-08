@@ -2,8 +2,8 @@ package graphql
 
 import (
 	"github.com/graphql-go/graphql"
-	"github.com/planet-lia/planet-lia/backend/logging"
-	"github.com/planet-lia/planet-lia/backend/version"
+	"github.com/planet-lia/planet-lia/backend/core/logging"
+	"github.com/planet-lia/planet-lia/backend/core/version"
 	"github.com/spf13/viper"
 	"time"
 )

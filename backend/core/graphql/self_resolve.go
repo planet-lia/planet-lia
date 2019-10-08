@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/graphql-go/graphql"
 	"github.com/pkg/errors"
-	"github.com/planet-lia/planet-lia/backend/logging"
+	"github.com/planet-lia/planet-lia/backend/core/logging"
 	"github.com/sirupsen/logrus"
 )
 

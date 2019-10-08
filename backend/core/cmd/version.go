@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/planet-lia/planet-lia/backend/version"
+	"github.com/planet-lia/planet-lia/backend/core/version"
 	"github.com/spf13/cobra"
 )
 

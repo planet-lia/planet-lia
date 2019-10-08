@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/planet-lia/planet-lia/backend/server"
-	"github.com/planet-lia/planet-lia/backend/version"
+	"github.com/planet-lia/planet-lia/backend/core/server"
+	"github.com/planet-lia/planet-lia/backend/core/version"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"

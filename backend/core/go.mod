@@ -1,4 +1,4 @@
-module github.com/planet-lia/planet-lia/backend
+module github.com/planet-lia/planet-lia/backend/core
 
 go 1.13
 

@@ -2,8 +2,8 @@ package server
 
 import (
 	"encoding/json"
-	"github.com/planet-lia/planet-lia/backend/graphql"
-	"github.com/planet-lia/planet-lia/backend/logging"
+	"github.com/planet-lia/planet-lia/backend/core/graphql"
+	"github.com/planet-lia/planet-lia/backend/core/logging"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"time"

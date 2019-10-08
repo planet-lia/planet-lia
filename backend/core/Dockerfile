@@ -10,9 +10,9 @@ WORKDIR /app
 RUN make build-linux COMMIT=${COMMIT_ID}
 
 FROM scratch
-COPY --from=builder /app/build/planet-lia-backend_linux_amd64 .
+COPY --from=builder /app/build/planet-lia-backend-core_linux_amd64 .
 
 # Default values
 EXPOSE 8080
 
-ENTRYPOINT ["/planet-lia-backend_linux_amd64"]
+ENTRYPOINT ["/planet-lia-backend-core_linux_amd64"]

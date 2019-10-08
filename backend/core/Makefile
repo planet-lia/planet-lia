@@ -9,17 +9,17 @@ VERSION_MAJOR:=$(shell cat version/version.go | awk '/versionMajor = / {print $$
 VERSION_MINOR:=$(shell cat version/version.go | awk '/versionMinor = / {print $$3}')
 COMMIT:=$(shell git rev-parse HEAD)
 VERSION:=$(VERSION_MAJOR).$(VERSION_MINOR)-$(COMMIT)
-IMPORT_PATH=github.com/planet-lia/planet-lia/backend
+IMPORT_PATH=github.com/planet-lia/planet-lia/backend/core
 LFLAGS=-ldflags "-X ${IMPORT_PATH}/version.buildDate=${BUILD_DATE} -X ${IMPORT_PATH}/version.commit=${COMMIT}"
 
-BINARY_NAME=planet-lia-backend
+BINARY_NAME=planet-lia-backend-core
 BINARY_MACOS=$(BINARY_NAME)_macos
 BINARY_LINUX=$(BINARY_NAME)_linux_amd64
 
 BUILD_DIR=./build
 MAIN_PACKAGE="."
 
-DOCKER_IMAGE=planetlia/backend
+DOCKER_IMAGE=planetlia/backend-core
 
 .PHONY: fmt
 fmt:
