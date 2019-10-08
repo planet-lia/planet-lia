@@ -7,16 +7,16 @@ import sys
 import re
 
 types = [
-    "feat",
-    "fix",
-    "docs",
-    "style",
-    "refactor",
-    "perf",
     "build",
-    "test",
     "ci",
     "infra",
+    "docs",
+    "feat",
+    "fix",
+    "perf",
+    "refactor",
+    "style",
+    "test",
     "chore"
 ]
 
