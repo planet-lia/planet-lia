@@ -3,7 +3,7 @@ import core.api.*;
 
 /**
  * The default Java bot implementation that is not specific
- * to any Planet Lia game but instead servers as a base for
+ * to any Planet Lia game but instead serves as a base for
  * all game specific bot implementations.
  */
 public class MyBot implements Bot {

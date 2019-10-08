@@ -1,6 +1,6 @@
-# python3-bot
+# Python 3 Bot
 
-Starter python3 bot implementation.
+Python 3 bot for Lia 1 game.
 
 ## Setup and Run Bot Manually
 ### Windows

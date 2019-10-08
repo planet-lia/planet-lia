@@ -3,7 +3,7 @@ import core.api.*;
 
 /**
  * The default Java bot implementation that is not specific
- * to any Planet Lia game but instead servers as a base for
+ * to any Planet Lia game but instead serves as a base for
  * all game specific bot implementations.
  */
 public class MyBot implements Bot {
@@ -13,11 +13,10 @@ public class MyBot implements Bot {
     @Override
     public void setup(InitialData data) {
         // TODO
-        // This is the default Java bot version that is not
-        // configured for any specific game.
-        // Implement classes in "core/api" with game specific
-        // data in order to use this language for a chosen game.
-        // Check this guide: <TODO_LINK>
+        // This is the default bot that is not configured
+        // for any specific game.
+        // See how to support a specific game:
+        // - <TODO_LINK>
     }
 
     // Called repeatedly while the match is generating. Each
@@ -26,11 +25,10 @@ public class MyBot implements Bot {
     @Override
     public void update(MatchState state, Response response) {
         // TODO
-        // This is the default Java bot version that is not
-        // configured for any specific game.
-        // Implement classes in "core/api" with game specific
-        // data in order to use this language for a chosen game.
-        // Check this guide: <TODO_LINK>
+        // This is the default bot that is not configured
+        // for any specific game.
+        // See how to support a specific game:
+        // - <TODO_LINK>
     }
 
     // Connects your bot to match generator, don't change it.

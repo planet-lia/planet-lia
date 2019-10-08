@@ -11,8 +11,6 @@ from core.networking_client import connect
 # see them while warrior units shoot if they see opponents.
 class MyBot(Bot):
 
-    # Called only once before the match starts. It holds the
-    # data that you may need before the game starts.
     def setup(self, initial_data):
         self.constants = initial_data["constants"]
 
@@ -21,6 +19,7 @@ class MyBot(Bot):
     # - GameState reference: https://docs.liagame.com/api/#gamestate
     # - Api reference:       https://docs.liagame.com/api/#api-object
     def update(self, state, response):
+
         # If you have enough resources to spawn a new warrior unit then spawn it.
         if state["resources"] >= self.constants["WARRIOR_PRICE"]:
             response.spawn_unit(UnitType.WARRIOR)

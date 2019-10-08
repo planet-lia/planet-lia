@@ -8,7 +8,7 @@ import core.api.*
  */
 class MyBot : Bot {
 
-    lateinit var constants: Constants
+    lateinit var constants: Constants 
 
     // Called only once before the match starts. It holds the
     // data that you may need before the game starts.
@@ -65,7 +65,7 @@ class MyBot : Bot {
         }
     }
 
-    // Connects your bot to Lia game engine, don't change it.
+    // Connects your bot to match generator, don't change it.
     companion object {
         @JvmStatic fun main(args: Array<String>) {
             NetworkingClient.connectNew(args, MyBot())

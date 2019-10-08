@@ -1,13 +1,14 @@
-# Java Default Bot #
+# Java Default Bot
 
-##### Build the project manually #####
+Starter Java bot implementation.
+
+## Setup and Run Bot Manually
 * ``` gradlew build ```
-* Check if it works: ``` java -jar build/libs/java-bot.jar ```
+* Check if it works: ``` java -jar build/libs/my-bot.jar ```
 
-##### Use in IntelliJ IDEA #####
-
-* Choose File->New->Project From Existing Sources
+### Use IntelliJ IDEA
+* Choose `File`  > `New` `Project From Existing Sources`
 * Follow the instructions
 * On the last screen check:
-    * Use auto-import
-    * Use gradle 'wrapper' task configuration
+    * `Use auto-import`
+    * `Use gradle 'wrapper' task configuration`

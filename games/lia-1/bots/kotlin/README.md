@@ -1,13 +1,14 @@
-# Kotlin Default Bot #
+# Kotlin Bot
 
-##### Build the project manually #####
+Kotlin bot for Lia 1 game.
+
+## Setup and Run Bot Manually
 * ``` gradlew build ```
-* Check if it works: ``` java -jar build/libs/kotlin-bot.jar ```
+* Check if it works: ``` java -jar build/libs/my-bot.jar ```
 
-##### Use in IntelliJ IDEA #####
-
-* Choose File->New->Project From Existing Sources
+### Use IntelliJ IDEA
+* Choose `File`  > `New` `Project From Existing Sources`
 * Follow the instructions
 * On the last screen check:
-    * Use auto-import
-    * Use gradle 'wrapper' task configuration
+    * `Use auto-import`
+    * `Use gradle 'wrapper' task configuration`
