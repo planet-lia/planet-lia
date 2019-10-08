@@ -1,8 +1,5 @@
-import core.Bot;
-import core.NetworkingClient;
-import core.api.Response;
-import core.api.InitialData;
-import core.api.MatchState;
+import core.*;
+import core.api.*;
 
 /**
  * The default Java bot implementation that is not specific
