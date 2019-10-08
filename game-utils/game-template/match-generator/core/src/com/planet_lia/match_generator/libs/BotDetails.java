@@ -2,7 +2,7 @@ package com.planet_lia.match_generator.libs;
 
 public class BotDetails {
     String botName;
-    String token;
+    transient String token;
     int teamIndex = -1;
     BotDetailsAdditional additional;
 

@@ -36,6 +36,16 @@ public class DesktopLauncher {
         GameConfig gameConfig = GameConfig.load();
         GeneralConfig generalConfig = gameConfig.generalConfig;
 
+        // Increase bot restrictions if it is debug mode
+        if (parsedArgs.debug) {
+            int largeNumber = 100000000;
+            generalConfig.connectingBotsTimeout = largeNumber;
+            generalConfig.botFirstResponseTimeout = largeNumber;
+            generalConfig.botResponseTimeout = largeNumber;
+            generalConfig.maxTimeoutsPerBot = largeNumber;
+            generalConfig.botResponseTotalDurationMax = largeNumber;
+        }
+
         // Setup match generator
         BotDetails[] botsDetails = parsedArgs.getBotsDetails(gameConfig.generalConfig);
         MatchGenerator game =  new MatchGenerator(parsedArgs, gameConfig, botsDetails);

@@ -103,7 +103,6 @@ class BotServerTest {
 
         BotDetails[] botsDetails = argsToBotDetails(config,"b1", "t1", "{}", "b2", "t2", "{}");
 
-
         BotServer server = new BotServer(config, timer, port, botsDetails);
         server.start();
 
@@ -114,19 +113,21 @@ class BotServerTest {
         assertDoesNotThrow(server::waitForBotsToConnect);
 
         server.sendToAll("{\"a\":\"request\"}", INITIAL);
-        bot1.send("{\"a\":\"response1\"}");
-        bot2.send("{\"a\":\"response2\"}");
+        bot1.send("{\"a\":\"response1\",\"__uid\":0}");
+        bot2.send("{\"a\":\"response2\",\"__uid\":0}");
 
         // Test if the response was received
         server.waitForBotsToRespond();
         assertTrue(bot1.receivedData.contains(
-                injectGeneralFieldsToJsonData("{\"a\":\"request\"}", INITIAL, botsDetails)
+                injectGeneralFieldsToJsonData("{\"a\":\"request\"}", INITIAL, 0,
+                        new MatchDetails(botsDetails, 0))
         ));
         assertTrue(bot2.receivedData.contains(
-                injectGeneralFieldsToJsonData("{\"a\":\"request\"}", INITIAL, botsDetails)
+                injectGeneralFieldsToJsonData("{\"a\":\"request\"}", INITIAL, 0,
+                        new MatchDetails(botsDetails, 1))
         ));
-        assertEquals("{\"a\":\"response1\"}", server.getLastResponseData(0));
-        assertEquals("{\"a\":\"response2\"}", server.getLastResponseData(1));
+        assertEquals("{\"a\":\"response1\",\"__uid\":0}", server.getLastResponseData(0));
+        assertEquals("{\"a\":\"response2\",\"__uid\":0}", server.getLastResponseData(1));
         assertEquals(0, server.getNumberOfTimeouts(0));
         assertEquals(0, server.getNumberOfTimeouts(1));
         assertFalse(server.isDisqualified(0));
@@ -185,7 +186,7 @@ class BotServerTest {
         assertEquals(-1f, server.getDisqualificationTime(0));
         assertEquals(1f, server.getDisqualificationTime(1));
         assertTrue(server.getDisqualificationReason(1).length() > 0);
-        assertFalse(server.allBotsDisqualified());
+        assertFalse(server.areAllBotsDisqualified());
 
         // Both bots disqualified
         timer.time += 1;
@@ -199,7 +200,7 @@ class BotServerTest {
         assertTrue(server.isDisqualified(1));
         assertEquals(2f, server.getDisqualificationTime(0));
         assertEquals(1f, server.getDisqualificationTime(1));
-        assertTrue(server.allBotsDisqualified());
+        assertTrue(server.areAllBotsDisqualified());
 
         server.stop();
     }
@@ -247,32 +248,34 @@ class BotServerTest {
 
         // First exchange
         server.sendToAll("{\"a\":\"request1\"}", INITIAL);
-        bot1.send("{\"a\":\"response1\"}");
-        bot2.send("{\"a\":\"response2\"}");
+        bot1.send("{\"a\":\"response1\",\"__uid\":0}");
+        bot2.send("{\"a\":\"response2\",\"__uid\":0}");
         server.waitForBotsToRespond();
 
         // Second exchange
         server.sendToAll("{\"a\":\"request2\"}", UPDATE);
-        bot1.send("{\"a\":\"response3\"}");
-        bot2.send("{\"a\":\"response4\"}");
+        bot1.send("{\"a\":\"response3\",\"__uid\":1}");
+        bot2.send("{\"a\":\"response4\",\"__uid\":1}");
         server.waitForBotsToRespond();
 
         assertBotListenerContains(
-                listener, "{\"a\":\"request1\"}", MATCH_GENERATOR, 0, INITIAL, botsDetails);
+                listener, "{\"a\":\"request1\"}", MATCH_GENERATOR, 0, INITIAL, 0,
+                new MatchDetails(botsDetails, 0));
         assertBotListenerContains(
-                listener, "{\"a\":\"request1\"}", MATCH_GENERATOR, 1, INITIAL, botsDetails);
+                listener, "{\"a\":\"request1\"}", MATCH_GENERATOR, 1, INITIAL, 0,
+                new MatchDetails(botsDetails, 1));
         assertBotListenerContains(
-                listener, "{\"a\":\"response1\"}", BOT, 0, null, null);
+                listener, "{\"a\":\"response1\"}", BOT, 0, null, 0, null);
         assertBotListenerContains(
-                listener, "{\"a\":\"response2\"}", BOT, 1, null, null);
+                listener, "{\"a\":\"response2\"}", BOT, 1, null, 0, null);
         assertBotListenerContains(
-                listener, "{\"a\":\"request2\"}", MATCH_GENERATOR, 0, UPDATE, null);
+                listener, "{\"a\":\"request2\"}", MATCH_GENERATOR, 0, UPDATE, 1, null);
         assertBotListenerContains(
-                listener, "{\"a\":\"request2\"}", MATCH_GENERATOR, 1, UPDATE, null);
+                listener, "{\"a\":\"request2\"}", MATCH_GENERATOR, 1, UPDATE, 1, null);
         assertBotListenerContains(
-                listener, "{\"a\":\"response3\"}", BOT, 0, null, null);
+                listener, "{\"a\":\"response3\"}", BOT, 0, null, 1, null);
         assertBotListenerContains(
-                listener, "{\"a\":\"response4\"}", BOT, 1, null, null);
+                listener, "{\"a\":\"response4\"}", BOT, 1, null, 1, null);
 
         server.stop();
     }
@@ -282,12 +285,13 @@ class BotServerTest {
                                            MessageSender sender,
                                            int botIndex,
                                            BotMessageType msgType,
-                                           BotDetails[] botsDetails) {
+                                           int uid,
+                                           MatchDetails matchDetails) {
         assertTrue(botListener.receivedData.contains(
                 BotListener.createMessage(
                         sender,
                         botIndex,
-                        injectGeneralFieldsToJsonData(msg, msgType, botsDetails))));
+                        injectGeneralFieldsToJsonData(msg, msgType, uid, matchDetails))));
     }
 
     @Test

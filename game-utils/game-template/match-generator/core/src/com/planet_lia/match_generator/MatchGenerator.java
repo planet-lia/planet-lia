@@ -41,14 +41,14 @@ public class MatchGenerator extends ApplicationAdapter {
 
     GameLogic gameLogic;
 
-    public MatchGenerator(Args args, GameConfig gameConfig, BotDetails[] botsDetails) {
+    public MatchGenerator(Args args, GameConfig gameConfig, BotDetails[] botsDetails) throws Exception {
         this.args = args;
         this.gameConfig = gameConfig;
         this.botsDetails = botsDetails;
         generalConfig = gameConfig.generalConfig;
 
         server = new BotServer(generalConfig, timer, args.port, botsDetails);
-        //server.waitForBotsToConnect();
+        server.waitForBotsToConnect();
 
         gameLogic = new GameLogic(args, gameConfig, botsDetails, server);
     }

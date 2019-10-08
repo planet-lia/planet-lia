@@ -188,7 +188,7 @@ public class BotServer {
         }
 
         BotDetails[] botsDetails = (type == BotMessageType.INITIAL) ? this.botsDetails : null;
-        data = injectGeneralFieldsToJsonData(data, type, botsDetails);
+        data = injectGeneralFieldsToJsonData(data, type, currentRequestIndex, new MatchDetails(botsDetails, botIndex));
 
         bot.currentRequestIndex = currentRequestIndex;
         bot.currentRequestTime = System.currentTimeMillis();
@@ -251,18 +251,20 @@ public class BotServer {
     /**
      * Injects __type field as well as __competitionMatchDetails field if the bot message is
      * of INITIAL type.
-     * @param data - json data as string
-     * @param type - type of the message
-     * @param botsDetails - list of BotDetails, if null the field will be skipped
+     * @param data json data as string
+     * @param type type of the message
+     * @param uid id of the request
+     * @param matchDetails M
      * @return json data string with injected fields
      */
-    static String injectGeneralFieldsToJsonData(String data, BotMessageType type, BotDetails[] botsDetails) {
+    static String injectGeneralFieldsToJsonData(String data, BotMessageType type, int uid, MatchDetails matchDetails) {
         return data.substring(0, data.length() - 1)
                 + ((type != null)
                     ? ",\"__type\":" + "\"" + type.toString() + "\""
                     : "")
-                + ((botsDetails != null)
-                    ? ",\"__competitionMatchDetails\":"  + (new Gson()).toJson(botsDetails)
+                + ",\"__uid\":" + uid
+                + ((matchDetails != null)
+                    ? ",\"__matchDetails\":"  + (new Gson()).toJson(matchDetails)
                     : "")
                 + "}";
     }
@@ -287,7 +289,7 @@ public class BotServer {
         return bots.get(botIndex).lastResponseData;
     }
 
-    public boolean allBotsDisqualified() {
+    public boolean areAllBotsDisqualified() {
         for (BotConnection bot : bots) {
             if (!bot.disqualified) {
                 return false;
