@@ -28,7 +28,7 @@ public class BotServer {
 
     private ArrayList<BotConnection> bots;
     private BotListener botListener;
-    private LogsStage logsStage;
+    private DebugGuiStage debugGuiStage;
 
     private int currentRequestIndex = 0;
 
@@ -65,8 +65,8 @@ public class BotServer {
         System.out.println("Bot server started on port " + server.getPort());
     }
 
-    public void setLogsStage(LogsStage logsStage) {
-        this.logsStage = logsStage;
+    public void setDebugGuiStage(DebugGuiStage debugGuiStage) {
+        this.debugGuiStage = debugGuiStage;
     }
 
     /**
@@ -197,8 +197,8 @@ public class BotServer {
         if (botListener != null) {
             botListener.send(MessageSender.MATCH_GENERATOR, botIndex, data);
         }
-        if (logsStage != null) {
-            logsStage.addLog(botIndex, MessageSender.MATCH_GENERATOR, data);
+        if (debugGuiStage != null) {
+            debugGuiStage.addLog(botIndex, MessageSender.MATCH_GENERATOR, data);
         }
 
         // Set this after sending to botListener for better synchronicity
@@ -231,8 +231,8 @@ public class BotServer {
             botListener.send(MessageSender.BOT, bots.indexOf(bot), message);
         }
 
-        if (logsStage != null) {
-            logsStage.addLog(bots.indexOf(bot), MessageSender.BOT, message);
+        if (debugGuiStage != null) {
+            debugGuiStage.addLog(bots.indexOf(bot), MessageSender.BOT, message);
         }
 
         bot.lastResponseData = message;

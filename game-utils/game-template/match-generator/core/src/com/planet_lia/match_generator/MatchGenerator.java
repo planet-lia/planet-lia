@@ -12,6 +12,7 @@ import com.kotcrab.vis.ui.VisUI;
 import com.planet_lia.match_generator.libs.*;
 import com.planet_lia.match_generator.logic.Args;
 import com.planet_lia.match_generator.logic.GameConfig;
+import com.planet_lia.match_generator.logic.MatchTools;
 
 public class MatchGenerator extends ApplicationAdapter {
 
@@ -36,8 +37,9 @@ public class MatchGenerator extends ApplicationAdapter {
     Viewport logsViewport;
     Viewport controlsViewport;
 
-    LogsStage logsStage;
+    DebugGuiStage debugGuiStage;
     ControlsStage controlsStage;
+    EntityDetailsSystem entityDetailsSystem;
 
     GameLogic gameLogic;
 
@@ -48,39 +50,39 @@ public class MatchGenerator extends ApplicationAdapter {
         generalConfig = gameConfig.generalConfig;
 
         server = new BotServer(generalConfig, timer, args.port, botsDetails);
-        server.waitForBotsToConnect();
-
-        gameLogic = new GameLogic(args, gameConfig, botsDetails, server);
+        //server.waitForBotsToConnect();
     }
 
     @Override
     public void create() {
+        // Create game camera and viewport
+        gameViewport = new FitViewport(gameConfig.cameraViewWidth, gameConfig.cameraViewHeight, gameCamera);
+        centerCamera(gameCamera, gameViewport);
+
+        // Create logs camera and viewport
+        logsViewport = new FitViewport(getLogsViewWidth(), Gdx.graphics.getHeight(), logsCamera);
+        centerCamera(logsCamera, logsViewport);
+
+        // Create controls camera and viewport
+        controlsViewport = new FitViewport(getGameViewWidth(), getControlsViewHeight(), controlsCamera);
+        centerCamera(controlsCamera, controlsViewport);
+
         if (args.debug) {
             VisUI.load();
 
-            // Create game camera and viewport
-            gameViewport = new FitViewport(gameConfig.mapWidth, gameConfig.mapHeight, gameCamera);
-            centerCamera(gameCamera, gameViewport);
-
-            // Create logs camera and viewport
-            logsViewport = new FitViewport(getLogsViewWidth(), Gdx.graphics.getHeight(), logsCamera);
-            centerCamera(logsCamera, logsViewport);
-
-            // Create controls camera and viewport
-            controlsViewport = new FitViewport(getGameViewWidth(), getControlsViewHeight(), controlsCamera);
-            centerCamera(controlsCamera, controlsViewport);
-
-            logsStage = new LogsStage(logsViewport, botsDetails);
+            debugGuiStage = new DebugGuiStage(logsViewport, botsDetails, generalConfig);
             controlsStage = new ControlsStage(controlsViewport, timer);
 
+            entityDetailsSystem = new EntityDetailsSystem(gameViewport, debugGuiStage);
+
             // Set input processor
-            InputMultiplexer mx = new InputMultiplexer(logsStage, controlsStage);
+            InputMultiplexer mx = new InputMultiplexer(debugGuiStage, controlsStage, entityDetailsSystem);
             Gdx.input.setInputProcessor(mx);
 
-            gameLogic.setupGraphics();
-
-            server.setLogsStage(logsStage);
+            server.setDebugGuiStage(debugGuiStage);
         }
+
+        gameLogic = new GameLogic(new MatchTools(args, gameConfig, botsDetails, server, gameViewport, entityDetailsSystem));
     }
 
     private void centerCamera(Camera camera, Viewport viewport) {
@@ -88,7 +90,7 @@ public class MatchGenerator extends ApplicationAdapter {
         camera.position.y = viewport.getWorldHeight() * 0.5f;
     }
 
-    float carry = 0;
+    private float carry = 0;
 
     @Override
     public void render() {
@@ -108,6 +110,8 @@ public class MatchGenerator extends ApplicationAdapter {
             }
             carry = updatesPerDraw + carry - (int) updatesPerDraw;
             carry -= (int) carry;
+
+            entityDetailsSystem.update();
 
             // Render the scene every render call
             draw();
@@ -153,13 +157,13 @@ public class MatchGenerator extends ApplicationAdapter {
         // Draw game
         gameCamera.update();
         gameViewport.apply();
-        gameLogic.draw(gameCamera, gameViewport);
+        gameLogic.draw();
 
         // Draw logs view
         logsCamera.update();
         logsViewport.apply();
-        logsStage.act();
-        logsStage.draw();
+        debugGuiStage.act();
+        debugGuiStage.draw();
 
         // Draw controls
         controlsCamera.update();
@@ -184,6 +188,7 @@ public class MatchGenerator extends ApplicationAdapter {
     @Override
     public void dispose() {
         if (args.debug) {
+            gameLogic.dispose();
             VisUI.dispose();
         }
     }
