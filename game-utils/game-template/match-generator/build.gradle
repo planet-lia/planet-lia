@@ -30,6 +30,7 @@ allprojects {
         gsonVersion = '2.8.5'
         visuiVersion = '1.4.2'
         junitVersion = '5.3.1'
+        gdxUtilsVersion = '0.13.4'
     }
 
     repositories {
@@ -51,6 +52,7 @@ project(":desktop") {
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
         compile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
     }
 }
 
@@ -70,6 +72,9 @@ project(":core") {
         compile "org.java-websocket:Java-WebSocket:$javaWebSocketVersion"
         implementation "com.google.code.gson:gson:$gsonVersion"
         compile "com.kotcrab.vis:vis-ui:$visuiVersion"
+        compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+        compile "net.dermetfan.libgdx-utils:libgdx-utils:$gdxUtilsVersion"
+        compile "net.dermetfan.libgdx-utils:libgdx-utils-box2d:$gdxUtilsVersion"
 
         testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"

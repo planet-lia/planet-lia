@@ -14,6 +14,11 @@ public class DebugWindowConfig {
     public float logsToGameRatio;
 
     /**
+     * Sets the height of entity details panel
+     */
+    public float entityDetailsToScreenHeight;
+
+    /**
      * The ratio between the height of the controls
      * and the window height
      */

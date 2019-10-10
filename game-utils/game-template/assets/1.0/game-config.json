@@ -5,6 +5,7 @@
         "debugWindow": {
             "framesPerSecond": 30,
             "logsToGameRatio": 0.3,
+            "entityDetailsToScreenHeight": 0.3,
             "controlsToWindowHeightRatio": 0.08
         },
         "ticksPerSecond": 10,
@@ -19,6 +20,7 @@
             {"format": "1:1:1:1", "weight": 1}
         ]
     },
-    "mapWidth": 192,
-    "mapHeight": 108
+    "cameraViewWidth": 192,
+    "cameraViewHeight": 108,
+    "defaultFontSize": 10
 }
