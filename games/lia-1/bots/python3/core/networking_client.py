@@ -8,16 +8,12 @@ from core.response import Response
 
 async def connect(bot):
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--port", help="Identification token with which bot can connect", required=False)
-    parser.add_argument("-t", "--token", help="Port of match generator to which to connect", required=False)
+    parser.add_argument("-p", "--port", help="Port of match generator to which to connect", required=False, default="8887")
+    parser.add_argument("-t", "--token", help="Identification token with which bot can connect", required=False, default="_")
+    parser.add_argument("-a", "--host", help="Hostname of match generator", required=False, default="localhost")
     args = parser.parse_args()
 
-    if args.port is None:
-        args.port = "8887"
-    if args.token is None:
-        args.token = "_"
-
-    async with websockets.connect("ws://localhost:" + args.port, extra_headers={'token': args.token}) as websocket:
+    async with websockets.connect("ws://{}:{}".format(args.host, args.port), extra_headers={'token': args.token}) as websocket:
         try:
             while True:
                 message = await websocket.recv()
