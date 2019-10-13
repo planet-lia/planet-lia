@@ -37,7 +37,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Run tests
-        run: make -C ./backend/core test
+      run: make -C ./backend/core test
     - name: Build Docker Image
       run: make -C ./backend/core docker
     - name: Docker login
