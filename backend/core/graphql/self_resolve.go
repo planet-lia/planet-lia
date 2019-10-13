@@ -16,7 +16,7 @@ func Query(ctx context.Context, query string) (map[string]interface{}, error) {
 	params := graphql.Params{Schema: Schema, RequestString: query, Context: ctx}
 	res := graphql.Do(params)
 	if len(res.Errors) > 0 {
-		logging.Error(ctx, "Failed to marshal GraphQL response as JSON", logrus.Fields{"error": res.Errors})
+		logging.ErrorC(ctx, "Failed to marshal GraphQL response as JSON", logrus.Fields{"error": res.Errors})
 		return nil, queryErrFailedToExec
 	}
 

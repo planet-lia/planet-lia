@@ -64,13 +64,13 @@ func graphqlMiddleware(next http.Handler) http.Handler {
 
 		bodyRaw, err := ioutil.ReadAll(reader1)
 		if err != nil {
-			logging.Error(r.Context(), "Failed to read request body", logrus.Fields{"error": err})
+			logging.ErrorC(r.Context(), "Failed to read request body", logrus.Fields{"error": err})
 			sendFailureResponse(&w, "internal server error", http.StatusInternalServerError)
 			return
 		}
 		r.Body.Close()
 
-		logging.Info(r.Context(), "Log query", logrus.Fields{"query": string(bodyRaw)})
+		logging.InfoC(r.Context(), "Log query", logrus.Fields{"query": string(bodyRaw)})
 
 		next.ServeHTTP(w, r)
 	})

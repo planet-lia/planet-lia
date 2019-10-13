@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"github.com/planet-lia/planet-lia/backend/core/logging"
+	"github.com/planet-lia/planet-lia/backend/core/onlineEditor"
+	"github.com/planet-lia/planet-lia/backend/core/redis"
 	"github.com/planet-lia/planet-lia/backend/core/server"
 	"github.com/planet-lia/planet-lia/backend/core/version"
 	"github.com/sirupsen/logrus"
@@ -12,6 +15,7 @@ import (
 	"os/signal"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var (
@@ -31,15 +35,26 @@ var rootCmd = &cobra.Command{
 		logrus.WithFields(viper.AllSettings()).Info("Config")
 
 		serverShutdown := make(chan bool)
+		editorShutdown := make(chan bool)
 
 		sig := make(chan os.Signal, 1)
 		signal.Notify(sig, os.Interrupt)
 		go func() {
 			for range sig {
-				logrus.Info("Shutting down server")
+				logging.Info("Shutting down server", logging.EmptyFields)
 				serverShutdown <- true
+				editorShutdown <- true
+
+				logging.Info("Closing Redis client connection", logging.EmptyFields)
+				redis.ClientClose(redis.Client)
 			}
 		}()
+
+		// Create Redis client
+		redis.Client = redis.NewClient()
+
+		// Online editor garbage collector
+		go onlineEditor.GarbageCollector(time.Second * 60, editorShutdown)
 
 		// Start HTTP server
 		server.Start(serverShutdown)
@@ -47,15 +62,22 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.Flags().BoolVar(&verbose, "verbose", false, "verbose logging")
-	rootCmd.Flags().BoolVar(&logJson, "log-json", true, "log output will be formatted in JSON")
+	rootCmd.Flags().BoolVar(&verbose, "verbose", false, "Verbose logging")
+	rootCmd.Flags().BoolVar(&logJson, "log-json", true, "Log output will be formatted in JSON")
 
 	const defaultPort = 8080
-	rootCmd.Flags().IntVarP(&port, "port", "p", defaultPort, "HTTP Server Port")
-	rootCmd.Flags().IPVarP(&bindIP, "http-bind", "b", net.IPv4(0, 0, 0, 0), "bind HTTP server to IP")
+	rootCmd.Flags().IntVarP(&port, "port", "p", defaultPort, "HTTP server port")
+	rootCmd.Flags().IPVarP(&bindIP, "http-bind", "b", net.IPv4(0, 0, 0, 0), "Bind HTTP server to IP")
 	rootCmd.Flags().String("url", "http://127.0.0.1:"+strconv.Itoa(defaultPort), "")
 
 	rootCmd.Flags().Bool("graphiql", true, "Enable GraphiQL (GraphQL web IDE)")
+
+	rootCmd.Flags().String("redis-host", "localhost", "Redis Server hostname")
+	rootCmd.Flags().Int("redis-port", 6379, "Redis server port")
+	rootCmd.Flags().Int("redis-db", 0, "Redis server database")
+	rootCmd.Flags().String("redis-password", "", "Redis server password")
+
+	rootCmd.Flags().String("jwt-internal", "foo", "Internal JWT secret token")
 
 	envPrefix := "LIA"
 	viper.SetEnvPrefix(envPrefix)
