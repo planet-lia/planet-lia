@@ -173,7 +173,7 @@ func DisableExpirationMatchState(ctx context.Context, id MatchId) error {
 func GetMatchBot(ctx context.Context, id MatchId, bot string) (string, error) {
 	logging.InfoC(ctx, "Getting online editor match bot", logrus.Fields{"matchId": id, "bot": bot})
 
-	r := redis.Client.HGet(submitDataKey(id), bot)
+	r := redis.Client.HGet(submitDataKey(id), bot + ".source")
 	if r.Err() != nil {
 		return "", errors.Wrap(r.Err(), "failed to get bot field")
 	}

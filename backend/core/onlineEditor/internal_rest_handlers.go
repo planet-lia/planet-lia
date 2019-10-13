@@ -1,6 +1,7 @@
 package onlineEditor
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
@@ -40,8 +41,16 @@ func matchBotHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	sourceDecoded, err := base64.StdEncoding.DecodeString(source)
+	if err != nil {
+		logging.WarningC(ctx, "Failed to decode bot source", logrus.Fields{"error": err, "matchId": mId,
+			"bot": bot})
+		sendFailureResponse(&w, "500 - Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(source))
+	w.Write(sourceDecoded)
 }
 
 func matchStateHandler(w http.ResponseWriter, r *http.Request) {
