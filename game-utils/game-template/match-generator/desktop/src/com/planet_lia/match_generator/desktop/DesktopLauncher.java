@@ -16,7 +16,7 @@ public class DesktopLauncher {
 
     public static void main (String[] arg) throws Exception {
         // TODO replace with real arguments
-        String[] args = new String[]{"-d", "b1", "t1", "{}", "b2", "t2", "{}", "b3", "t3", "{}", "b4", "t4", "{}"};
+        String[] args = new String[]{"-d", "b1", "_", "{}", "b2", "_", "{}"};
 
         // Parse arguments
         Args parsedArgs = new Args();
@@ -33,8 +33,8 @@ public class DesktopLauncher {
         }
 
         // Load configs
-        GameConfig gameConfig = GameConfig.load();
-        GeneralConfig generalConfig = gameConfig.generalConfig;
+        GameConfig.load();
+        GeneralConfig generalConfig = GameConfig.values.general;
 
         // Increase bot restrictions if it is debug mode
         if (parsedArgs.debug) {
@@ -47,8 +47,8 @@ public class DesktopLauncher {
         }
 
         // Setup match generator
-        BotDetails[] botsDetails = parsedArgs.getBotsDetails(gameConfig.generalConfig);
-        MatchGenerator game =  new MatchGenerator(parsedArgs, gameConfig, botsDetails);
+        BotDetails[] botsDetails = parsedArgs.getBotsDetails(GameConfig.values.general);
+        MatchGenerator game =  new MatchGenerator(parsedArgs, botsDetails);
 
         if (parsedArgs.debug) {
             // Run with debug view
@@ -68,12 +68,20 @@ public class DesktopLauncher {
             config.useVsync(false);
             config.setTitle(generalConfig.gameNamePretty);
             config.setResizable(false);
-            new Lwjgl3Application(game, config);
+            try {
+                new Lwjgl3Application(game, config);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             // Run headless application
             HeadlessApplicationConfiguration config = new HeadlessApplicationConfiguration();
             config.renderInterval = 0f;
-            new HeadlessApplication(game, config);
+            try {
+                new HeadlessApplication(game, config);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

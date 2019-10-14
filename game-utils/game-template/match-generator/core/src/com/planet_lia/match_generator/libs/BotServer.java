@@ -1,7 +1,10 @@
 package com.planet_lia.match_generator.libs;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.planet_lia.match_generator.libs.BotListener.MessageSender;
+import com.planet_lia.match_generator.logic.api.commands.BotCommandDeserializer;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -32,6 +35,9 @@ public class BotServer {
 
     private int currentRequestIndex = 0;
 
+    private Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
+    private Gson gson;
+
     public BotServer(GeneralConfig generalConfig,
                      Timer gameTimer,
                      int port,
@@ -51,7 +57,7 @@ public class BotServer {
 
         bots = prepareBotConnections(botsDetails);
 
-        // Only create bot listener if botListenerToken is ""
+        // Only create bot listener if botListenerToken is not DEFAULT_BOT_LISTENER_TOKEN
         if (!botListenerToken.equals(DEFAULT_BOT_LISTENER_TOKEN)) {
             botListener = new BotListener(botListenerToken);
         }
@@ -63,6 +69,15 @@ public class BotServer {
     public void start() {
         server.start();
         System.out.println("Bot server started on port " + server.getPort());
+    }
+
+    /**
+     * Registers bot commands so that BotServer knows how to parse them from JSON
+     * @param supportedBotCommandsClasses - array of Class objects for all supported bot commands
+     */
+    public void registerBotCommands(Class[] supportedBotCommandsClasses) {
+        BotCommandDeserializer serializer = new BotCommandDeserializer(supportedBotCommandsClasses);
+        gson = new GsonBuilder().registerTypeAdapter(BotCommand.class, serializer).create();
     }
 
     public void setDebugGuiStage(DebugGuiStage debugGuiStage) {
@@ -152,11 +167,11 @@ public class BotServer {
 
     /**
      * Send data to all bots
-     * @param data - data as json string
+     * @param message - ApiMessage object
      */
-    public void sendToAll(String data, BotMessageType type) {
+    public void sendToAll(ApiMessage message) {
         for (int i = 0; i < bots.size(); i++) {
-            send(i, data, type);
+            send(i, message);
         }
     }
 
@@ -164,16 +179,15 @@ public class BotServer {
      * Send data to a specific bot
      * @param botIndex - the index based on where it was provided to
      *                 the match-generator as a program argument
-     * @param data - data as json string
-     * @param type - what type of message is being sent
+     * @param message - ApiMessage object
      */
-    public void send(int botIndex, String data, BotMessageType type) {
+    public void send(int botIndex, ApiMessage message) {
         BotConnection bot = bots.get(botIndex);
 
         if (bot.disqualified) {
             return;
         }
-        if (type == BotMessageType.INITIAL) {
+        if (message.__type == BotMessageType.INITIAL) {
             if (!bot.initialMessageSent) {
                 bot.initialMessageSent = true;
             }
@@ -187,22 +201,28 @@ public class BotServer {
             return;
         }
 
-        BotDetails[] botsDetails = (type == BotMessageType.INITIAL) ? this.botsDetails : null;
-        data = injectGeneralFieldsToJsonData(data, type, currentRequestIndex, new MatchDetails(botsDetails, botIndex));
+        // Inject fields values
+        message.__uid = currentRequestIndex;
+        if (message.__type == BotMessageType.INITIAL) {
+            ((BaseInitialMessage) message).__matchDetails = new MatchDetails(this.botsDetails, botIndex);
+        }
+
+        String jsonData = gson.toJson(message);
 
         bot.currentRequestIndex = currentRequestIndex;
         bot.currentRequestTime = System.currentTimeMillis();
-        bot.connection.send(data);
 
         if (botListener != null) {
-            botListener.send(MessageSender.MATCH_GENERATOR, botIndex, data);
+            botListener.send(MessageSender.MATCH_GENERATOR, botIndex, message);
         }
         if (debugGuiStage != null) {
-            debugGuiStage.addLog(botIndex, MessageSender.MATCH_GENERATOR, data);
+            debugGuiStage.addLog(botIndex, MessageSender.MATCH_GENERATOR, gsonPretty.toJson(message));
         }
 
         // Set this after sending to botListener for better synchronicity
         bot.waitingResponse = true;
+
+        bot.connection.send(jsonData);
     }
 
     private void onMessage(WebSocket conn, String message) {
@@ -227,12 +247,25 @@ public class BotServer {
             return;
         }
 
+        BotResponse response;
+        try {
+            response = gson.fromJson(message, BotResponse.class);
+        } catch (Exception e) {
+            System.out.printf("Bot response for bot '%s' is not valid: %s\n", bot.details.botName, e.getMessage());
+            return;
+        }
+
+        if (response.__uid != currentRequestIndex) {
+            System.out.printf("Response from bot '%s' has incorrect index\n", bot.details.botName);
+            return;
+        }
+
         if (botListener != null) {
-            botListener.send(MessageSender.BOT, bots.indexOf(bot), message);
+            botListener.send(MessageSender.BOT, bots.indexOf(bot), gson.fromJson(message, JsonObject.class));
         }
 
         if (debugGuiStage != null) {
-            debugGuiStage.addLog(bots.indexOf(bot), MessageSender.BOT, message);
+            debugGuiStage.addLog(bots.indexOf(bot), MessageSender.BOT, gsonPretty.toJson(response));
         }
 
         bot.lastResponseData = message;
@@ -242,31 +275,10 @@ public class BotServer {
             disqualifyBot(bot, "bot used all available time");
         }
 
-        // Set this after sending to botListener for better synchronicity.
-        // It prevents from waitForBotsToRespond to finish before the
-        // data was sent to botListener
+        // Set this after all other actions for better synchronicity.
+        // It prevents from waitForBotsToRespond to finish before this
+        // response is applied
         bot.waitingResponse = false;
-    }
-
-    /**
-     * Injects __type field as well as __competitionMatchDetails field if the bot message is
-     * of INITIAL type.
-     * @param data json data as string
-     * @param type type of the message
-     * @param uid id of the request
-     * @param matchDetails M
-     * @return json data string with injected fields
-     */
-    static String injectGeneralFieldsToJsonData(String data, BotMessageType type, int uid, MatchDetails matchDetails) {
-        return data.substring(0, data.length() - 1)
-                + ((type != null)
-                    ? ",\"__type\":" + "\"" + type.toString() + "\""
-                    : "")
-                + ",\"__uid\":" + uid
-                + ((matchDetails != null)
-                    ? ",\"__matchDetails\":"  + (new Gson()).toJson(matchDetails)
-                    : "")
-                + "}";
     }
 
     public int getNumberOfTimeouts(int botIndex) {
@@ -285,8 +297,8 @@ public class BotServer {
         return bots.get(botIndex).disqualificationReason;
     }
 
-    public String getLastResponseData(int botIndex) {
-        return bots.get(botIndex).lastResponseData;
+    public <T> T getLastResponseData(int botIndex, Class<T> type) {
+        return gson.fromJson(bots.get(botIndex).lastResponseData, type);
     }
 
     public boolean areAllBotsDisqualified() {
@@ -301,9 +313,8 @@ public class BotServer {
     /**
      * Waits for all bots that received a request in this turn to respond or
      * timeout. Handles disqualifying bots if necessary.
-     * @throws InterruptedException
      */
-    public void waitForBotsToRespond() throws InterruptedException {
+    public void waitForBotsToRespond() {
         long startTime = System.currentTimeMillis();
         float timeout = (currentRequestIndex == 0)
                 ? generalConfig.botFirstResponseTimeout
@@ -315,7 +326,11 @@ public class BotServer {
             if (allBotsResponded()) {
                 break;
             }
-            Thread.sleep(0, 0);
+            try {
+                Thread.sleep(0, 0);
+            }  catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         // Handle bots that timed out
@@ -339,7 +354,7 @@ public class BotServer {
     }
 
     private void disqualifyBot(BotConnection bot, String reason) {
-        bot.disqualificationTime = gameTimer.time;
+        bot.disqualificationTime = gameTimer.getTime();
         bot.disqualified = true;
         bot.lastResponseData = null;
         bot.disqualificationReason = reason;
@@ -429,6 +444,7 @@ public class BotServer {
         };
         server.setReuseAddr(true);
         server.setTcpNoDelay(true);
+        server.setConnectionLostTimeout(0);
         return server;
     }
 }

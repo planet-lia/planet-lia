@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class GeneralConfigTest {
+class GeneralGameConfigTest {
     @Test
     void allowedNumbersOfBots() {
         GeneralConfig generalConfig = new GeneralConfig();

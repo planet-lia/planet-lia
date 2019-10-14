@@ -21,7 +21,7 @@ public class GeneralConfig {
     /**
      * How many game logic updates happen per second
      */
-    public int ticksPerSecond;
+    public int gameUpdatesPerSecond;
 
     /**
      * How long do bots have to connect (in seconds)

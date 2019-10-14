@@ -14,15 +14,16 @@ public class ControlsStage extends Stage {
     private VisTable mainTable = new VisTable();
     private VisTable centerContainer = new VisTable();
 
-    float speed = 1f;
-    float backupSpeed = speed;
+    float speed = 0f;
+    float backupSpeed = 1f;
 
     VisLabel timeLabel = new VisLabel(0.00 + "");
-    VisTextButton pauseResumeButton = new VisTextButton("Pause");
-    VisSlider speedSlider = new VisSlider(0.1f, 10, 0.1f, false);
-    VisLabel speedLabel = new VisLabel(speed + "x");
+    VisTextButton pauseResumeButton = new VisTextButton("Start");
+    VisSlider speedSlider = new VisSlider(0.1f, 20, 0.1f, false);
+    VisLabel speedLabel = new VisLabel(backupSpeed + "x");
+    VisTextButton maxSpeedButton = new VisTextButton("Fast forward");
 
-    boolean paused = false;
+    boolean paused = true;
 
 
     public ControlsStage(Viewport viewport, Timer timer) {
@@ -41,6 +42,7 @@ public class ControlsStage extends Stage {
         centerContainer.add(timeLabel).expandX();
         addPauseResumeButton();
         addSpeedControls();
+        addMaxSpeedButton();
     }
 
     private void addPauseResumeButton() {
@@ -73,7 +75,7 @@ public class ControlsStage extends Stage {
 
     private void addSpeedControls() {
         // Speed slider
-        speedSlider.setValue(speed);
+        speedSlider.setValue(backupSpeed);
         speedSlider.addListener(event -> {
             if (event instanceof InputEvent
                     && ((InputEvent) event).getType() == InputEvent.Type.touchDragged) {
@@ -92,4 +94,21 @@ public class ControlsStage extends Stage {
         // Speed label
         centerContainer.add(speedLabel);
     }
+
+    private void addMaxSpeedButton() {
+        maxSpeedButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (paused) {
+                    backupSpeed = speedSlider.getValue();
+                } else {
+                    speed = 100;
+                }
+                speedLabel.setText(("max"));
+            }
+        });
+
+        centerContainer.add(maxSpeedButton).expandX();
+    }
+
 }

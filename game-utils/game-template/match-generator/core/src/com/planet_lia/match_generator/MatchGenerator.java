@@ -4,8 +4,10 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.kotcrab.vis.ui.VisUI;
@@ -17,8 +19,6 @@ import com.planet_lia.match_generator.logic.MatchTools;
 public class MatchGenerator extends ApplicationAdapter {
 
     Args args;
-    GameConfig gameConfig;
-    GeneralConfig generalConfig;
     BotDetails[] botsDetails;
 
     Timer timer = new Timer();
@@ -29,9 +29,9 @@ public class MatchGenerator extends ApplicationAdapter {
     FPSLimiter fpsLimiter = new FPSLimiter();
     boolean isFirstUpdate = true;
 
-    Camera gameCamera = new OrthographicCamera();
-    Camera logsCamera  = new OrthographicCamera();
-    Camera controlsCamera  = new OrthographicCamera();
+    OrthographicCamera gameCamera = new OrthographicCamera();
+    OrthographicCamera logsCamera  = new OrthographicCamera();
+    OrthographicCamera controlsCamera  = new OrthographicCamera();
 
     Viewport gameViewport;
     Viewport logsViewport;
@@ -43,21 +43,25 @@ public class MatchGenerator extends ApplicationAdapter {
 
     GameLogic gameLogic;
 
-    public MatchGenerator(Args args, GameConfig gameConfig, BotDetails[] botsDetails) throws Exception {
-        this.args = args;
-        this.gameConfig = gameConfig;
-        this.botsDetails = botsDetails;
-        generalConfig = gameConfig.generalConfig;
+    ShapeRenderer shapeRenderer;
 
-        server = new BotServer(generalConfig, timer, args.port, botsDetails);
-        //server.waitForBotsToConnect();
+    public MatchGenerator(Args args, BotDetails[] botsDetails) throws Exception {
+        this.args = args;
+        this.botsDetails = botsDetails;
+
+        server = new BotServer(GameConfig.values.general, timer, args.port, botsDetails);
+        server.start();
+        server.waitForBotsToConnect();
     }
 
     @Override
     public void create() {
         // Create game camera and viewport
-        gameViewport = new FitViewport(gameConfig.cameraViewWidth, gameConfig.cameraViewHeight, gameCamera);
-        centerCamera(gameCamera, gameViewport);
+        if (GameConfig.values.cameraViewWidth / GameConfig.values.cameraViewHeight != 16/9f) {
+            throw new Error("cameraViewWidth / cameraViewHeight should be in 16/9 ratio");
+        }
+        gameViewport = new FitViewport(GameConfig.values.cameraViewWidth, GameConfig.values.cameraViewHeight, gameCamera);
+        // gameCamera is be positioned in GameLogic
 
         // Create logs camera and viewport
         logsViewport = new FitViewport(getLogsViewWidth(), Gdx.graphics.getHeight(), logsCamera);
@@ -69,8 +73,9 @@ public class MatchGenerator extends ApplicationAdapter {
 
         if (args.debug) {
             VisUI.load();
+            shapeRenderer = new ShapeRenderer();
 
-            debugGuiStage = new DebugGuiStage(logsViewport, botsDetails, generalConfig);
+            debugGuiStage = new DebugGuiStage(logsViewport, botsDetails, GameConfig.values.general);
             controlsStage = new ControlsStage(controlsViewport, timer);
 
             entityDetailsSystem = new EntityDetailsSystem(gameViewport, debugGuiStage);
@@ -82,7 +87,7 @@ public class MatchGenerator extends ApplicationAdapter {
             server.setDebugGuiStage(debugGuiStage);
         }
 
-        gameLogic = new GameLogic(new MatchTools(args, gameConfig, botsDetails, server, gameViewport, entityDetailsSystem));
+        gameLogic = new GameLogic(new MatchTools(args, botsDetails, server, gameViewport, entityDetailsSystem));
     }
 
     private void centerCamera(Camera camera, Viewport viewport) {
@@ -94,19 +99,22 @@ public class MatchGenerator extends ApplicationAdapter {
 
     @Override
     public void render() {
-        float delta = getDelta();
+        double delta = getDelta();
 
         if (args.debug) {
-            float logicFps = generalConfig.ticksPerSecond * controlsStage.getSpeed();
-            float drawFps = generalConfig.debugWindow.framesPerSecond;
+            float logicFps = GameConfig.values.general.gameUpdatesPerSecond * controlsStage.getSpeed();
+            float drawFps = GameConfig.values.general.debugWindow.framesPerSecond;
             float updatesPerDraw = logicFps / drawFps;
 
             // Adjust how many times update logic is called based on the
             // default ticks per second of the match, taking in consideration
             // custom speed of the game and interval of drawing match to the screen
             for (int i = 1; i <= updatesPerDraw + carry; i++) {
-                timer.time += delta;
-                gameLogic.update(timer, delta);
+                timer.add(delta);
+                gameLogic.update(timer, (float) delta);
+                if (isFirstUpdate) {
+                    isFirstUpdate = false;
+                }
             }
             carry = updatesPerDraw + carry - (int) updatesPerDraw;
             carry -= (int) carry;
@@ -115,51 +123,59 @@ public class MatchGenerator extends ApplicationAdapter {
 
             // Render the scene every render call
             draw();
-            controlsStage.setTime(timer.time);
-            fpsLimiter.sync(generalConfig.debugWindow.framesPerSecond);
+            controlsStage.setTime(timer.getTime());
+            fpsLimiter.sync(GameConfig.values.general.debugWindow.framesPerSecond);
         }
         else {
-            timer.time += delta;
-            gameLogic.update(timer, delta);
+            timer.add(delta);
+            gameLogic.update(timer, (float) delta);
+            if (isFirstUpdate) {
+                isFirstUpdate = false;
+            }
         }
     }
 
     private int getLogsViewWidth() {
-        return gameConfig.generalConfig.debugWindow.getLogsViewWidth(Gdx.graphics.getHeight());
+        return GameConfig.values.general.debugWindow.getLogsViewWidth(Gdx.graphics.getHeight());
     }
 
     private int getGameViewWidth() {
-        return gameConfig.generalConfig.debugWindow.getGameViewWidth(Gdx.graphics.getHeight());
+        return GameConfig.values.general.debugWindow.getGameViewWidth(Gdx.graphics.getHeight());
     }
 
     private int getControlsViewHeight() {
-        return gameConfig.generalConfig.debugWindow.getControlsViewHeight(Gdx.graphics.getHeight());
+        return GameConfig.values.general.debugWindow.getControlsViewHeight(Gdx.graphics.getHeight());
     }
 
     private int getGameViewHeight() {
-        return gameConfig.generalConfig.debugWindow.getGameViewHeight(Gdx.graphics.getHeight());
+        return GameConfig.values.general.debugWindow.getGameViewHeight(Gdx.graphics.getHeight());
     }
 
-    private float getDelta() {
+    private double getDelta() {
         if (isFirstUpdate) {
-            isFirstUpdate = false;
             return 0;
         }
-        return 1.0f / generalConfig.ticksPerSecond;
+        return 1.0 / GameConfig.values.general.gameUpdatesPerSecond;
     }
 
     private void draw() {
-        Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
+        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
-        // Draw game
+        // Draw game view
         gameCamera.update();
         gameViewport.apply();
+        // Draw black background below game view
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.BLACK);
+        shapeRenderer.rect(0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        shapeRenderer.end();
+        // Draw custom logic
         gameLogic.draw();
 
-        // Draw logs view
+        // Draw debug gui view
         logsCamera.update();
         logsViewport.apply();
         debugGuiStage.act();
@@ -181,7 +197,6 @@ public class MatchGenerator extends ApplicationAdapter {
             controlsViewport.update(getGameViewWidth(), getControlsViewHeight());
             logsViewport.update(getLogsViewWidth(), height);
             logsViewport.setScreenX(getGameViewWidth());
-
         }
     }
 
