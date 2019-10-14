@@ -25,6 +25,7 @@ type Match struct {
 	QueuePosition int
 	Bots []InputBot
 	Log string
+	ReplayUrl string
 	Status string
 	Created time.Time
 }
@@ -104,6 +105,13 @@ func GetMatch(ctx context.Context, id MatchId) (Match, error) {
 		match.Log = val
 	} else {
 		logging.ErrorC(ctx, "Failed to find online editor match key: log", logrus.Fields{"matchId": id})
+		return Match{}, MatchStateFailed{}
+	}
+
+	if val, ok := data["replayUrl"]; ok {
+		match.Log = val
+	} else {
+		logging.ErrorC(ctx, "Failed to find online editor match key: replayUrl", logrus.Fields{"matchId": id})
 		return Match{}, MatchStateFailed{}
 	}
 

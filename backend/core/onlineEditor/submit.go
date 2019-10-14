@@ -37,6 +37,7 @@ func Submit(ctx context.Context, game string, bots []InputBot) (MatchId, error) 
 
 	data["game"] = game
 	data["log"] = ""
+	data["replayUrl"] = ""
 	data["created"] = now.UnixNano()
 	data["status"] = MatchStatusQueued
 

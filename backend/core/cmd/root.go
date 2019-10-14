@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/planet-lia/planet-lia/backend/core/logging"
+	"github.com/planet-lia/planet-lia/backend/core/minio"
 	"github.com/planet-lia/planet-lia/backend/core/onlineEditor"
 	"github.com/planet-lia/planet-lia/backend/core/redis"
 	"github.com/planet-lia/planet-lia/backend/core/server"
@@ -32,7 +33,7 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		checkVerbose()
 		logrus.WithField("version", version.Ver.String()).Info("Running Planet Lia Backend")
-		logrus.WithFields(viper.AllSettings()).Info("Config")
+		logrus.WithFields(GetConfigsForLogging()).Info("Config")
 
 		serverShutdown := make(chan bool)
 		editorShutdown := make(chan bool)
@@ -56,6 +57,12 @@ var rootCmd = &cobra.Command{
 		// Online editor garbage collector
 		go onlineEditor.GarbageCollector(time.Second * 60, editorShutdown)
 
+		// Create Minio client
+		minio.Client = minio.NewClient()
+		if err := minio.InitialBuckets(minio.Client); err != nil {
+			logging.Fatal("Failed to create initial buckets", logrus.Fields{"error": err})
+		}
+
 		// Start HTTP server
 		server.Start(serverShutdown)
 	},
@@ -78,6 +85,12 @@ func init() {
 	rootCmd.Flags().String("redis-password", "", "Redis server password")
 
 	rootCmd.Flags().String("jwt-internal", "foo", "Internal JWT secret token")
+
+	rootCmd.Flags().String("minio-host", "localhost", "Minio host")
+	rootCmd.Flags().Int("minio-port", 9000, "Minio port")
+	rootCmd.Flags().String("minio-access-key", "admin", "Minio access key")
+	rootCmd.Flags().String("minio-secret-key", "password", "Minio secret key")
+	rootCmd.Flags().Bool("minio-ssl", true, "Use SSL when connecting to Minio")
 
 	envPrefix := "LIA"
 	viper.SetEnvPrefix(envPrefix)
@@ -111,4 +124,21 @@ func checkVerbose() {
 	if viper.GetBool("verbose") {
 		logrus.SetLevel(logrus.DebugLevel)
 	}
+}
+
+var secretConfigKeys = []string{"jwt-internal", "redis-password"}
+
+// Returns what viper.AllSettings() returns with the exception that keys which are in the slice `secretConfigKeys`
+// their value will be set to "<redacted>". This allows us to log the returned value without worrying about exposing
+// passwords in logs.
+func GetConfigsForLogging() map[string]interface{}{
+	c := viper.AllSettings()
+
+	for _, key := range secretConfigKeys {
+		if _, ok := c[key]; ok {
+			c[key] = "<redacted>"
+		}
+	}
+
+	return c
 }

@@ -8,6 +8,7 @@ require (
 	github.com/gorilla/mux v1.7.3
 	github.com/graphql-go/graphql v0.7.8
 	github.com/graphql-go/handler v0.2.3
+	github.com/minio/minio-go/v6 v6.0.39
 	github.com/pkg/errors v0.8.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.4.2

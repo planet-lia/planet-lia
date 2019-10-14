@@ -106,9 +106,12 @@ var onlineEditorMatchStateObject = graphql.NewObject(
 				Description: "URL of the replay file",
 				Type:        graphql.String,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-					// TODO
-					//m := p.Source.(onlineEditor.Match)
-					return nil, nil
+					m := p.Source.(onlineEditor.Match)
+					url := m.ReplayUrl
+					if url == "" {
+						return nil, nil
+					}
+					return url, nil
 				},
 			},
 			"game": &graphql.Field{

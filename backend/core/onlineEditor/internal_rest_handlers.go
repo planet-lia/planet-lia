@@ -1,13 +1,16 @@
 package onlineEditor
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
+	_minio "github.com/minio/minio-go/v6"
 	"github.com/planet-lia/planet-lia/backend/core/logging"
+	"github.com/planet-lia/planet-lia/backend/core/minio"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"io/ioutil"
@@ -116,7 +119,34 @@ func matchStateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = SetMatchData(ctx, mId, b.Status, b.Log, "")
+	replayUrl := ""
+	if b.Replay != "" {
+		replay, err := base64.StdEncoding.DecodeString(b.Replay)
+		if err != nil {
+			logging.ErrorC(ctx, "Failed to decode base64 encoded replay", logrus.Fields{"matchId": mId, "error": err})
+			sendFailureResponse(&w, "Failed to decode base64 encoded replay file", http.StatusBadRequest)
+			return
+		}
+
+		bucket := "replays"
+		filename := "online-editor/" + string(mId) + ".json"
+		replayReader := bytes.NewReader(replay)
+
+		_, err = minio.Client.PutObjectWithContext(ctx, bucket, filename, replayReader, int64(len(replay)),
+			_minio.PutObjectOptions{ContentType: "application/json"})
+
+		if err != nil {
+			logging.ErrorC(ctx, "Failed to upload to Minio replay file", logrus.Fields{"matchId": mId, "error": err})
+			sendFailureResponse(&w, "500 - Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		replayUrl = fmt.Sprintf("%s/%s/%s", minio.GetEndpoint(), bucket, filename)
+
+		logging.InfoC(ctx, "Replay file successfully uploaded", logrus.Fields{"matchId": mId, "url": replayUrl})
+	}
+
+	err = SetMatchData(ctx, mId, b.Status, b.Log, replayUrl)
 	if err != nil {
 		logging.ErrorC(ctx, "Failed to set online editor match data", logrus.Fields{"matchId": mId, "error": err})
 		sendFailureResponse(&w, "500 - Internal Server Error", http.StatusInternalServerError)
