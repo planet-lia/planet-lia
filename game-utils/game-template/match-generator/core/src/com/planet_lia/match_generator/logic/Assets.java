@@ -19,28 +19,34 @@ public class Assets {
     private static FreeTypeFontLoaderParameter defaultFontParameter = new FreeTypeFontLoaderParameter();
 
     @Asset(value = Texture.class, param = "defaultTextureParam")
-    public static String block = GameConfig.PATH_TO_ASSETS + "/images/block.png";
-//    @Asset(value = BitmapFont.class, param = "defaultFontParameter")
-//    public static String defaultFont = defaultFontParameter.fontFileName;
+    public static String tile = GameConfig.PATH_TO_ASSETS + "/images/tile.png";
+    @Asset(value = Texture.class, param = "defaultTextureParam")
+    public static String unit = GameConfig.PATH_TO_ASSETS + "/images/unit.png";
+    @Asset(value = Texture.class, param = "defaultTextureParam")
+    public static String coin = GameConfig.PATH_TO_ASSETS + "/images/coin.png";
 
-    // --- Add your assets here, for example:
+    // // This is how you can add fonts::
+    // @Asset(value = BitmapFont.class, param = "defaultFontParameter")
+    // public static String defaultFont = defaultFontParameter.fontFileName;
+
+    // // Add your assets here, for example:
     // @Asset(value = Texture.class, param = "textureParam")
     // public static String ninja = "images/ninja.png";
-    // --- and then get it after you call load(...) method with:
+    // // and then get it after you call load(...) method with:
     // Texture ninjaTex = Assets.get(Assets.ninja, Texture.class);
-    // --- More examples at:
-    // --- https://bitbucket.org/dermetfan/libgdx-utils/wiki/net.dermetfan.gdx.assets.AnnotationAssetManager
+    // // More examples at:
+    // // https://bitbucket.org/dermetfan/libgdx-utils/wiki/net.dermetfan.gdx.assets.AnnotationAssetManager
 
     protected static AnnotationAssetManager assetManager;
 
-    public static void load(GameConfig config) {
+    public static void load() {
         // Prepare default texture parameter
         defaultTextureParam.minFilter = Texture.TextureFilter.Linear;
         defaultTextureParam.magFilter = Texture.TextureFilter.Linear;
 
         // Prepare default font parameter
         defaultFontParameter.fontFileName = "fonts/medium.ttf";
-        defaultFontParameter.fontParameters.size = getFontHeight(config);
+        defaultFontParameter.fontParameters.size = getFontHeight();
 
         // Prepare asset manager and load assets
         InternalFileHandleResolver resolver = new InternalFileHandleResolver();
@@ -51,11 +57,12 @@ public class Assets {
         assetManager.finishLoading();
     }
 
-    private static int getFontHeight(GameConfig config) {
+    private static int getFontHeight() {
         // Only calculate if debug mode
         System.out.println(Gdx.app.getType());
         if (Gdx.app.getType() == Application.ApplicationType.HeadlessDesktop) return 0;
-        return (int) (config.defaultFontSize * (Gdx.graphics.getHeight() / (float) config.cameraViewHeight));
+        return (int) (GameConfig.values.defaultFontSize *
+                (Gdx.graphics.getHeight() / GameConfig.values.cameraViewHeight));
     }
 
     public static <T> T get(String fileName, Class<T> type) {

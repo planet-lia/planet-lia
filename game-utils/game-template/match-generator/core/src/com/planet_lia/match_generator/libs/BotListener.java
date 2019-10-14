@@ -1,5 +1,6 @@
 package com.planet_lia.match_generator.libs;
 
+import com.google.gson.Gson;
 import org.java_websocket.WebSocket;
 
 
@@ -11,23 +12,17 @@ class BotListener {
 
     WebSocket connection;
     String token;
+    private static Gson gson = new Gson();
 
     BotListener(String token) {
         this.token = token;
     }
 
-    void send(MessageSender sender, int botIndex, String data) {
-        this.connection.send(createMessage(sender,botIndex, data));
+    void send(MessageSender sender, int botIndex, Object data) {
+        this.connection.send(createMessage(sender, botIndex, data));
     }
 
-    static String createMessage(MessageSender sender, int botIndex, String data) {
-        data = String.format(
-                "{" +
-                        "\"sender\": \"%s\"," +
-                        "\"botIndex\":%d," +
-                        "\"data\":%s" +
-                "}",
-                sender.toString(), botIndex, data);
-        return data;
+    public static String createMessage(MessageSender sender, int botIndex, Object data) {
+        return gson.toJson(new BotListenerMessage(sender, botIndex, data));
     }
 }

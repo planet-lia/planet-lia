@@ -1,6 +1,7 @@
 package com.planet_lia.match_generator.libs;
 
 import com.beust.jcommander.JCommander;
+import com.google.gson.Gson;
 import com.planet_lia.match_generator.libs.BotListener.MessageSender;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -17,7 +18,6 @@ import static com.planet_lia.match_generator.libs.BotListener.MessageSender.MATC
 import static com.planet_lia.match_generator.libs.BotMessageType.INITIAL;
 import static com.planet_lia.match_generator.libs.BotMessageType.UPDATE;
 import static com.planet_lia.match_generator.libs.BotServer.BOT_LISTENER_TOKEN_HEADER_KEY;
-import static com.planet_lia.match_generator.libs.BotServer.injectGeneralFieldsToJsonData;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BotServerTest {
@@ -112,22 +112,22 @@ class BotServerTest {
         // Test if bots connect
         assertDoesNotThrow(server::waitForBotsToConnect);
 
-        server.sendToAll("{\"a\":\"request\"}", INITIAL);
-        bot1.send("{\"a\":\"response1\",\"__uid\":0}");
-        bot2.send("{\"a\":\"response2\",\"__uid\":0}");
+        server.sendToAll(new InitialMessageMock("request"));
+        bot1.send(toJson(new BotResponseMock("response1", 0)));
+        bot2.send(toJson(new BotResponseMock("response2", 0)));
 
         // Test if the response was received
         server.waitForBotsToRespond();
         assertTrue(bot1.receivedData.contains(
-                injectGeneralFieldsToJsonData("{\"a\":\"request\"}", INITIAL, 0,
-                        new MatchDetails(botsDetails, 0))
+                toJson(new InitialMessageMock("request", 0, new MatchDetails(botsDetails, 0)))
         ));
         assertTrue(bot2.receivedData.contains(
-                injectGeneralFieldsToJsonData("{\"a\":\"request\"}", INITIAL, 0,
-                        new MatchDetails(botsDetails, 1))
+                toJson(new InitialMessageMock("request", 0, new MatchDetails(botsDetails, 1)))
         ));
-        assertEquals("{\"a\":\"response1\",\"__uid\":0}", server.getLastResponseData(0));
-        assertEquals("{\"a\":\"response2\",\"__uid\":0}", server.getLastResponseData(1));
+        assertEquals(toJson(new BotResponseMock("response1", 0)),
+                toJson(server.getLastResponseData(0, BotResponseMock.class)));
+        assertEquals(toJson(new BotResponseMock("response2", 0)),
+                toJson(server.getLastResponseData(1, BotResponseMock.class)));
         assertEquals(0, server.getNumberOfTimeouts(0));
         assertEquals(0, server.getNumberOfTimeouts(1));
         assertFalse(server.isDisqualified(0));
@@ -159,11 +159,11 @@ class BotServerTest {
         server.waitForBotsToConnect();
 
         // Should timeout
-        server.sendToAll("request", INITIAL);
+        server.sendToAll(new InitialMessageMock("request"));
         server.waitForBotsToRespond();
 
-        assertNull(server.getLastResponseData(0));
-        assertNull(server.getLastResponseData(1));
+        assertNull(server.getLastResponseData(0, BotResponseMock.class));
+        assertNull(server.getLastResponseData(1, BotResponseMock.class));
         assertEquals(1, server.getNumberOfTimeouts(0));
         assertEquals(1, server.getNumberOfTimeouts(1));
         assertFalse(server.isDisqualified(0));
@@ -171,14 +171,16 @@ class BotServerTest {
 
         // Bot 2 should be disqualified
         timer.time += 1;
-        server.sendToAll("request", UPDATE);
-        bot1.send("response1");
+        server.sendToAll(new MatchStateMessageMock("request", 1));
+        bot1.send(toJson(new BotResponseMock("response1", 1)));
+        bot1.send(toJson(new BotResponseMock("response1", 1)));
         // This send should be ignored
-        bot1.send("response3");
+        bot1.send(toJson(new BotResponseMock("response3", 1)));
         server.waitForBotsToRespond();
 
-        assertEquals("response1", server.getLastResponseData(0));
-        assertNull(server.getLastResponseData(1));
+        assertEquals(toJson(new BotResponseMock("response1", 1)),
+                toJson(server.getLastResponseData(0, BotResponseMock.class)));
+        assertNull(server.getLastResponseData(1, BotResponseMock.class));
         assertEquals(1, server.getNumberOfTimeouts(0));
         assertEquals(2, server.getNumberOfTimeouts(1));
         assertFalse(server.isDisqualified(0));
@@ -190,10 +192,10 @@ class BotServerTest {
 
         // Both bots disqualified
         timer.time += 1;
-        server.sendToAll("request", UPDATE);
+        server.sendToAll(new MatchStateMessageMock("request"));
         server.waitForBotsToRespond();
 
-        assertNull(server.getLastResponseData(0));
+        assertNull(server.getLastResponseData(0, BotResponseMock.class));
         assertEquals(2, server.getNumberOfTimeouts(0));
         assertEquals(2, server.getNumberOfTimeouts(1));
         assertTrue(server.isDisqualified(0));
@@ -247,51 +249,67 @@ class BotServerTest {
         assertTrue(server.isBotListenerConnected());
 
         // First exchange
-        server.sendToAll("{\"a\":\"request1\"}", INITIAL);
-        bot1.send("{\"a\":\"response1\",\"__uid\":0}");
-        bot2.send("{\"a\":\"response2\",\"__uid\":0}");
+        server.sendToAll(new InitialMessageMock("request1"));
+        bot1.send(toJson(new BotResponseMock("response1", 0)));
+        bot2.send(toJson(new BotResponseMock("response2", 0)));
         server.waitForBotsToRespond();
 
         // Second exchange
-        server.sendToAll("{\"a\":\"request2\"}", UPDATE);
-        bot1.send("{\"a\":\"response3\",\"__uid\":1}");
-        bot2.send("{\"a\":\"response4\",\"__uid\":1}");
+        server.sendToAll(new MatchStateMessageMock("request2"));
+        bot1.send(toJson(new BotResponseMock("response3", 1)));
+        bot2.send(toJson(new BotResponseMock("response4", 1)));
         server.waitForBotsToRespond();
 
+        MatchDetails matchDetails = new MatchDetails(botsDetails, 0);
         assertBotListenerContains(
-                listener, "{\"a\":\"request1\"}", MATCH_GENERATOR, 0, INITIAL, 0,
-                new MatchDetails(botsDetails, 0));
+                listener,
+                new InitialMessageMock("request1", 0, matchDetails),
+                MATCH_GENERATOR, 0, INITIAL, 0, matchDetails);
+        matchDetails = new MatchDetails(botsDetails, 1);
         assertBotListenerContains(
-                listener, "{\"a\":\"request1\"}", MATCH_GENERATOR, 1, INITIAL, 0,
-                new MatchDetails(botsDetails, 1));
+                listener,
+                new InitialMessageMock("request1", 0, matchDetails),
+                MATCH_GENERATOR, 1, INITIAL, 0, matchDetails);
         assertBotListenerContains(
-                listener, "{\"a\":\"response1\"}", BOT, 0, null, 0, null);
+                listener, new BotResponseMock("response1", 0), BOT, 0,
+                null, 0, null);
         assertBotListenerContains(
-                listener, "{\"a\":\"response2\"}", BOT, 1, null, 0, null);
+                listener, new BotResponseMock("response2", 0), BOT, 1,
+                null, 0, null);
         assertBotListenerContains(
-                listener, "{\"a\":\"request2\"}", MATCH_GENERATOR, 0, UPDATE, 1, null);
+                listener,
+                new MatchStateMessageMock("request2", 1),
+                MATCH_GENERATOR, 0, UPDATE, 1, null);
         assertBotListenerContains(
-                listener, "{\"a\":\"request2\"}", MATCH_GENERATOR, 1, UPDATE, 1, null);
+                listener,
+                new MatchStateMessageMock("request2", 1),
+                MATCH_GENERATOR, 1, UPDATE, 1, null);
         assertBotListenerContains(
-                listener, "{\"a\":\"response3\"}", BOT, 0, null, 1, null);
+                listener, new BotResponseMock("response3", 1), BOT, 0,
+                null, 1, null);
         assertBotListenerContains(
-                listener, "{\"a\":\"response4\"}", BOT, 1, null, 1, null);
+                listener,  new BotResponseMock("response4", 1), BOT, 1,
+                null, 1, null);
 
         server.stop();
     }
 
     private void assertBotListenerContains(ClientMock botListener,
-                                           String msg,
+                                           Object msg,
                                            MessageSender sender,
                                            int botIndex,
                                            BotMessageType msgType,
                                            int uid,
                                            MatchDetails matchDetails) {
+        String a = BotListener.createMessage(
+                sender,
+                botIndex,
+                msg);
         assertTrue(botListener.receivedData.contains(
                 BotListener.createMessage(
                         sender,
                         botIndex,
-                        injectGeneralFieldsToJsonData(msg, msgType, uid, matchDetails))));
+                        msg)));
     }
 
     @Test
@@ -316,11 +334,11 @@ class BotServerTest {
         // Test if bots connect
         assertDoesNotThrow(server::waitForBotsToConnect);
 
-        server.sendToAll("request", INITIAL);
-        bot1.send("response1");
-        bot2.send("response2");
+        server.sendToAll(new InitialMessageMock("request1"));
+        bot1.send(toJson(new BotResponseMock("response1", 0)));
+        bot2.send(toJson(new BotResponseMock("response2", 0)));
 
-        assertThrows(Error.class, () -> server.sendToAll("request2", INITIAL));
+        assertThrows(Error.class, () -> server.sendToAll(new InitialMessageMock("request2")));
 
         server.stop();
     }
@@ -347,6 +365,10 @@ class BotServerTest {
 
         return defaultArgs.getBotsDetails(config);
     }
+
+    public String toJson(Object response) {
+        return (new Gson()).toJson(response);
+    }
 }
 
 class ClientMock extends WebSocketClient {
@@ -370,4 +392,48 @@ class ClientMock extends WebSocketClient {
 
     @Override
     public void onError(Exception ex) {}
+}
+
+class InitialMessageMock extends BaseInitialMessage {
+
+    String text;
+
+    InitialMessageMock(String text) {
+        __type = INITIAL;
+        this.text = text;
+    }
+
+    InitialMessageMock(String text,  int uid, MatchDetails matchDetails) {
+        __type = INITIAL;
+        this.text = text;
+        this.__uid = uid;
+        this.__matchDetails = matchDetails;
+    }
+}
+
+class MatchStateMessageMock extends ApiMessage {
+
+    String text;
+
+    MatchStateMessageMock(String text) {
+        __type = UPDATE;
+        this.text = text;
+    }
+
+    MatchStateMessageMock(String text,  int uid) {
+        __type = UPDATE;
+        this.text = text;
+        this.__uid = uid;
+    }
+}
+
+class BotResponseMock {
+
+    String text;
+    int __uid;
+
+    BotResponseMock(String text, int uid) {
+        this.text = text;
+        this.__uid = uid;
+    }
 }

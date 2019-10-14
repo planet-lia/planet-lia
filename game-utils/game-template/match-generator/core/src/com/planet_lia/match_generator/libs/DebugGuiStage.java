@@ -13,8 +13,13 @@ import com.kotcrab.vis.ui.widget.*;
 import com.planet_lia.match_generator.libs.BotListener.MessageSender;
 
 import java.util.ArrayList;
+import java.util.SimpleTimeZone;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class DebugGuiStage extends Stage {
+
+    private final Lock lock = new ReentrantLock(true);
 
     private GeneralConfig generalConfig;
 
@@ -107,9 +112,28 @@ public class DebugGuiStage extends Stage {
         mainTable.add(entityDetailsScrollPane).height(entityDetailsPaneHeight).row();
     }
 
-    void addLog(int botIndex, MessageSender sender, String message) {
-        ArrayList<TabButton> bots = (sender == MessageSender.BOT) ? fromBots : toBots;
-        bots.get(botIndex).addText(message);
+    @Override
+    public void act() {
+        lock.lock();
+        try {
+            super.act();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public void draw() {
+        lock.lock();
+        try {
+            super.draw();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
     }
 
     void setActiveButton(TabButton button) {
@@ -126,10 +150,29 @@ public class DebugGuiStage extends Stage {
         mainTable.pack();
     }
 
+    void addLog(int botIndex, MessageSender sender, String message) {
+        lock.lock();
+        try {
+            ArrayList<TabButton> bots = (sender == MessageSender.BOT) ? fromBots : toBots;
+            bots.get(botIndex).addText(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+
     void updateEntityDetails(String text) {
-        float y = entityDetailsScrollPane.getScrollY();
-        entityDetails.setText(text);
-        entityDetailsScrollPane.setScrollY(y);
+        lock.lock();
+        try {
+            float y = entityDetailsScrollPane.getScrollY();
+            entityDetails.setText(text);
+            entityDetailsScrollPane.setScrollY(y);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
     }
 }
 
@@ -138,67 +181,17 @@ public class DebugGuiStage extends Stage {
  */
 class TabButton extends TextButton {
 
+    ScrollableTextArea contentPanel;
     ScrollPane scrollPane;
 
     TabButton(DebugGuiStage logStage, String text) {
         super(text, VisUI.getSkin());
-        addText("{\n" +
-                "  \"data\": [{\n" +
-                "    \"type\": \"articles\",\n" +
-                "    \"id\": \"1\",\n" +
-                "    \"attributes\": {\n" +
-                "      \"title\": \"JSON:API paints my bikeshedmy bikeshedmy bikeshedmy bikeshedmy bikeshed!\",\n" +
-                "      \"body\": \"The shortest article. Ever.\",\n" +
-                "      \"created\": \"2015-05-22T14:56:29.000Z\",\n" +
-                "      \"updated\": \"2015-05-22T14:56:28.000Z\"\n" +
-                "    },\n" +
-                "    \"relationships\": {\n" +
-                "      \"author\": {\n" +
-                "        \"data\": {\"id\": \"42\", \"type\": \"people\"}\n" +
-                "      }\n" +
-                "    }\n" +
-                "  }],\n" +
-                "  \"included\": [\n" +
-                "    {\n" +
-                "      \"type\": \"people\",\n" +
-                "      \"id\": \"42\",\n" +
-                "      \"attributes\": {\n" +
-                "        \"name\": \"John\",\n" +
-                "        \"age\": 80,\n" +
-                "        \"gender\": \"male\"\n" +
-                "      }\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}" +
-                "{\n" +
-                "  \"data\": [{\n" +
-                "    \"type\": \"articles\",\n" +
-                "    \"id\": \"1\",\n" +
-                "    \"attributes\": {\n" +
-                "      \"title\": \"JSON:API paints my bikeshed!\",\n" +
-                "      \"body\": \"The shortest article. Ever.\",\n" +
-                "      \"created\": \"2015-05-22T14:56:29.000Z\",\n" +
-                "      \"updated\": \"2015-05-22T14:56:28.000Z\"\n" +
-                "    },\n" +
-                "    \"relationships\": {\n" +
-                "      \"author\": {\n" +
-                "        \"data\": {\"id\": \"42\", \"type\": \"people\"}\n" +
-                "      }\n" +
-                "    }\n" +
-                "  }],\n" +
-                "  \"included\": [\n" +
-                "    {\n" +
-                "      \"type\": \"people\",\n" +
-                "      \"id\": \"42\",\n" +
-                "      \"attributes\": {\n" +
-                "        \"name\": \"John\",\n" +
-                "        \"age\": 80,\n" +
-                "        \"gender\": \"male\"\n" +
-                "      }\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}");
         setSelected(false);
+
+        contentPanel = new ScrollableTextArea(text);
+        scrollPane = contentPanel.createCompatibleScrollPane();
+
+        addText("");
 
         // Register onClick listener
         TabButton thisButton = this;
@@ -212,8 +205,10 @@ class TabButton extends TextButton {
     }
 
     void addText(String text) {
-        ScrollableTextArea contentPanel = new ScrollableTextArea(text);
-        scrollPane = contentPanel.createCompatibleScrollPane();
+        float y = scrollPane.getScrollY();
+        contentPanel.setText(text);
+        scrollPane.setScrollY(y);
+        contentPanel.invalidateHierarchy();
     }
 
     void setSelected(boolean selected) {

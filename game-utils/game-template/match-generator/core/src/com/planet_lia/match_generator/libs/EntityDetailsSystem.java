@@ -13,11 +13,11 @@ public class EntityDetailsSystem implements InputProcessor {
 
     private Vector2 position = new Vector2();
 
-    private ArrayList<BaseEntity> entities = new ArrayList<>();
+    private ArrayList<Clickable> entities = new ArrayList<>();
     private Viewport viewport;
     private DebugGuiStage debugGuiStage;
 
-    private BaseEntity selectedEntity;
+    private Clickable selectedEntity;
 
     public EntityDetailsSystem(Viewport viewport, DebugGuiStage debugGuiStage) {
         super();
@@ -25,11 +25,11 @@ public class EntityDetailsSystem implements InputProcessor {
         this.debugGuiStage = debugGuiStage;
     }
 
-    public void registerEntity(BaseEntity entity) {
+    public void registerEntity(Clickable entity) {
         entities.add(entity);
     }
 
-    public void unregisterEntity(BaseEntity entity) {
+    public void unregisterEntity(Clickable entity) {
         entities.remove(entity);
     }
 
@@ -45,7 +45,7 @@ public class EntityDetailsSystem implements InputProcessor {
         if (button != Input.Buttons.LEFT || pointer > 0) {
             return false;
         }
-        BaseEntity hooveredEntity = getHooveredEntity(screenX, screenY);
+        Clickable hooveredEntity = getHooveredEntity(screenX, screenY);
         if (hooveredEntity != null) {
             debugGuiStage.updateEntityDetails(hooveredEntity.getDisplayText());
             selectedEntity = hooveredEntity;
@@ -56,7 +56,7 @@ public class EntityDetailsSystem implements InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        BaseEntity hooveredEntity = getHooveredEntity(screenX, screenY);
+        Clickable hooveredEntity = getHooveredEntity(screenX, screenY);
         if (hooveredEntity != null) {
             Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Hand);
         }
@@ -66,7 +66,7 @@ public class EntityDetailsSystem implements InputProcessor {
         return true;
     }
 
-    private BaseEntity getHooveredEntity(int screenX, int screenY) {
+    private Clickable getHooveredEntity(int screenX, int screenY) {
         if (screenX > viewport.getScreenWidth() || screenY > viewport.getScreenHeight()) {
             return null;
         }
@@ -74,15 +74,15 @@ public class EntityDetailsSystem implements InputProcessor {
         viewport.unproject(position.set(screenX, screenY));
 
         // Find the hovered entity
-        BaseEntity hoveredEntity = null;
+        Clickable hoveredEntity = null;
         int hoveredEntityLayer = -100000;
 
-        for (BaseEntity entity : entities) {
+        for (Clickable entity : entities) {
             if (position.x >= entity.getX() - entity.getWidth() * 0.5f
                     && position.x <= entity.getX() + entity.getWidth() * 0.5f
                     && position.y >= entity.getY() - entity.getHeight() * 0.5f
                     && position.y <= entity.getY() + entity.getHeight() * 0.5f) {
-                if (entity.getLayer() > hoveredEntityLayer) {
+                if (entity.getLayer() >= hoveredEntityLayer) {
                     hoveredEntity = entity;
                     hoveredEntityLayer = entity.getLayer();
                 }

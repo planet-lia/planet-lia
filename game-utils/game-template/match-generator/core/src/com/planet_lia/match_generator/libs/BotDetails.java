@@ -1,10 +1,10 @@
 package com.planet_lia.match_generator.libs;
 
 public class BotDetails {
-    String botName;
+    public String botName;
     transient String token;
-    int teamIndex = -1;
-    BotDetailsAdditional additional;
+    public int teamIndex = -1;
+    public BotDetailsAdditional additional;
 
     public BotDetails(String botName, String token, BotDetailsAdditional additional) {
         this.botName = botName;
