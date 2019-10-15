@@ -1,7 +1,7 @@
 import {Application, Container, Graphics} from "pixi.js";
 import {registerOnEntityClickShowPath, TextureEntity} from "./textureEntity";
 import {colorToNumber} from './util/color';
-import {Camera, CAMERA_HUD_ID, CAMERA_MANUAL_ID, createCenteredCamera} from "./camera";
+import {Camera, CAMERA_HUD_ID, CAMERA_DEFAULT_ID, createCenteredCamera} from "./camera";
 import {Entity, isOnHUD} from "./entity";
 import {TextEntity} from "./textEntity";
 import {Chart} from "./chart";
@@ -59,9 +59,11 @@ export function startGame(replayRaw: JSON, assetsBaseUrl: string): MatchViewerAp
     app.gameCameras = toOrderedArrayOfCameras(replay.cameras);
     app.gameCameras.forEach((camera: Camera) => camera.finishSetup());
 
-    // Create manual camera and add it to cameras on 0 index
-    let manualCamera = createCenteredCamera(CAMERA_MANUAL_ID, gameDetails.camera.width, gameDetails.camera.height);
-    app.gameCameras.unshift(manualCamera);
+    // If no cameras were provided, create default camera and add it to cameras
+    if (app.gameCameras.length == 0) {
+        let defaultCamera = createCenteredCamera(CAMERA_DEFAULT_ID, gameDetails.camera.width, gameDetails.camera.height);
+        app.gameCameras.push(defaultCamera);
+    }
 
     app.currentCamera = app.gameCameras[0];
 

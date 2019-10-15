@@ -4,7 +4,7 @@ import {Section} from "./curves/sections/section";
 import {Container} from "pixi.js";
 
 export const CAMERA_ID_PREFIX = "CAMERA_";
-export const CAMERA_MANUAL_ID = "CAMERA_MANUAL";
+export const CAMERA_DEFAULT_ID = "CAMERA_DEFAULT";
 export const CAMERA_HUD_ID = "CAMERA_HUD";
 
 export enum CameraAttribute {

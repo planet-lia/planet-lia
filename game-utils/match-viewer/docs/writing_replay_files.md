@@ -528,7 +528,7 @@ Note that they are automatically created out of sections provided in the replay 
 * Representing a game camera that defines which part of the map the viewer of the replay can see, defines its rotation, zoom and movement.
 * **entityId prefix:**
     * each `entityId` that has a prefix `"CAMERA_"` belongs to a Camera
-    * By default two additional cameras are created, `"CAMERA_MANUAL"` is the camera with title 1 in match-viewer when viewing the replay and that is always still and centered. Alongside also `"CAMERA_HUD"` is created that keeps other entities with `"HUD_"` prefix and that does not scale with game cameras. 
+    * If no cameras is provided a `"CAMERA_DEFAULT"` is created automatically with a title 1 in match-viewer when viewing the replay and that is always still and centered. Alongside also `"CAMERA_HUD"` is created that keeps other entities with `"HUD_"` prefix and that does not scale with game cameras. 
 * **Attributes/Curves:**
 * Curves:
     <table style="margin: 1em;">
