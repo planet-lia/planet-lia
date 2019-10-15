@@ -174,12 +174,14 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
         if (this.app === null) return;
 
         if (this.state.isPlaying) {
-            this.app!.stop();
+            //this.app!.stop();
+            this.app.playbackSpeed = 0;
             this.setState({
                 isPlaying: false,
             });
         } else {
-            this.app!.start();
+            // this.app!.start();
+            this.app.playbackSpeed = this.state.playbackSpeed;
             this.setState({
                 isPlaying: true,
             });
