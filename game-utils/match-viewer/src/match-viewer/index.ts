@@ -60,7 +60,7 @@ export function startGame(replayRaw: JSON, assetsBaseUrl: string): MatchViewerAp
     app.gameCameras.forEach((camera: Camera) => camera.finishSetup());
 
     // If no cameras were provided, create default camera and add it to cameras
-    if (app.gameCameras.length == 0) {
+    if (app.gameCameras.length === 0) {
         let defaultCamera = createCenteredCamera(CAMERA_DEFAULT_ID, gameDetails.camera.width, gameDetails.camera.height);
         app.gameCameras.push(defaultCamera);
     }

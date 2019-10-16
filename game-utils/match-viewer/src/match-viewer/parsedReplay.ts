@@ -102,56 +102,63 @@ function parseSections(sections: JSON, cameraWidth: number, cameraHeight: number
     let standaloneCurves = new Map<string, Curve<any>>();
 
     (sections as any).forEach(sectionRaw => {
-        // Find the correct Section
-        let section: Section<any>;
-        for (let sectionType of SUPPORTED_SECTION_TYPES) {
-            if (sectionRaw.type === sectionType.name) {
-                section = sectionType.parse(sectionRaw);
-                break;
+        // Try parsing this section
+        try {
+            // Find the correct Section
+            let section: Section<any>;
+            for (let sectionType of SUPPORTED_SECTION_TYPES) {
+                if (sectionRaw.type === sectionType.name) {
+                    section = sectionType.parse(sectionRaw);
+                    break;
+                }
+            }
+
+            let entityId = sectionRaw.entityId;
+
+            if (isStandaloneCurve(entityId)) {
+                let curveId = entityId;
+                if (!standaloneCurves.has(curveId)) {
+                    standaloneCurves.set(curveId, new Curve<any>());
+                }
+                let curve = standaloneCurves.get(curveId)!;
+                curve.add(section!);
+            } else if (isCamera(entityId)) {
+                // Camera
+
+                // If the cameraIndex with provided id does not exist, create it
+                if (!cameras.has(entityId)) {
+                    let camera = new Camera(entityId, cameraWidth, cameraHeight);
+                    cameras.set(entityId, camera);
+                }
+
+                // Add curve sections to entity
+                let camera = cameras.get(entityId)!;
+                camera.addSection(sectionRaw.attribute, section!);
+            } else {
+                // Entity
+
+                // If the entity with provided id does not exist, create it
+                if (!entities.has(entityId)) {
+                    let getEntity = (id: string) => {
+                        return entities.get(id)!.attachable
+                    };
+
+                    let entity: Entity;
+                    if (isTextEntity(entityId)) entity = new TextEntity(entityId, getEntity);
+                    else if (isParticleEntity(entityId)) entity = new ParticleEntity(entityId, getEntity);
+                    else entity = new TextureEntity(entityId, getEntity);
+
+                    entities.set(entityId, entity);
+                }
+
+                // Add curve sections to entity
+                let entity = entities.get(entityId)!;
+                entity.addSection(sectionRaw.attribute, section!);
             }
         }
-
-        let entityId = sectionRaw.entityId;
-
-        if (isStandaloneCurve(entityId)) {
-            let curveId = entityId;
-            if (!standaloneCurves.has(curveId)) {
-                standaloneCurves.set(curveId, new Curve<any>());
-            }
-            let curve = standaloneCurves.get(curveId)!;
-            curve.add(section!);
-        } else if (isCamera(entityId)) {
-            // Camera
-
-            // If the cameraIndex with provided id does not exist, create it
-            if (!cameras.has(entityId)) {
-                let camera = new Camera(entityId, cameraWidth, cameraHeight);
-                cameras.set(entityId, camera);
-            }
-
-            // Add curve sections to entity
-            let camera = cameras.get(entityId)!;
-            camera.addSection(sectionRaw.attribute, section!);
-        } else {
-            // Entity
-
-            // If the entity with provided id does not exist, create it
-            if (!entities.has(entityId)) {
-                let getEntity = (id: string) => {
-                    return entities.get(id)!.attachable
-                };
-
-                let entity: Entity;
-                if (isTextEntity(entityId)) entity = new TextEntity(entityId, getEntity);
-                else if (isParticleEntity(entityId)) entity = new ParticleEntity(entityId, getEntity);
-                else entity = new TextureEntity(entityId, getEntity);
-
-                entities.set(entityId, entity);
-            }
-
-            // Add curve sections to entity
-            let entity = entities.get(entityId)!;
-            entity.addSection(sectionRaw.attribute, section!);
+        catch (e) {
+            e.message += `\nRaw section: ${JSON.stringify(sectionRaw)}`;
+            throw e;
         }
     });
 

@@ -12,8 +12,8 @@ export class Curve<T = never> {
             let lastSection = this.sections[this.sections.length - 1];
 
             if (lastSection.endTime > section.endTime) {
-                throw new Error(`Section time ${section.endTime} must be > than ` +
-                    `previous times in this curve.`);
+                throw new Error(`Section time must be > than previous section time in this curve. `
+                + `\nSection: ${JSON.stringify(section)} \nPrevious section: ${JSON.stringify(lastSection)}`);
             }
         }
 
