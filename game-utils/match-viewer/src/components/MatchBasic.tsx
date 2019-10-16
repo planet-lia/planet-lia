@@ -9,7 +9,6 @@ import * as Pako from "pako";
 import * as JSZip from "jszip";
 
 export interface MatchBaseProps {
-    replayFormat: "json" | "gzip" | "zip";
     /** json needs to be string; gzip and zip need to be ArrayBuffer */
     replayFile: string | ArrayBuffer | null;
     replayUrl: string | null;
@@ -61,14 +60,16 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
 
     loadReplayAndStart = async () => {
         let response: Response | null = null;
+        let responseClone: Response | null = null;
         let rawData: string | ArrayBuffer | null = null;
 
         // Fetch from url
         if (this.props.replayUrl !== null) {
             let replayUrl = this.props.replayUrl;
             response = await fetch(replayUrl);
+            responseClone = response.clone();
         }
-        // Replay as string
+        // Already loaded but not parsed replay data
         else if (this.props.replayFile !== null) {
             rawData = this.props.replayFile;
         } else {
@@ -78,29 +79,27 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
 
         let replay: JSON;
 
-        switch (this.props.replayFormat) {
-            case "json": {
-                let data = (response !== null)
-                    ? await response.text()
-                    : rawData as string;
-                replay = JSON.parse(data);
-                break;
-            }
-            case "gzip": {
-                let data = (response !== null)
-                    ? await response.arrayBuffer()
-                    : rawData as ArrayBuffer;
+        // Parse replay file
+        try {
+            let data = (response !== null)
+                ? await response.arrayBuffer()
+                : rawData as ArrayBuffer;
+            try {
+                // Try gzip
                 replay = JSON.parse(Pako.inflate(new Uint8Array(data), {to: "string"}));
-                break;
             }
-            case "zip": {
-                let data = (response !== null)
-                    ? await response.arrayBuffer()
-                    : rawData as ArrayBuffer;
+            catch (e) {
+                // Try zip
                 let replayFileZip = Object.values((await JSZip.loadAsync(data)).files)[0];
                 replay = JSON.parse(await replayFileZip.async("text"));
-                break;
             }
+        }
+        catch (e) {
+            // Try plain json
+            let data = (responseClone !== null)
+                ? await responseClone.text()
+                : rawData as string;
+            replay = JSON.parse(data);
         }
 
         this.app = startGame(replay!, this.props.assetsBaseUrl);

@@ -10,8 +10,7 @@ import {MatchDetail} from "../match-viewer/matchDetails";
 import {BotDetails} from "../match-viewer/botDetails";
 import {BotDetailsView} from "./BotDetailsView";
 
-interface MatchAdvancedProps extends MatchBaseProps {
-}
+interface MatchAdvancedProps extends MatchBaseProps {}
 
 interface MatchAdvancedState {
     app: MatchViewerApplication | null;
@@ -41,7 +40,6 @@ export class MatchAdvanced extends Component<MatchAdvancedProps, MatchAdvancedSt
                     {/* Match view */}
                     <Col md={8}>
                         <MatchBasic
-                            replayFormat={this.props.replayFormat}
                             replayFile={this.props.replayFile}
                             replayUrl={this.props.replayUrl}
                             loopMatch={this.props.loopMatch}
