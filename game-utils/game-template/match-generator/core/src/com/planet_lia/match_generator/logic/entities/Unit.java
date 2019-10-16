@@ -93,7 +93,6 @@ public class Unit implements Clickable {
             this.y = destinationY;
 
             // Make the unit move linearly to its destination from previous to this update call
-            float timeBetweenUpdates = GameConfig.values.general.gameUpdatesPerSecond;
             replay.sections.add(new LinearSection(eid, TextureEntityAttribute.X, time, x));
             replay.sections.add(new LinearSection(eid, TextureEntityAttribute.Y, time, y));
         }

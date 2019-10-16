@@ -9,12 +9,11 @@ public class GameConfig {
 
     public static GameConfig values;
 
-    public static final String ASSETS_VERSION = "1.0";
-    public static final String PATH_TO_ASSETS = "assets/" + ASSETS_VERSION;
-    public static final String PATH_TO_IMAGES = PATH_TO_ASSETS + "/images/";
-    public static final String PATH_TO_GAME_CONFIG = PATH_TO_ASSETS + "/game-config.json";
-
     public GeneralConfig general;
+
+    // Setup on load(...) call
+    public String pathToAssets;
+    public String pathToImages;
 
     // Here you can add other configuration fields that will
     // load from a game-config.json
@@ -31,13 +30,17 @@ public class GameConfig {
     public float unitRotationSpeed;
     public float unitSpeed;
 
+    /** Initializes static fields in GameConfig class */
     public static void load(String configPath) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(configPath));
         values = (new Gson()).fromJson(reader, GameConfig.class);
+
+        values.pathToAssets = "assets/" + values.general.assetsVersion;
+        values.pathToImages = values.pathToAssets + "/images/";
     }
 
-    /** Removes PATH_TO_IMAGES from path */
+    /** Removes pathToImages from provided path */
     public static String shortenImagePath(String path) {
-        return path.replaceFirst(PATH_TO_IMAGES, "");
+        return path.replaceFirst(values.pathToImages, "");
     }
 }

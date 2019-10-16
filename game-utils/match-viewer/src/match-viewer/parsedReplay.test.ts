@@ -7,8 +7,9 @@ import {colorToNumber} from "./util/color";
 test('ParsedReplay.parse', () => {
     let data = {
         "gameDetails": {
-            "game": "super_game",
-            "version": "1.0",
+            "gameName": "super_game",
+            "gameVersion": "1.0",
+            "assetsVersion": "1.0",
             "backgroundColor": "#FF0000",
             "camera": {
                 "width": 1,
@@ -66,8 +67,8 @@ test('ParsedReplay.parse', () => {
     let replay = ParsedReplay.parse(jsonData);
 
     let gameDetails = replay.gameDetails;
-    expect(gameDetails.game).toBe("super_game");
-    expect(gameDetails.version).toBe("1.0");
+    expect(gameDetails.gameName).toBe("super_game");
+    expect(gameDetails.assetsVersion).toBe("1.0");
     expect(gameDetails.backgroundColor).toBe("#FF0000");
     expect(gameDetails.camera.width).toBe(1);
     expect(gameDetails.camera.height).toBe(2);

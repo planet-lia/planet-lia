@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.planet_lia.match_generator.libs.BotListener.MessageSender;
+import com.planet_lia.match_generator.libs.replays.BotReplayDetails;
 import com.planet_lia.match_generator.logic.api.commands.BotCommandDeserializer;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -279,6 +280,10 @@ public class BotServer {
         // It prevents from waitForBotsToRespond to finish before this
         // response is applied
         bot.waitingResponse = false;
+    }
+
+    ArrayList<BotConnection> getBotConnections() {
+        return bots;
     }
 
     public int getNumberOfTimeouts(int botIndex) {

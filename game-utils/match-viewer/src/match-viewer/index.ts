@@ -9,9 +9,12 @@ import {MatchDetail} from "./matchDetails";
 import {ParsedReplay} from "./parsedReplay";
 import {Assets, loadAssets} from "./assets";
 import {ParticleEntity} from "./particleEntity";
+import {BotDetails} from "./botDetails";
 
 export class MatchViewerApplication extends Application {
     matchDetails: MatchDetail[] | null = null;
+    botDetails: BotDetails[] | null = null;
+    teamsFinalOrder: number[] | null = null;
     matchDuration: number = 0;
     time: number = 0;
     playbackSpeed: number = 1;
@@ -38,12 +41,12 @@ export function startGame(replayRaw: JSON, assetsBaseUrl: string): MatchViewerAp
     app.renderer.view.style.width = "100%";
 
     // Game viewport holds all entities in
-    // the game and displays them
+    // the gameName and displays them
     const gameViewport = new Container();
     gameViewport.sortableChildren = true;
     app.stage.addChild(gameViewport);
 
-    // Hud viewport holds all game UI
+    // Hud viewport holds all gameName UI
     // entities and displays them.
     const hudViewport = new Container();
     hudViewport.sortableChildren = true;
@@ -52,7 +55,10 @@ export function startGame(replayRaw: JSON, assetsBaseUrl: string): MatchViewerAp
     // Load replay
     let replay = ParsedReplay.parse(replayRaw);
     let [entities, gameDetails] = [replay.entities, replay.gameDetails!];
-    [app.matchDetails, app.charts] = [replay.matchDetails, replay.charts];
+    app.matchDetails = replay.matchDetails;
+    app.botDetails = replay.botDetails;
+    app.teamsFinalOrder = replay.teamsFinalOrder;
+    app.charts = replay.charts;
     app.renderer.backgroundColor = colorToNumber(gameDetails.backgroundColor);
 
     // Setup alphabetically ordered array of gameCameras
@@ -75,14 +81,14 @@ export function startGame(replayRaw: JSON, assetsBaseUrl: string): MatchViewerAp
 
     let worldToScreen = screenHeight / gameDetails.camera.height;
 
-    // Get game duration
+    // Get gameName duration
     app.matchDuration = replay.getEndTime();
 
-    let assetPath = `${assetsBaseUrl}/${gameDetails.game}/assets/${gameDetails.version}`;
+    let assetPath = `${assetsBaseUrl}/${gameDetails.gameName}/assets/${gameDetails.assetsVersion}`;
     let assets = new Assets(assetPath);
 
     let onAssetsLoaded = () => {
-        // Setup entities and add them to game or HUD viewport
+        // Setup entities and add them to gameName or HUD viewport
         entities.forEach((entity: Entity) => {
             entity.finishSetup(assets);
 
@@ -106,7 +112,7 @@ export function startGame(replayRaw: JSON, assetsBaseUrl: string): MatchViewerAp
 
         let prevTime = 0;
 
-        // Add main game function to be called every tick
+        // Add main gameName function to be called every tick
         app.ticker.add((deltaScale) => {
             let delta = 0;
 
@@ -114,7 +120,7 @@ export function startGame(replayRaw: JSON, assetsBaseUrl: string): MatchViewerAp
             if (app.time !== prevTime) {
                 delta = app.time - prevTime;
             }
-            // Normal game iteration
+            // Normal gameName iteration
             else {
                 delta = (1 / 60) * deltaScale * app.playbackSpeed;
                 app.time += delta;
@@ -125,7 +131,7 @@ export function startGame(replayRaw: JSON, assetsBaseUrl: string): MatchViewerAp
 
             prevTime = app.time;
 
-            // Update current game camera
+            // Update current gameName camera
             app.currentCamera!.update(app.time, gameViewport, screenHeight, worldToScreen);
 
             // Update entities

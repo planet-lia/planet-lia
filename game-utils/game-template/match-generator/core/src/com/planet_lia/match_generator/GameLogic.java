@@ -1,9 +1,7 @@
 package com.planet_lia.match_generator;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.planet_lia.match_generator.libs.BotCommand;
-import com.planet_lia.match_generator.libs.BotResponse;
-import com.planet_lia.match_generator.libs.Timer;
+import com.planet_lia.match_generator.libs.*;
 import com.planet_lia.match_generator.libs.replays.*;
 import com.planet_lia.match_generator.logic.Assets;
 import com.planet_lia.match_generator.logic.GameConfig;
@@ -91,13 +89,9 @@ public class GameLogic {
 
     /** Called repeatedly to update match state */
     public void update(Timer timer, float delta) {
-        int winnerBotIndex = getWinnerBotIndex();
-        if (winnerBotIndex != -1) {
-            // We have found a winner
-            System.out.printf("Bot '%s' has won!\n", tools.botsDetails[winnerBotIndex].botName);
-            addUnitPositionChartsToReplay();
-            ReplayCreator.saveReplayFile(replay, tools.args.replay);
-            System.exit(0);
+        int winningTeamIndex = getWinningTeamIndex();
+        if (winningTeamIndex != -1) {
+            matchOver(winningTeamIndex);
         }
 
         // Update entities
@@ -148,35 +142,49 @@ public class GameLogic {
         batch.end();
     }
 
-    private int getWinnerBotIndex() {
+    private int getWinningTeamIndex() {
         for (int botIndex = 0; botIndex < tools.botsDetails.length; botIndex++) {
             Unit unit = units[botIndex];
             if (coin.x == unit.getX() && coin.y == unit.getY()) {
-                // Unit has won (to make this example simple we simply ignore what
+                // Team has won (to make this example simple we simply ignore what
                 // happens if both units are at the same position as the coin
                 // at the same time)
-                return botIndex;
+                return tools.botsDetails[botIndex].teamIndex;
             }
         }
         return -1;
     }
 
-    private void addUnitPositionChartsToReplay() {
+    private void matchOver(int winningTeamIndex) {
+        // We have found a winner
+        System.out.printf("Bot '%s' has won!\n", tools.botsDetails[winningTeamIndex].botName);
+
+        // Demonstrate how to add charts to the replay file
+        addUnitPositionXChartToReplay();
+
+        // Create a final order of the teams
+        int loosingTeamIndex = (winningTeamIndex == 0) ? 1 : 0;
+        int[] teamsFinalOrder = new int[]{winningTeamIndex, loosingTeamIndex};
+
+        // Save replay file
+        ReplayWriter.saveReplayFile(replay, teamsFinalOrder, tools.server, tools.args.replay);
+
+        System.exit(0);
+    }
+
+    private void addUnitPositionXChartToReplay() {
+        String chartName = "Unit x position";
+        Chart chart = new Chart(chartName);
+
         for (int botIndex = 0; botIndex < tools.botsDetails.length; botIndex++) {
             Unit unit = units[botIndex];
-
-            String chartName = "Unit (" + tools.botsDetails[botIndex].botName + ")";
-            Chart chart = new Chart(chartName);
             chart.series.add(new ChartSeriesElement(
-                    "x",
-                    "#FF0000",
+                    tools.botsDetails[botIndex].botName,
+                    GameConfig.values.general.botColors[botIndex],
                     new CurveRef(unit.eid, TextureEntityAttribute.X)));
-            chart.series.add(new ChartSeriesElement(
-                    "y",
-                    "#0000FF",
-                    new CurveRef(unit.eid, TextureEntityAttribute.Y)));
-            replay.charts.add(chart);
         }
+
+        replay.charts.add(chart);
     }
 
     private boolean shouldSendRequestsToBots(int updateIndex) {

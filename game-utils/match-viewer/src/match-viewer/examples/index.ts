@@ -90,7 +90,7 @@ const empty = () => {};
 //     let gameDetails = new GameDetails("examples", "1.0", "#333333");
 //     replayElements.push(gameDetails);
 //
-//     let path = `${gameDetails.game}/${gameDetails.version}/`;
+//     let path = `${gameDetails.gameName}/${gameDetails.assetsVersion}/`;
 //
 //     // TextureEntity and textures as loaded from the replay file
 //     let loadedEntity: TextureEntity;
@@ -133,7 +133,7 @@ const empty = () => {};
 //
 //         // SIMULATE the movement of the entity
 //         if (time <= duration && generating) {
-//             // Update game entity
+//             // Update gameName entity
 //             gameEntity.move(time, delta);
 //
 //             // Store a location point for reference
@@ -157,7 +157,7 @@ const empty = () => {};
 //
 //             // Load required textures
 //             let texturesToLoad = getUniqueTexturePaths(entities);
-//             let path = `${gameDetails.game}/${gameDetails.version}/`;
+//             let path = `${gameDetails.gameName}/${gameDetails.assetsVersion}/`;
 //             texturesToLoad.forEach(texture => loadedTextures.set(texture, Texture.from(path + texture)));
 //
 //             // Use only the entity with id 1

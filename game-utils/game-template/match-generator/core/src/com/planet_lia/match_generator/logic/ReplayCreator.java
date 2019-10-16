@@ -1,12 +1,6 @@
 package com.planet_lia.match_generator.logic;
 
-import com.google.gson.Gson;
 import com.planet_lia.match_generator.libs.replays.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class ReplayCreator {
 
@@ -14,8 +8,10 @@ public class ReplayCreator {
     // - https://github.com/planet-lia/planet-lia/blob/master/game-utils/match-viewer/docs/writing_replay_files.md#replay-file-format
     public static Replay newReplay() {
         GameDetails gameDetails = new GameDetails(
-                "game-template",
-                GameConfig.ASSETS_VERSION,
+                GameConfig.values.general.gameNamePretty,
+                GameConfig.values.general.gameName,
+                GameConfig.values.general.gameVersion,
+                GameConfig.values.general.assetsVersion,
                 "#000000",
                 new CameraSettings(
                         GameConfig.values.cameraViewWidth,
@@ -40,14 +36,4 @@ public class ReplayCreator {
         return replay;
     }
 
-    public static void saveReplayFile(Replay replay, String filePath) {
-        String replayJson = new Gson().toJson(replay);
-        try {
-            Files.write(Paths.get(filePath), replayJson.getBytes());
-        } catch (IOException e) {
-            System.err.println("Failed to save replay file in a file");
-            e.printStackTrace();
-            System.exit(1);
-        }
-    }
 }

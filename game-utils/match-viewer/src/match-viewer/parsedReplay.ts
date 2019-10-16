@@ -14,6 +14,7 @@ import {TextSection} from "./curves/sections/text";
 import {AttachSection} from "./attachSection";
 import {BooleanSection} from "./curves/sections/boolean";
 import {isParticleEntity, ParticleEntity} from "./particleEntity";
+import {BotDetails} from "./botDetails";
 
 
 const SUPPORTED_SECTION_TYPES = [
@@ -30,6 +31,8 @@ const STANDALONE_CURVE_ID_PREFIX = "CURVE_";
 export class ParsedReplay {
     gameDetails: GameDetails;
     matchDetails: MatchDetail[];
+    botDetails: BotDetails[];
+    teamsFinalOrder: number[];
     charts: Chart[] = [];
     entities = new Map<string, Entity>();
     cameras = new Map<string, Camera>();
@@ -37,12 +40,16 @@ export class ParsedReplay {
 
     constructor(gameDetails: GameDetails,
                 matchDetails: MatchDetail[],
+                botDetails: BotDetails[],
+                teamsFinalOrder: number[],
                 charts: Chart[],
                 entities: Map<string, Entity>,
                 cameras: Map<string, Camera>,
                 standaloneCurves: Map<string, Curve<any>>) {
         this.gameDetails = gameDetails;
         this.matchDetails = matchDetails;
+        this.botDetails = botDetails;
+        this.teamsFinalOrder = teamsFinalOrder;
         this.entities = entities;
         this.cameras = cameras;
         this.standaloneCurves = standaloneCurves;
@@ -61,19 +68,33 @@ export class ParsedReplay {
         // Parse charts
         let charts: Chart[] = [];
         dict.charts.forEach(chart => {
-            charts.push(Chart.parse(chart))
+            charts.push(Chart.parse(chart));
         });
         linkChartsWithCurves(charts, standaloneCurves, entities);
 
         // Parse match details
         let matchDetails: MatchDetail[] = [];
         dict.matchDetails.forEach(detail => {
-            matchDetails.push(MatchDetail.parse(detail))
+            matchDetails.push(MatchDetail.parse(detail));
         });
+
+        // Parse bot details
+        let botDetails: BotDetails[] = [];
+        dict.botDetails.forEach(detail => {
+            botDetails.push(BotDetails.parse(detail));
+        });
+
+        let teamsFinalOrderLength = (dict.teamsFinalOrder as number[]).length;
+        if (teamsFinalOrderLength !== botDetails.length) {
+            console.warn(`Length of teamsFinalOrder (${teamsFinalOrderLength}) should be the same `
+                + `as the length of the botsDetails (${botDetails.length})`);
+        }
 
         return new ParsedReplay(
             gameDetails,
             matchDetails,
+            botDetails,
+            dict.teamsFinalOrder,
             charts,
             entities,
             cameras,

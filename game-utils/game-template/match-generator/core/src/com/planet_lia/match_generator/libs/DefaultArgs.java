@@ -6,8 +6,6 @@ import com.google.gson.Gson;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import static com.planet_lia.match_generator.logic.GameConfig.PATH_TO_GAME_CONFIG;
-
 public class DefaultArgs {
     @Parameter(names = { "--help", "-h" }, help = true)
     public boolean help = false;
@@ -31,7 +29,7 @@ public class DefaultArgs {
     public String replay = LocalDateTime.now().toString() + ".json";
 
     @Parameter(names = {"--config", "-c"}, description = "Specify a path to the game configuration file")
-    public String config = PATH_TO_GAME_CONFIG;
+    public String config = "assets/game-config.json";
 
     @Parameter(names = {"--port", "-p"}, description = "Specify the port on which bots can connect")
     public int port = 8887;

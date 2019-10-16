@@ -3,6 +3,7 @@ package com.planet_lia.match_generator.libs;
 import com.beust.jcommander.JCommander;
 import com.google.gson.Gson;
 import com.planet_lia.match_generator.libs.BotListener.MessageSender;
+import com.planet_lia.match_generator.logic.api.MoveCommand;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import static com.planet_lia.match_generator.libs.BotServer.BOT_LISTENER_TOKEN_H
 import static org.junit.jupiter.api.Assertions.*;
 
 class BotServerTest {
+
     @Test
     void badBotParameters() {
         GeneralConfig config = new GeneralConfig();
@@ -104,6 +106,8 @@ class BotServerTest {
         BotDetails[] botsDetails = argsToBotDetails(config,"b1", "t1", "{}", "b2", "t2", "{}");
 
         BotServer server = new BotServer(config, timer, port, botsDetails);
+        server.registerBotCommands(new Class[]{});
+
         server.start();
 
         ClientMock bot1 = connectBot(port, "t1");
@@ -150,6 +154,7 @@ class BotServerTest {
         BotDetails[] botsDetails = argsToBotDetails(config,"b1", "t1", "{}", "b2", "t2", "{}");
         int port = 9000;
         BotServer server = new BotServer(config, timer, port, botsDetails);
+        server.registerBotCommands(new Class[]{});
         server.start();
 
         ClientMock bot1 = connectBot(port, "t1");
@@ -170,7 +175,7 @@ class BotServerTest {
         assertFalse(server.isDisqualified(1));
 
         // Bot 2 should be disqualified
-        timer.time += 1;
+        timer.add(1);
         server.sendToAll(new MatchStateMessageMock("request", 1));
         bot1.send(toJson(new BotResponseMock("response1", 1)));
         bot1.send(toJson(new BotResponseMock("response1", 1)));
@@ -191,7 +196,7 @@ class BotServerTest {
         assertFalse(server.areAllBotsDisqualified());
 
         // Both bots disqualified
-        timer.time += 1;
+        timer.add(1);
         server.sendToAll(new MatchStateMessageMock("request"));
         server.waitForBotsToRespond();
 
@@ -215,6 +220,7 @@ class BotServerTest {
         BotDetails[] botsDetails = argsToBotDetails(config, "b1", "t1", "{}", "b2", "t2", "{}");
 
         BotServer server = new BotServer(config, new Timer(), 9000, botsDetails);
+        server.registerBotCommands(new Class[]{});
 
         assertFalse(server.isBotListenerEnabled());
     }
@@ -234,6 +240,7 @@ class BotServerTest {
         String botListenerToken = "btt";
 
         BotServer server = new BotServer(config, timer, port, botsDetails, botListenerToken);
+        server.registerBotCommands(new Class[]{});
         server.start();
 
         ClientMock bot1 = connectBot(port, "t1");
@@ -326,6 +333,7 @@ class BotServerTest {
         Timer timer = new Timer();
 
         BotServer server = new BotServer(config, timer, port, botsDetails);
+        server.registerBotCommands(new Class[]{});
         server.start();
 
         ClientMock bot1 = connectBot(port, "t1");

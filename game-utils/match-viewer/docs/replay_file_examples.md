@@ -11,8 +11,9 @@ Assets that will be referenced in examples eg. `"block.png"` will be taken from 
 
 ```json5
 "gameDetails": {
-    "game": "lia-1",
-    "version": "1.0",
+    "gameName": "lia-1",
+    "gameVersion": "1.1",
+    "assetsVersion": "1.0",
     "backgroundColor": "#333333",
     "camera": {
     "width": 176,
@@ -21,7 +22,21 @@ Assets that will be referenced in examples eg. `"block.png"` will be taken from 
     "showEntityPath": null
 },
 "matchDetails": [],
-"charts": [],
+"botDetails": [
+    {
+        "botName": "great-bot",
+        "teamIndex": 0,
+        "color": "#D9C72E",
+        "rank": 20,
+        "totalCpuTime": 0.0,
+        "numberOfTimeouts": 0,
+        "disqualified": false,
+        "disqualificationTime": -1.0,
+        "disqualificationReason": ""
+    }
+],
+"teamsFinalOrder": [],
+"charts": []
 ```
 
 ### Examples

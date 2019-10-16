@@ -292,3 +292,23 @@ body {
     position: absolute;
     bottom: 0;
 }
+
+/* Bot Details View */
+
+.bot-details-tabs {
+    padding-top: 2em;
+}
+
+.bot-details-tabs > div {
+    padding-right: 1em;
+    display: inline-block;
+}
+
+.bot-details-tabs > div:hover {
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.bot-details-tabs-selected {
+    text-decoration: underline;
+}

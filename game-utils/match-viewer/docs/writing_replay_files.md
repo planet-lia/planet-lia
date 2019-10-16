@@ -8,6 +8,8 @@ Table of content:
 * [Replay file format](#replay-file-format)
     * [Game details](#gameDetails)
     * [Match details](#matchDetails)
+    * [Bot details](#botDetails)
+    * [Teams final order](#teamsFinalOrder)
     * [Charts](#charts) 
     * [Sections](#sections)
         * [Entity types](#entity-types)
@@ -82,8 +84,10 @@ a replay file (`json` format) includes the parts listed below.
 ### gameDetails
 Basic data about the game
 
-* `game`: string - the name of the game
-* `version`: string - the version of the game
+* `gameName`: string - the name of the game
+* `gameVersion`: string - the version of the game
+* `assetsVersion`: string - version of the assets, it should only change when the assets are added, removed or updated
+     * directory for that game are introduced
 * `backgroundColor`: string - the default background color of the replay viewer
 * `camera` - details about the game camera. Note that the ratio between width and height must be 16:9.
     * `width`: number - width in world units of the area of the world that the camera can see when zoom is 1
@@ -102,8 +106,9 @@ Basic data about the game
 // Replay file
 {
     "gameDetails": {
-        "game": "lia-1",
-        "version": "1.0",
+        "gameName": "lia-1",
+        "gameVersion": "1.0",
+        "assetsVersion": "1.0",
         "backgroundColor": "#333333", 
         "camera": {
             "width": 176,
@@ -120,6 +125,7 @@ Basic data about the game
     "matchDetails": // ...
     "charts": // ...
     "sections": // ...
+    // ...
 }
 ```
 </p>
@@ -159,12 +165,61 @@ Content is up to you.
             "value": 99
         }
     ],
-    "charts": // ...
+    // ...
     "sections": // ...
 }
 ```
 </p>
 </details> 
+
+        
+### botDetails
+List of details for all bots. This details hold all the necessary data to determine who which bot was on which team, what happened with them during match generation etc.
+
+* **BotDetails**:
+    * `botName`: string - the name of the bot
+    * `teamIndex`: number - the index of the team for which this bot played during the match stored in the replay file 
+    * `color`: string - the color representing the bot
+    * `rank`: string - the rank of the bot (`-1` if not set)
+    * `totalCpuTime`: string - the total amount of seconds the bot used to respond to requests
+    * `numberOfTimeouts`: string - number of times the bot didn't return the response in time
+    * `disqualified`: string - if the bot was disqualified
+    * `disqualificationTime`: string
+    * `disqualificationReason`: string
+
+<details><summary>Example</summary>
+<p>
+
+```json5
+// Replay file
+{
+    "gameDetails": // ...
+    "matchDetails": // ..
+    "botDetails": [
+        {
+            "botName": "great-bot",
+            "teamIndex": 0,
+            "color": "#D9C72E",
+            "rank": 20,
+            "totalCpuTime": 2.4,
+            "numberOfTimeouts": 1,
+            "disqualified": false,
+            "disqualificationTime": -1.0,
+            "disqualificationReason": ""
+        }, 
+        { 
+            // ... other bots
+        }
+    ],
+    // ...
+    "sections": // ...
+}
+```
+</p>
+</details> 
+
+### teamsFinalOrder
+List of team indexes (`number[]`) in order that they have finished the match. If the value is `[2,0,1]` it means that a team with index `2` was first, the team with index `0` was second and the team with index `1` was last.
 
 ### charts
 Defines a chart of data that will be displayed next to the match viewer.
@@ -212,6 +267,7 @@ There can be 0 or more Chart objects created in one replay file.
         },
         // ... More charts
     ],
+    // ...
     "sections": // ...
 }
 ```

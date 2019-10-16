@@ -23,7 +23,7 @@ interface MatchBasicProps extends MatchBaseProps {
 
 export class MatchBasic extends Component<MatchBasicProps, {}> {
 
-    // Parses the replay file and displays the game
+    // Parses the replay file and displays the gameName
     app: MatchViewerApplication | null = null;
     gameCanvas: HTMLDivElement | null = null;
 
@@ -133,7 +133,7 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
         }
     };
 
-    // Calls itself recursively and syncs game time and timeline
+    // Calls itself recursively and syncs gameName time and timeline
     setTime = () => {
         // this.app is null only when it is destroyed as this
         // method is only called after this.app has been initialized

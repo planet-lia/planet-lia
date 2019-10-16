@@ -1,12 +1,14 @@
 import * as React from "react";
 import {Component} from "react";
-import {MatchBasic, MatchBaseProps} from "./MatchBasic";
+import {MatchBaseProps, MatchBasic} from "./MatchBasic";
 import {Col, Row} from "react-bootstrap";
 import {MatchViewerApplication} from "../match-viewer";
 import {round} from "../match-viewer/math/round";
 import {Chart} from "../match-viewer/chart";
 import {StatisticChart} from "./StatisticChart";
 import {MatchDetail} from "../match-viewer/matchDetails";
+import {BotDetails} from "../match-viewer/botDetails";
+import {BotDetailsView} from "./BotDetailsView";
 
 interface MatchAdvancedProps extends MatchBaseProps {
 }
@@ -36,7 +38,6 @@ export class MatchAdvanced extends Component<MatchAdvancedProps, MatchAdvancedSt
         return (
             <div className="match">
                 <Row>
-
                     {/* Match view */}
                     <Col md={8}>
                         <MatchBasic
@@ -50,15 +51,20 @@ export class MatchAdvanced extends Component<MatchAdvancedProps, MatchAdvancedSt
                     </Col>
 
                     <Col md={4}>
-
-                        {/* Match details */}
                         {app != null
                             ? <div>
-                                <Row><h3>Bot 1 vs Bot 2</h3></Row>
+                                <Row>{this.getBotsVersus(app.botDetails!, app.teamsFinalOrder!)}</Row>
                                 <Row>Duration: {matchDuration} s</Row>
+
+                                {/* Match details */}
                                 {app!.matchDetails!.map((detail: MatchDetail, i: number) => {
                                     return <Row key={i}>{detail.description}: {detail.value}</Row>
                                 })}
+
+                                {/* Bot details */}
+                                <Row>
+                                    <BotDetailsView botDetails={app.botDetails!}/>
+                                </Row>
                             </div>
                             : null
                         }
@@ -81,6 +87,31 @@ export class MatchAdvanced extends Component<MatchAdvancedProps, MatchAdvancedSt
                 }
             </div>
         )
+    }
+
+    getBotsVersus = (botDetails: BotDetails[], teamsFinalOrder: number[]) : any => {
+
+        // Sort bots by teams and by the order of the teams
+        botDetails.sort((d1: BotDetails, d2: BotDetails): number => {
+            let b1TeamPlace = teamsFinalOrder.indexOf(d1.teamIndex);
+            let b2TeamPlace = teamsFinalOrder.indexOf(d2.teamIndex);
+            return b1TeamPlace - b2TeamPlace;
+        });
+
+        return <h3>{botDetails.map((details: BotDetails, i: number) => {
+            return <span key={i}>
+                <span style={{color: details.color, fontWeight: "bold"}}>{details.botName}</span>
+                <small>{
+                    (i < botDetails.length - 1)
+                        ? (details.teamIndex !== botDetails[i + 1].teamIndex)
+                            ? <span style={{padding: "0.2em"}}>
+                                {((details.teamIndex === teamsFinalOrder[0]) ? " defeats " : " and ")}
+                            </span>
+                            : ", "
+                        : null }
+                </small>
+            </span>;
+        })}</h3>
     }
 }
 

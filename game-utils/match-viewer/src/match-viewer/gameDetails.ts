@@ -4,46 +4,39 @@ import {colorToNumber} from "./util/color";
 
 export class GameDetails {
 
-    game: string;
-    version: string;
+    gameNamePretty: string;
+    gameName: string;
+    gameVersion: string;
+    assetsVersion: string;
     backgroundColor: string;
 
     camera: CameraSettings;
     showEntityPath: ShowEntityPathSettings | null;
 
-    constructor(game: string, version: string, backgroundColor: string,
-                camera: CameraSettings, showEntityPath: ShowEntityPathSettings | null) {
-        this.game = game;
-        this.version = version;
+    constructor(gameNamePretty: string, gameName: string, gameVersion: string, assetsVersion: string,
+                backgroundColor: string, camera: CameraSettings, showEntityPath: ShowEntityPathSettings | null) {
+        this.gameNamePretty = gameName;
+        this.gameName = gameName;
+        this.gameVersion = gameVersion;
+        this.assetsVersion = assetsVersion;
         this.backgroundColor = backgroundColor;
         this.camera = camera;
         this.showEntityPath = showEntityPath;
     }
 
     static parse(dict: any): GameDetails {
-        errorIfUndefined([dict.game, dict.version, dict.backgroundColor, dict.camera, dict.showEntityPath]);
+        errorIfUndefined([dict.gameNamePretty, dict.gameName, dict.gameVersion, dict.assetsVersion,
+            dict.backgroundColor, dict.camera, dict.showEntityPath]);
 
         let showEntityPath = (dict.showEntityPath == null)
             ? null
             : ShowEntityPathSettings.parse(dict.showEntityPath);
 
         return new GameDetails(
-            dict.game, dict.version, dict.backgroundColor,
+            dict.gameNamePretty, dict.gameName, dict.gameVersion, dict.assetsVersion, dict.backgroundColor,
             CameraSettings.parse(dict.camera),
             showEntityPath
         );
-    }
-
-    static toDict(game: string, version: string, backgroundColor: string,
-                  cameraWidth: number, cameraHeight: number): object {
-        return {
-            "type": GameDetails.name,
-            "game": game,
-            "version": version,
-            "backgroundColor": backgroundColor,
-            "cameraWidth": cameraWidth,
-            "cameraHeight": cameraHeight
-        };
     }
 }
 

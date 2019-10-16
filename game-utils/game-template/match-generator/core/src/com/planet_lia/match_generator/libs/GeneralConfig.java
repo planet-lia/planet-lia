@@ -14,6 +14,19 @@ public class GeneralConfig {
     public String gameName;
 
     /**
+     * The version of this game. Used for updating the match-generator
+     * on local system of the users
+     */
+    public String gameVersion;
+
+    /**
+     * The version of the assets used in this game. Used to resolve
+     * path to assets. Should only change when changes in assets
+     * directory for that game are introduced
+     */
+    public String assetsVersion;
+
+    /**
      * Configuration for debug window if it is enabled
      */
     public DebugWindowConfig debugWindow;
@@ -68,6 +81,13 @@ public class GeneralConfig {
      * bots can be in one match and how they are split in teams
      */
     public TeamFormat[] allowedTeamFormats;
+
+    /**
+     * List of colors that will represent bots when the match
+     * will be replayed. Bot with index i gets the color with
+     * the same index
+     */
+    public String[] botColors;
 
     /**
      * Returns ArrayList of allowed numbers of bots

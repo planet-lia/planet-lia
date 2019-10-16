@@ -52,7 +52,8 @@ export class StatisticChart extends Component<StatisticChartProps, StatisticChar
                         trigger: "axis"
                     },
                     legend: {
-                        top: "4%",
+                        type: "scroll",
+                        top: "15%",
                         data: stat.series.map((s: ChartSeriesElement) => {
                             return s.name;
                         })
@@ -61,6 +62,7 @@ export class StatisticChart extends Component<StatisticChartProps, StatisticChar
                         left: "0%",
                         right: "0%",
                         bottom: "0%",
+                        top: "27%",
                         containLabel: true
                     },
                     xAxis: {

@@ -12,14 +12,14 @@ class BotConnection {
     boolean waitingResponse = false;
     int currentRequestIndex = -1;
     long currentRequestTime = 0;
+    boolean initialMessageSent = false;
     int numberOfTimeouts = 0;
     boolean disqualified = false;
     float disqualificationTime = -1f;
     float responseTotalDuration = 0f;
     String disqualificationReason = "";
-    boolean initialMessageSent = false;
 
-    public BotConnection(BotDetails details) {
+    BotConnection(BotDetails details) {
         this.details = details;
     }
 }
