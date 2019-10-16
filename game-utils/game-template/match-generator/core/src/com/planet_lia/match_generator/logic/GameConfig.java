@@ -11,6 +11,7 @@ public class GameConfig {
 
     public static final String ASSETS_VERSION = "1.0";
     public static final String PATH_TO_ASSETS = "assets/" + ASSETS_VERSION;
+    public static final String PATH_TO_IMAGES = PATH_TO_ASSETS + "/images/";
     public static final String PATH_TO_GAME_CONFIG = PATH_TO_ASSETS + "/game-config.json";
 
     public GeneralConfig general;
@@ -30,8 +31,13 @@ public class GameConfig {
     public float unitRotationSpeed;
     public float unitSpeed;
 
-    public static void load() throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(PATH_TO_GAME_CONFIG));
+    public static void load(String configPath) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(configPath));
         values = (new Gson()).fromJson(reader, GameConfig.class);
+    }
+
+    /** Removes PATH_TO_IMAGES from path */
+    public static String shortenImagePath(String path) {
+        return path.replaceFirst(PATH_TO_IMAGES, "");
     }
 }

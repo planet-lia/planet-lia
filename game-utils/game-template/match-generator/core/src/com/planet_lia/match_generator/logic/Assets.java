@@ -19,11 +19,13 @@ public class Assets {
     private static FreeTypeFontLoaderParameter defaultFontParameter = new FreeTypeFontLoaderParameter();
 
     @Asset(value = Texture.class, param = "defaultTextureParam")
-    public static String tile = GameConfig.PATH_TO_ASSETS + "/images/tile.png";
+    public static String tile = GameConfig.PATH_TO_IMAGES + "tile.png";
     @Asset(value = Texture.class, param = "defaultTextureParam")
-    public static String unit = GameConfig.PATH_TO_ASSETS + "/images/unit.png";
+    public static String unitYellow = GameConfig.PATH_TO_IMAGES + "unit-yellow.png";
     @Asset(value = Texture.class, param = "defaultTextureParam")
-    public static String coin = GameConfig.PATH_TO_ASSETS + "/images/coin.png";
+    public static String unitGreen = GameConfig.PATH_TO_IMAGES + "unit-green.png";
+    @Asset(value = Texture.class, param = "defaultTextureParam")
+    public static String coin = GameConfig.PATH_TO_IMAGES + "coin.png";
 
     // // This is how you can add fonts::
     // @Asset(value = BitmapFont.class, param = "defaultFontParameter")

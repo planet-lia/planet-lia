@@ -8,12 +8,17 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.planet_lia.match_generator.libs.Clickable;
-import com.planet_lia.match_generator.libs.Timer;
+import com.planet_lia.match_generator.libs.replays.*;
 import com.planet_lia.match_generator.logic.Assets;
 import com.planet_lia.match_generator.logic.GameConfig;
 
+import static com.planet_lia.match_generator.logic.GameConfig.shortenImagePath;
+
 public class Coin implements Clickable {
 
+    private Replay replay;
+
+    public String eid = "coin";
     public float x;
     public float y;
     public float size;
@@ -21,45 +26,29 @@ public class Coin implements Clickable {
 
     private Sprite sprite;
 
-    private float previousPosChangeTime = 0f;
-
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public Coin(Unit[] units) {
+    public Coin(Replay replay) {
+        this.replay = replay;
         this.size = GameConfig.values.coinSize;
-        changePosition(units);
+
+        x = GameConfig.values.mapWidth / 2f;
+        y =GameConfig.values.mapHeight / 2f;
+
 
         Texture tex = Assets.get(Assets.coin, Texture.class);
         if (tex != null) {
             sprite = new Sprite(tex);
         }
-    }
 
-    public void update(Timer timer, Unit[] units) {
-        if (timer.getTime() >= previousPosChangeTime + GameConfig.values.coinPositionChangePeriod) {
-            changePosition(units);
-            previousPosChangeTime = timer.getTime();
-        }
-    }
-
-    private void changePosition(Unit[] units) {
-        float tileSize = GameConfig.values.backgroundTileSize;
-        int mapWidth = GameConfig.values.mapWidth;
-        int mapHeight = GameConfig.values.mapHeight;
-
-        for (int i = 0; i < 100; i++) {
-            float newX = MathUtils.random(0, mapWidth - 1) + tileSize / 2f;
-            float newY = MathUtils.random(0, mapHeight - 1) + tileSize / 2f;
-
-            for (Unit unit : units) {
-                if (unit.getX() != newX || unit.getY() != newY) {
-                    x = newX;
-                    y = newY;
-                    return;
-                }
-            }
-        }
-        // Tried 100 times but failed to find a position
+        // Write coin to replay file
+        replay.sections.add(new StepSection(eid, TextureEntityAttribute.X, 0f, x));
+        replay.sections.add(new StepSection(eid, TextureEntityAttribute.Y, 0f, y));
+        replay.sections.add(new StepSection(eid, TextureEntityAttribute.WIDTH, 0f, size));
+        replay.sections.add(new StepSection(eid, TextureEntityAttribute.HEIGHT, 0f, size));
+        replay.sections.add(new TextSection(eid, TextureEntityAttribute.TEXTURE, 0f,
+                shortenImagePath(Assets.coin)));
+        replay.sections.add(new StepSection(eid, TextureEntityAttribute.LAYER, 0f, 1f));
     }
 
     public void draw(SpriteBatch batch) {

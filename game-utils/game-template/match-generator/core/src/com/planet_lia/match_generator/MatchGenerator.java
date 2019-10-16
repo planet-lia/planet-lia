@@ -102,22 +102,35 @@ public class MatchGenerator extends ApplicationAdapter {
         double delta = getDelta();
 
         if (args.debug) {
-            float logicFps = GameConfig.values.general.gameUpdatesPerSecond * controlsStage.getSpeed();
-            float drawFps = GameConfig.values.general.debugWindow.framesPerSecond;
-            float updatesPerDraw = logicFps / drawFps;
+            // When generation is paused but step was clicked
+            if (controlsStage.isStep()) {
+                controlsStage.disableStep();
 
-            // Adjust how many times update logic is called based on the
-            // default ticks per second of the match, taking in consideration
-            // custom speed of the game and interval of drawing match to the screen
-            for (int i = 1; i <= updatesPerDraw + carry; i++) {
                 timer.add(delta);
                 gameLogic.update(timer, (float) delta);
                 if (isFirstUpdate) {
                     isFirstUpdate = false;
                 }
             }
-            carry = updatesPerDraw + carry - (int) updatesPerDraw;
-            carry -= (int) carry;
+            // Match is generating, update the match
+            else {
+                float logicFps = GameConfig.values.general.gameUpdatesPerSecond * controlsStage.getSpeed();
+                float drawFps = GameConfig.values.general.debugWindow.framesPerSecond;
+                float updatesPerDraw = logicFps / drawFps;
+
+                // Adjust how many times update logic is called based on the
+                // default ticks per second of the match, taking in consideration
+                // custom speed of the game and interval of drawing match to the screen
+                for (int i = 1; i <= updatesPerDraw + carry; i++) {
+                    timer.add(delta);
+                    gameLogic.update(timer, (float) delta);
+                    if (isFirstUpdate) {
+                        isFirstUpdate = false;
+                    }
+                }
+                carry = updatesPerDraw + carry - (int) updatesPerDraw;
+                carry -= (int) carry;
+            }
 
             entityDetailsSystem.update();
 

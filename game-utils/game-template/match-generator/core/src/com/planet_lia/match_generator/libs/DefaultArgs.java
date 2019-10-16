@@ -3,7 +3,10 @@ package com.planet_lia.match_generator.libs;
 import com.beust.jcommander.Parameter;
 import com.google.gson.Gson;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+
+import static com.planet_lia.match_generator.logic.GameConfig.PATH_TO_GAME_CONFIG;
 
 public class DefaultArgs {
     @Parameter(names = { "--help", "-h" }, help = true)
@@ -25,10 +28,10 @@ public class DefaultArgs {
 
     @Parameter(names = {"--replay", "-r"}, description = "Specify the name and the path of a replay file for this\n" +
             "match, if not specified, the replay file will be named using a timestamp")
-    public String replay = "";
+    public String replay = LocalDateTime.now().toString() + ".json";
 
     @Parameter(names = {"--config", "-c"}, description = "Specify a path to the game configuration file")
-    public String config = "";
+    public String config = PATH_TO_GAME_CONFIG;
 
     @Parameter(names = {"--port", "-p"}, description = "Specify the port on which bots can connect")
     public int port = 8887;
@@ -39,7 +42,7 @@ public class DefaultArgs {
     public static final String DEFAULT_BOT_LISTENER_TOKEN  = "";
 
     @Parameter(names = {"--window-to-screen", "-w"}, description = "Specify the ratio between debug window " +
-            "(if --debug flag is enabled) and the size of the monitor")
+            "(if -d/--debug flag is enabled) and the size of the monitor")
     public float debugWindowToScreen = 0.7f;
 
     /**

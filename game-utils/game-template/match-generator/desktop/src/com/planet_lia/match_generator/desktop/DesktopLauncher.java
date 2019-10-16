@@ -16,7 +16,7 @@ public class DesktopLauncher {
 
     public static void main (String[] arg) throws Exception {
         // TODO replace with real arguments
-        String[] args = new String[]{"-d", "b1", "_", "{}", "b2", "_", "{}"};
+        String[] args = new String[]{"-d", "-r", "file.json", "b1", "_", "{}", "b2", "_", "{}"};
 
         // Parse arguments
         Args parsedArgs = new Args();
@@ -33,7 +33,7 @@ public class DesktopLauncher {
         }
 
         // Load configs
-        GameConfig.load();
+        GameConfig.load(parsedArgs.config);
         GeneralConfig generalConfig = GameConfig.values.general;
 
         // Increase bot restrictions if it is debug mode

@@ -1,12 +1,13 @@
 package com.planet_lia.match_generator;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.planet_lia.match_generator.libs.BotCommand;
 import com.planet_lia.match_generator.libs.BotResponse;
 import com.planet_lia.match_generator.libs.Timer;
+import com.planet_lia.match_generator.libs.replays.*;
 import com.planet_lia.match_generator.logic.Assets;
 import com.planet_lia.match_generator.logic.GameConfig;
+import com.planet_lia.match_generator.logic.ReplayCreator;
 import com.planet_lia.match_generator.logic.api.InitialMessage;
 import com.planet_lia.match_generator.logic.api.MatchStateMessage;
 import com.planet_lia.match_generator.logic.api.MoveCommand;
@@ -17,6 +18,8 @@ import com.planet_lia.match_generator.logic.entities.Unit;
 import com.planet_lia.match_generator.logic.MatchTools;
 
 public class GameLogic {
+
+    Replay replay = ReplayCreator.newReplay();
 
     MatchTools tools;
     SpriteBatch batch;
@@ -43,22 +46,33 @@ public class GameLogic {
             setupGraphics();
         }
 
-        // Create game entities
-        background = new Background();
-        float unitSize = GameConfig.values.unitSize;
-        units[0] = new Unit(unitSize / 2f, unitSize / 2f);
-        units[1] = new Unit(
-                GameConfig.values.mapWidth - unitSize / 2f,
-                GameConfig.values.mapHeight - unitSize / 2f);
-        coin = new Coin(units);
+        int mapWidth = GameConfig.values.mapWidth;
+        int mapHeight = GameConfig.values.mapHeight;
 
-        // Register entities so that their details will be displayed when they will be clicked on
+        // Create game entities
+        background = new Background(replay);
+        float unitSize = GameConfig.values.unitSize;
+        units[0] = new Unit(0, unitSize / 2f, unitSize / 2f,
+                replay, Assets.unitYellow);
+        units[1] = new Unit(1,
+                mapWidth - unitSize / 2f,
+                mapHeight - unitSize / 2f,
+                replay, Assets.unitGreen);
+        coin = new Coin(replay);
+
+        // Register entities so that their details will be displayed
+        // when they will be clicked on
         if (tools.entityDetailsSystem != null) {
             for (Unit unit : units) {
                 tools.entityDetailsSystem.registerEntity(unit);
             }
             tools.entityDetailsSystem.registerEntity(coin);
         }
+
+        // Create the default camera and set its position in replay file
+        String cameraId = "CAMERA_1";
+        replay.sections.add(new StepSection(cameraId, CameraAttribute.X, 0f, mapWidth / 2f));
+        replay.sections.add(new StepSection(cameraId, CameraAttribute.Y, 0f, mapHeight / 2f));
 
         // Send initial information to bots
         tools.server.sendToAll(new InitialMessage());
@@ -77,10 +91,19 @@ public class GameLogic {
 
     /** Called repeatedly to update match state */
     public void update(Timer timer, float delta) {
-        checkIfMatchIsFinished(timer);
+        int winnerBotIndex = getWinnerBotIndex();
+        if (winnerBotIndex != -1) {
+            // We have found a winner
+            System.out.printf("Bot '%s' has won!\n", tools.botsDetails[winnerBotIndex].botName);
+            addUnitPositionChartsToReplay();
+            ReplayCreator.saveReplayFile(replay, tools.args.replay);
+            System.exit(0);
+        }
 
-        // Update coin
-        coin.update(timer, units);
+        // Update entities
+        for (Unit unit : units) {
+            unit.update(timer.getTime(), delta);
+        }
 
         // Send new state to bots
         if (shouldSendRequestsToBots(updatesCount)) {
@@ -95,7 +118,7 @@ public class GameLogic {
             // Handle bot responses
             for (int botIndex = 0; botIndex < tools.botsDetails.length; botIndex++) {
                 BotResponse botResponse = tools.server.getLastResponseData(botIndex, BotResponse.class);
-                handleBotResponse(botIndex, botResponse);
+                handleBotResponse(botIndex, botResponse, timer.getTime());
             }
         }
 
@@ -125,16 +148,34 @@ public class GameLogic {
         batch.end();
     }
 
-    private void checkIfMatchIsFinished(Timer timer) {
+    private int getWinnerBotIndex() {
         for (int botIndex = 0; botIndex < tools.botsDetails.length; botIndex++) {
             Unit unit = units[botIndex];
             if (coin.x == unit.getX() && coin.y == unit.getY()) {
-                // Unit has won (to make this example simple we just ignore what
+                // Unit has won (to make this example simple we simply ignore what
                 // happens if both units are at the same position as the coin
                 // at the same time)
-                System.out.printf("Bot '%s' has won!\n", tools.botsDetails[botIndex].botName);
-                Gdx.app.exit();
+                return botIndex;
             }
+        }
+        return -1;
+    }
+
+    private void addUnitPositionChartsToReplay() {
+        for (int botIndex = 0; botIndex < tools.botsDetails.length; botIndex++) {
+            Unit unit = units[botIndex];
+
+            String chartName = "Unit (" + tools.botsDetails[botIndex].botName + ")";
+            Chart chart = new Chart(chartName);
+            chart.series.add(new ChartSeriesElement(
+                    "x",
+                    "#FF0000",
+                    new CurveRef(unit.eid, TextureEntityAttribute.X)));
+            chart.series.add(new ChartSeriesElement(
+                    "y",
+                    "#0000FF",
+                    new CurveRef(unit.eid, TextureEntityAttribute.Y)));
+            replay.charts.add(chart);
         }
     }
 
@@ -148,13 +189,13 @@ public class GameLogic {
         tools.server.send(botIndex, message);
     }
 
-    private void handleBotResponse(int botIndex, BotResponse botResponse) {
+    private void handleBotResponse(int botIndex, BotResponse botResponse, float time) {
         for (BotCommand command : botResponse.commands) {
             if (command instanceof MoveCommand) {
                 // Handle move command
                 MoveCommand moveCommand = (MoveCommand) command;
                 Unit unit = units[botIndex];
-                unit.move(moveCommand.direction);
+                unit.move(moveCommand.direction, time);
             }
             else {
                 System.err.printf("Bot '%s' provided an invalid command\n", tools.botsDetails[botIndex].botName);
