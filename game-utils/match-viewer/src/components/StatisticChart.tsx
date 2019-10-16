@@ -2,6 +2,7 @@ import * as React from "react";
 import {Component} from "react";
 import ReactEcharts from "echarts-for-react";
 import {Chart, ChartSeriesElement} from "../match-viewer/chart";
+import {round} from "../match-viewer/math/round";
 
 interface StatisticChartProps {
     stat: Chart;
@@ -24,7 +25,7 @@ export class StatisticChart extends Component<StatisticChartProps, StatisticChar
 
             let data: [number, number][] = [];
             for (let time = 0; time <= this.props.matchDuration; time += 0.1) {
-                data.push([time, s.curve!.getValue(time)]);
+                data.push([time, round(s.curve!.getValue(time), 3)]);
             }
             series.push({
                 name: s.name,
