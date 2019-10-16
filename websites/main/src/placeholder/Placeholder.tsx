@@ -41,6 +41,17 @@ export class Placeholder extends Component<Props, State> {
                         <div id="content">
 
                             <div className="sub-section">
+                                <h3> What is Planet Lia?</h3>
+                                <p>
+                                    Planet Lia is a bot programming platform for beginners
+                                    and advanced coders alike, where you can use your coding
+                                    skills to develop a bot for our video games and battle with
+                                    it against other enthusiastic coders. Improve your coding
+                                    skills, join the community and have fun!
+                                </p>
+                            </div>
+
+                            <div className="sub-section">
                                 <h3>We are currently in process of upgrading our platform.</h3>
                                 <p>
                                     You can still access our <b>previous website at </b>
@@ -82,16 +93,6 @@ export class Placeholder extends Component<Props, State> {
                                     </div>
                                 </div>
                             </div>
-
-                            <div className="sub-section"></div>
-                            <h3> What is Planet Lia?</h3>
-                            <p>
-                                Planet Lia is a bot programming platform for beginners
-                                and advanced coders alike, where you can use your coding
-                                skills to develop a bot for our video games and battle with
-                                it against other enthusiastic coders. Improve your coding
-                                skills, join the community and have fun!
-                            </p>
                         </div>
                     </div>
                 </div>
