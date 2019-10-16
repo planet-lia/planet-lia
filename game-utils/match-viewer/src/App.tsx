@@ -9,7 +9,7 @@ const App: React.FC = () => {
             <Col md={2}/>
             <Col md={8}>
                 <MatchAdvanced
-                    replayUrl={"http://localhost:3333/lia-1/assets/1.0/replay-example.json"}
+                    replayUrl={"http://localhost:3333/assets/1.0/replay-example.json"}
                     replayFile={null}
                     loopMatch={false}
                     assetsBaseUrl={"http://localhost:3333"}

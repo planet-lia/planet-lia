@@ -1,7 +1,7 @@
-# Match Generator Base (WIP)
+# Game Example
 
-Base framework for match generators for Planet Lia games. 
-It provides a basic game structure, support for debugging view as well as other useful libraries.
+Basic Planet lia game example. 
+It provides a basic game structure, basic bots, support for debugging view, writing replay files as well as other useful libraries.
 
 ## Run
 
@@ -14,7 +14,7 @@ Guide for IntelliJ IDEA:
 5. Configure the application
     - Choose a name
     - Set *Main class* to `DesktopLauncher`
-    - Set *Working directory* to `<path-to-planet-lia>/planet-lia/game-utils/game-template/`
+    - Set *Working directory* to `<path-to-planet-lia>/planet-lia/game-utils/game-example/`
     - Set *Use Classpath of module* to `desktop_main`
     - Click *Apply*
 6. Run the application

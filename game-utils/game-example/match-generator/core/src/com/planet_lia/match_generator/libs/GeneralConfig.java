@@ -3,13 +3,13 @@ package com.planet_lia.match_generator.libs;
 public class GeneralConfig {
     /**
      * A name of the game that will display on top of debug viewer.
-     * Eg. Game Template
+     * Eg. Game Example
      */
     public String gameNamePretty;
 
     /**
      * A name of the game that corresponds to the name of the folder
-     * eg. game-template
+     * eg. game-example
      */
     public String gameName;
 

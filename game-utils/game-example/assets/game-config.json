@@ -1,7 +1,7 @@
 {
     "general": {
-        "gameNamePretty": "Game Template",
-        "gameName": "game-template",
+        "gameNamePretty": "Game Example",
+        "gameName": "game-example",
         "gameVersion": "1.0",
         "assetsVersion": "1.0",
         "debugWindow": {
