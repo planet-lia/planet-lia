@@ -84,12 +84,12 @@ public class NetworkingClient extends WebSocketClient {
 
             if (message.contains("\"__type\":\"INITIAL\"")) {
                 InitialData data = gson.fromJson(message, InitialData.class);
-                response.set__uid(data.getUid());
+                response.set__uid(data.get__uid());
                 myBot.setup(data);
             }
             else if (message.contains("\"__type\":\"UPDATE\"")) {
                 MatchState data = gson.fromJson(message, MatchState.class);
-                response.set__uid(data.getUid());
+                response.set__uid(data.get__uid());
                 myBot.update(data, response);
             }
             send(gson.toJson(response));

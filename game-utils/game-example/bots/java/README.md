@@ -1,6 +1,6 @@
-# Java Default Bot
+# Java Example Bot
 
-Starter Java bot implementation.
+Example Java bot implementation.
 
 ## Setup and Run Bot Manually
 * ``` gradlew build ```

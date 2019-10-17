@@ -1,34 +1,39 @@
 import asyncio
+import random
 
 from core.bot import Bot
 from core.networking_client import connect
+from core.enums import Direction
 
 
-# The default Python 3 bot implementation that is not specific
-# to any Planet Lia game but instead serves as a base for
-# all game specific bot implementations.
+# Example Python 3 bot implementation for Planet Lia game-example.
+# To change this so that it can be used in some other Planet Lia game:
+# 1. Change response object to fit the API format of that game
+# 2. Update the basic MyBot implementation with basic bot logic
 class MyBot(Bot):
 
     # Called only once before the match starts. It holds the
     # data that you may need before the game starts.
     def setup(self, initial_data):
-        # TODO
-        # This is the default bot that is not configured
-        # for any specific game.
-        # See how to support a specific game:
-        # - <TODO_LINK>
-        pass
+        print(initial_data)
+        self.initial_data = initial_data
 
     # Called repeatedly while the match is generating. Each
     # time you receive the current match state and can use
     # response object to issue your commands.
     def update(self, state, response):
-        # TODO
-        # This is the default bot that is not configured
-        # for any specific game.
-        # See how to support a specific game:
-        # - <TODO_LINK>
-        pass
+        print(state)
+
+        # Move in one of the four directions every update call
+        r = random.randint(0, 3)
+        if r == 0:
+            response.move_unit(Direction.LEFT)
+        elif r == 1:
+            response.move_unit(Direction.RIGHT)
+        elif r == 2:
+            response.move_unit(Direction.UP)
+        else:
+            response.move_unit(Direction.DOWN)
 
 
 # Connects your bot to match generator, don't change it.

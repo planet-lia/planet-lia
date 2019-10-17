@@ -1,6 +1,6 @@
-# Python 3 Default Bot
+# Python 3 Example Bot
 
-Starter Python 3 bot implementation.
+Example Python 3 bot implementation.
 
 ## Setup and Run Bot Manually
 ### Windows
@@ -8,19 +8,19 @@ Starter Python 3 bot implementation.
 # Setup 
 python -m pip install virtualenv
 python3 -m venv env
-.\venv\Scripts\pip install -r requirements.txt
+.\env\Scripts\pip install -r requirements.txt
 # Run
-.\venv\Scripts\python my_bot.py
+.\env\Scripts\python my_bot.py
 ```
 
 ### Linux / macOS
 ```bash
 # Setup 
 python -m pip install virtualenv
-.\venv\Scripts\pip install -r requirements.txt
-python -m venv venv
+python -m venv env
+./env/bin/pip install -r requirements.txt
 # Run
-venv/bin/python3 my_bot.py -p "$1" -i "$2"
+./env/bin/python3 my_bot.py -p "$1" -i "$2"
 ```
 
 ### Use PyCharm

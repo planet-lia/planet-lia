@@ -4,7 +4,7 @@ import core.api.*;
 import core.api.commands.Direction;
 
 /**
- * Example Java bot implementation for Planet Lia game-template.
+ * Example Java bot implementation for Planet Lia game-example.
  * To change this so that it can be used in some other Planet Lia game:
  * 1. Change InitialData, MatchState and Response objects to fit
  *   the API format of that game
@@ -29,12 +29,13 @@ public class MyBot implements Bot {
     @Override
     public void update(MatchState state, Response response) {
         System.out.println((new Gson()).toJson(state));
-        // Move in one of the four directions once per second
+
+        // Move in one of the four directions every update call
         double randomNumber = Math.random();
-        if (randomNumber < 0.25) response.moveBox(Direction.LEFT);
-        else if (randomNumber < 0.5) response.moveBox(Direction.RIGHT);
-        else if (randomNumber < 0.75) response.moveBox(Direction.UP);
-        else response.moveBox(Direction.DOWN);
+        if (randomNumber < 0.25) response.moveUnit(Direction.LEFT);
+        else if (randomNumber < 0.5) response.moveUnit(Direction.RIGHT);
+        else if (randomNumber < 0.75) response.moveUnit(Direction.UP);
+        else response.moveUnit(Direction.DOWN);
     }
 
     // Connects your bot to match generator, don't change it.

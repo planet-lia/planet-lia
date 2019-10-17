@@ -10,7 +10,7 @@ public class Response {
     public int __uid;
     private ArrayList<Command> commands = new ArrayList<>();
 
-    public void moveBox(Direction direction) {
+    public void moveUnit(Direction direction) {
         commands.add(new MoveCommand(direction));
     }
 }

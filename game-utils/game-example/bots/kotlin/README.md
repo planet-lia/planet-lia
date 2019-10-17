@@ -1,6 +1,6 @@
-# Kotlin Default Bot
+# Kotlin Example Bot
 
-Starter Kotlin bot implementation.
+Example Kotlin bot implementation.
 
 ## Setup and Run Bot Manually
 * ``` gradlew build ```

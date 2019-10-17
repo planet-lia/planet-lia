@@ -1,6 +1,6 @@
 package core.api;
 
-public class Box {
+public class Unit {
     public float x;
     public float y;
 }
