@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	versionMajor = 0
-	versionMinor = 0
+	versionMajor  = 0
+	versionMinor  = 0
 	versionBugfix = 0
 )
 
@@ -15,9 +15,9 @@ var (
 )
 
 type Version struct {
-	Major     int    `json:"major"`
-	Minor     int    `json:"minor"`
-	Bugfix     int    `json:"bugfix"`
+	Major  int `json:"major"`
+	Minor  int `json:"minor"`
+	Bugfix int `json:"bugfix"`
 }
 
 func (v Version) String() string {

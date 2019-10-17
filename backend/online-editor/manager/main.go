@@ -15,7 +15,6 @@ import (
 	"strings"
 )
 
-
 func main() {
 	if err := rootCmd.Execute(); err != nil {
 		logrus.Fatal(err)
@@ -30,7 +29,7 @@ var rootCmd = &cobra.Command{
 			return errors.New("requires at least 4 arguments")
 		}
 
-		if len(args) % 2 != 0 {
+		if len(args)%2 != 0 {
 			return errors.New("bot language-url pairs are not even")
 		}
 

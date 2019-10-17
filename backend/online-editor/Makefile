@@ -19,11 +19,11 @@ fmt:
 
 .PHONY: build-macos
 build-macos: fmt
-	cd manager && GOOS="darwin" GOARCH="amd64" CGO_ENABLED=0 $(GOBUILD) -a -installsuffix cgo -o ../$(BUILD_DIR)/$(BINARY_MACOS) -v $(MAIN_PACKAGE)
+	cd manager && GOOS="darwin" GOARCH="amd64" CGO_ENABLED=0 $(GOBUILD) -a -installsuffix cgo -o $(BUILD_DIR)/$(BINARY_MACOS) -v $(MAIN_PACKAGE)
 
 .PHONY: build-linux
 build-linux: fmt
-	cd manager && GOOS="linux" GOARCH="amd64" CGO_ENABLED=0 $(GOBUILD) -a -installsuffix cgo -o ../$(BUILD_DIR)/$(BINARY_LINUX) -v $(MAIN_PACKAGE)
+	cd manager && GOOS="linux" GOARCH="amd64" CGO_ENABLED=0 $(GOBUILD) -a -installsuffix cgo -o $(BUILD_DIR)/$(BINARY_LINUX) -v $(MAIN_PACKAGE)
 
 .PHONY: test
 test:
@@ -36,5 +36,4 @@ clean:
 
 .PHONY: online-editor-v1
 online-editor-v1:
-	cd ../../ && docker build -t $(DOCKER_IMAGE):0.0.0 -f ./backend/online-editor/v1/Dockerfile .
-
+	docker build -t $(DOCKER_IMAGE):0.0.0 -f ./v1/Dockerfile .

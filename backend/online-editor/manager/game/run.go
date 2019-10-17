@@ -16,8 +16,8 @@ import (
 
 const (
 	StatusGenerating = "generating"
-	StatusSuccess = "success"
-	StatusFailure = "failure"
+	StatusSuccess    = "success"
+	StatusFailure    = "failure"
 )
 
 func GenerateMatch(m Match, bots []Bot, replayFilePath string, output io.Writer, shutdown chan bool) error {
@@ -106,7 +106,7 @@ func Update(m Match, status, log, replay string) error {
 		return errors.Wrap(err, "failed to create network request")
 	}
 
-	req.Header.Add("Authorization", "Bearer " + viper.GetString("jwt"))
+	req.Header.Add("Authorization", "Bearer "+viper.GetString("jwt"))
 	req.Header.Add("Content-Type", "application/json")
 
 	client := http.Client{}

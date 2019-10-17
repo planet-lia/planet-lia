@@ -48,7 +48,7 @@ func Start(m Match, bots []Bot, shutdown chan bool) {
 	}()
 
 	var logBuffer bytes.Buffer
-	go StateSync(500 * time.Millisecond, &logBuffer, syncShutdown, m)
+	go StateSync(500*time.Millisecond, &logBuffer, syncShutdown, m)
 
 	replayFile := filepath.Join(LiaSdkDir(), "replay.lia")
 

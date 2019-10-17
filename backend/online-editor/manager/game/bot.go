@@ -11,17 +11,17 @@ import (
 )
 
 type Bot struct {
-	Id string
-	Language string
-	Source []byte
+	Id        string
+	Language  string
+	Source    []byte
 	SourceUrl string
-	Path string  // Path to Bot's directory
-	BJ BotJson  // 😜
+	Path      string  // Path to Bot's directory
+	BJ        BotJson // 😜
 }
 
 type Match struct {
 	GameName string
-	MatchId string
+	MatchId  string
 }
 
 type BotJson struct {
@@ -86,7 +86,6 @@ func (b *Bot) GetBotJson() error {
 func (b *Bot) InjectSourceCode() error {
 	mainBotFilePath := filepath.Join(b.Path, b.BJ.MainFile)
 	logrus.WithFields(logrus.Fields{"botPath": b.Path, "mainBotFile": mainBotFilePath}).Info("Injecting source code into bot")
-
 
 	file, err := os.Create(mainBotFilePath)
 	defer file.Close()

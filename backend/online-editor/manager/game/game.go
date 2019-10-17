@@ -68,7 +68,7 @@ func VerifyGameBots(gameName string) (noBots int, err error) {
 	}
 
 	noBots = len(botDirs) / noLanguages
-	if noBots * noLanguages != len(botDirs) {
+	if noBots*noLanguages != len(botDirs) {
 		return 0, errors.New("number of languages and bots mismatch")
 	}
 
@@ -96,7 +96,11 @@ func GetReplayFileBase64Encoded(replayFilePath string) (string, error) {
 func dirExists(path string) (bool, error) {
 	// https://stackoverflow.com/a/10510783
 	_, err := os.Stat(path)
-	if err == nil { return true, nil }
-	if os.IsNotExist(err) { return false, nil }
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
 	return true, err
 }
