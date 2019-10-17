@@ -94,7 +94,7 @@ var aboutField = graphql.Field{
 	Description: "Basic information about service.",
 	Type:        aboutObject,
 	Resolve: func(p graphql.ResolveParams) (interface{}, error) {
-		logging.Debug(p.Context, "Creating GraphQL about object", logging.EmptyFields)
+		logging.DebugC(p.Context, "Creating GraphQL about object", logging.EmptyFields)
 		return p, nil
 	},
 }

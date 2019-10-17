@@ -55,7 +55,7 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 
 	data, err := graphql.Query(ctx, query)
 	if err != nil {
-		logging.Error(ctx, "Failed to query GraphQL endpoint", logrus.Fields{"error": err})
+		logging.ErrorC(ctx, "Failed to query GraphQL endpoint", logrus.Fields{"error": err})
 		sendFailureResponse(&w, "internal server error", http.StatusInternalServerError)
 		return
 	}
@@ -66,7 +66,7 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = json.Unmarshal(rJSON, &response)
 	if err != nil {
-		logging.Fatal(ctx, "Failed to marshal final value merge", logging.EmptyFields)
+		logging.FatalC(ctx, "Failed to marshal final value merge", logging.EmptyFields)
 		sendFailureResponse(&w, "internal server error", http.StatusInternalServerError)
 		return
 	}

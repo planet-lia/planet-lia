@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/graphql-go/handler"
 	"github.com/planet-lia/planet-lia/backend/core/graphql"
+	"github.com/planet-lia/planet-lia/backend/core/onlineEditor"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"net"
@@ -31,6 +32,9 @@ func Start(shutdown chan bool) {
 	r.HandleFunc("/", rootHandler).Methods("GET")
 	r.HandleFunc("/health", healthHandler).Methods("GET")
 	r.Handle("/graphql", graphqlMiddleware(graphqlHandler))
+
+	onlineEditorRouter := r.PathPrefix("/internal/online-editor").Subrouter()
+	onlineEditor.RegisterHandles(onlineEditorRouter)
 
 	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 

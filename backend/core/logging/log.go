@@ -54,27 +54,47 @@ func addRequestIdFromContext(ctx context.Context, attr *logrus.Fields) {
 	}
 }
 
-func Debug(ctx context.Context, message string, attr logrus.Fields) {
+func DebugC(ctx context.Context, message string, attr logrus.Fields) {
 	addRequestIdFromContext(ctx, &attr)
 	logrus.WithFields(attr).Debug(message)
 }
 
-func Info(ctx context.Context, message string, attr logrus.Fields) {
+func InfoC(ctx context.Context, message string, attr logrus.Fields) {
 	addRequestIdFromContext(ctx, &attr)
 	logrus.WithFields(attr).Info(message)
 }
 
-func Warning(ctx context.Context, message string, attr logrus.Fields) {
+func WarningC(ctx context.Context, message string, attr logrus.Fields) {
 	addRequestIdFromContext(ctx, &attr)
 	logrus.WithFields(attr).Warning(message)
 }
 
-func Error(ctx context.Context, message string, attr logrus.Fields) {
+func ErrorC(ctx context.Context, message string, attr logrus.Fields) {
 	addRequestIdFromContext(ctx, &attr)
 	logrus.WithFields(attr).Error(message)
 }
 
-func Fatal(ctx context.Context, message string, attr logrus.Fields) {
+func FatalC(ctx context.Context, message string, attr logrus.Fields) {
 	addRequestIdFromContext(ctx, &attr)
+	logrus.WithFields(attr).Fatal(message)
+}
+
+func Debug(message string, attr logrus.Fields) {
+	logrus.WithFields(attr).Debug(message)
+}
+
+func Info(message string, attr logrus.Fields) {
+	logrus.WithFields(attr).Info(message)
+}
+
+func Warning(message string, attr logrus.Fields) {
+	logrus.WithFields(attr).Warning(message)
+}
+
+func Error(message string, attr logrus.Fields) {
+	logrus.WithFields(attr).Error(message)
+}
+
+func Fatal(message string, attr logrus.Fields) {
 	logrus.WithFields(attr).Fatal(message)
 }

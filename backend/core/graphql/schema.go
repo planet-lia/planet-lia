@@ -8,12 +8,20 @@ import (
 var queryType = graphql.NewObject(graphql.ObjectConfig{
 	Name: "Query",
 	Fields: graphql.Fields{
-		"about": &aboutField,
+		"about":                  &aboutField,
+		"onlineEditorMatchState": &onlineEditorMatchStateField,
+	},
+})
+
+var mutationType = graphql.NewObject(graphql.ObjectConfig{
+	Name: "Mutation",
+	Fields: graphql.Fields{
+		"onlineEditorSubmit": &onlineEditorSubmitMutationObject,
 	},
 })
 
 func GenerateSchema() graphql.Schema {
-	schemaConfig := graphql.SchemaConfig{Query: queryType}
+	schemaConfig := graphql.SchemaConfig{Query: queryType, Mutation: mutationType}
 
 	schema, err := graphql.NewSchema(schemaConfig)
 	if err != nil {
