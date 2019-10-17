@@ -8,7 +8,7 @@ import (
 var queryType = graphql.NewObject(graphql.ObjectConfig{
 	Name: "Query",
 	Fields: graphql.Fields{
-		"about": &aboutField,
+		"about":                  &aboutField,
 		"onlineEditorMatchState": &onlineEditorMatchStateField,
 	},
 })

@@ -8,7 +8,7 @@ import (
 var LanguageType = graphql.NewEnum(graphql.EnumConfig{
 	Name:        "Language",
 	Description: "Programming Language",
-	Values:      graphql.EnumValueConfigMap{
+	Values: graphql.EnumValueConfigMap{
 		"PYTHON3": &graphql.EnumValueConfig{
 			Value: "python3",
 		},
@@ -22,8 +22,8 @@ var LanguageType = graphql.NewEnum(graphql.EnumConfig{
 })
 
 var OnlineEditorMatchStatus = graphql.NewEnum(graphql.EnumConfig{
-	Name:        "OnlineEditorMatchStatus",
-	Values:      graphql.EnumValueConfigMap{
+	Name: "OnlineEditorMatchStatus",
+	Values: graphql.EnumValueConfigMap{
 		"QUEUED": &graphql.EnumValueConfig{
 			Value: onlineEditor.MatchStatusQueued,
 		},

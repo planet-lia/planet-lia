@@ -18,9 +18,9 @@ func NewClient() *_redis.Client {
 	logging.Info("Connecting to redis", logrus.Fields{"address": addr})
 
 	client := _redis.NewClient(&_redis.Options{
-		Addr: addr,
+		Addr:     addr,
 		Password: viper.GetString("redis-password"),
-		DB: viper.GetInt("redis-db"),
+		DB:       viper.GetInt("redis-db"),
 	})
 
 	logging.Debug("Pinging Redis", logging.EmptyFields)

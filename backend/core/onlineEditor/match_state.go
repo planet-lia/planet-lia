@@ -3,34 +3,37 @@ package onlineEditor
 import (
 	"context"
 	"fmt"
+	_redis "github.com/go-redis/redis/v7"
 	"github.com/pkg/errors"
 	"github.com/planet-lia/planet-lia/backend/core/logging"
 	"github.com/planet-lia/planet-lia/backend/core/redis"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"regexp"
 	"strconv"
 	"time"
 )
 
 const (
-	MatchStatusQueued = "queued"
+	MatchStatusQueued     = "queued"
 	MatchStatusGenerating = "generating"
-	MatchStatusSuccess = "success"
-	MatchStatusFailure = "failure"
+	MatchStatusSuccess    = "success"
+	MatchStatusFailure    = "failure"
 )
 
 type Match struct {
-	Id MatchId
-	Game string
+	Id            MatchId
+	Game          string
 	QueuePosition int
-	Bots []InputBot
-	Log string
-	ReplayUrl string
-	Status string
-	Created time.Time
+	Bots          []InputBot
+	Log           string
+	ReplayUrl     string
+	Status        string
+	Created       time.Time
 }
 
 type MatchDoesNotExist struct{}
+
 func (_ MatchDoesNotExist) Error() string {
 	return "match does not exist"
 }
@@ -56,7 +59,6 @@ func GetMatchState(ctx context.Context, id MatchId) (Match, error) {
 	return m, nil
 }
 
-
 func MatchExists(id MatchId) (bool, error) {
 	r := redis.Client.Exists(submitDataKey(id))
 	if r.Err() != nil {
@@ -66,7 +68,8 @@ func MatchExists(id MatchId) (bool, error) {
 	return r.Val() > 0, nil
 }
 
-type MatchStateFailed struct {}
+type MatchStateFailed struct{}
+
 func (_ MatchStateFailed) Error() string {
 	return "failed to get match data"
 }
@@ -109,7 +112,7 @@ func GetMatch(ctx context.Context, id MatchId) (Match, error) {
 	}
 
 	if val, ok := data["replayUrl"]; ok {
-		match.Log = val
+		match.ReplayUrl = val
 	} else {
 		logging.ErrorC(ctx, "Failed to find online editor match key: replayUrl", logrus.Fields{"matchId": id})
 		return Match{}, MatchStateFailed{}
@@ -136,7 +139,7 @@ func GetMatch(ctx context.Context, id MatchId) (Match, error) {
 	}
 
 	if match.Status == MatchStatusQueued {
-		pos, err := matchQueuePlace(ctx, id)
+		pos, err := matchQueuePlace(ctx, redis.Client, id)
 		if err != nil {
 			logging.ErrorC(ctx, "Cannot calculate match queue place for online editor match",
 				logrus.Fields{"matchId": id, "error": err})
@@ -149,16 +152,17 @@ func GetMatch(ctx context.Context, id MatchId) (Match, error) {
 	return match, nil
 }
 
-func ExtendExpirationMatchState(ctx context.Context, id MatchId) error {
+func ExtendExpirationMatchState(ctx context.Context, id MatchId, duration time.Duration) error {
 	key := submitDataKey(id)
-	logging.InfoC(ctx, "Extending the expiration of online editor match key", logrus.Fields{"matchId": id, "key": key})
+	logging.InfoC(ctx, "Extending the expiration of online editor match key",
+		logrus.Fields{"matchId": id, "key": key, "duration": duration})
 
 	r := redis.Client.TTL(key)
 	if r.Err() != nil {
 		return errors.Wrap(r.Err(), "failed to get TTL for key")
 	}
 
-	r2 := redis.Client.Expire(submitDataKey(id), submitDefaultTTL)
+	r2 := redis.Client.Expire(submitDataKey(id), duration)
 	if r2.Err() != nil {
 		return errors.Wrap(r2.Err(), "failed to set exiration for key")
 	}
@@ -181,7 +185,7 @@ func DisableExpirationMatchState(ctx context.Context, id MatchId) error {
 func GetMatchBot(ctx context.Context, id MatchId, bot string) (string, error) {
 	logging.InfoC(ctx, "Getting online editor match bot", logrus.Fields{"matchId": id, "bot": bot})
 
-	r := redis.Client.HGet(submitDataKey(id), bot + ".source")
+	r := redis.Client.HGet(submitDataKey(id), bot+".source")
 	if r.Err() != nil {
 		return "", errors.Wrap(r.Err(), "failed to get bot field")
 	}
@@ -203,20 +207,24 @@ func unixNanoStringToTime(unixNano string) (time.Time, error) {
 	return time.Unix(0, val), nil
 }
 
-func matchQueuePlace(ctx context.Context, id MatchId) (int, error) {
-	r := redis.Client.ZRank(queue, string(id))
-	if r.Err() != nil {
-		return 0, errors.Wrap(r.Err(), "Failed to get rank of queue item for matchQueuePlace")
+func matchQueuePlace(ctx context.Context, client *_redis.Client, id MatchId) (int, error) {
+	r := client.ZRank(queue, string(id))
+	score, err := r.Result()
+	if err != nil && err.Error() == "redis: nil" {
+		return -1, nil
 	}
 
-	score := r.Val()
-
-	r = redis.Client.ZCount(queue, fmt.Sprintf("%d", score), "+inf")
-	if r.Err() != nil {
-		return 0, errors.Wrap(r.Err(), "Failed to get count of queue for matchQueuePlace")
+	if err != nil {
+		return 0, errors.Wrap(err, "Failed to get rank of queue item for matchQueuePlace")
 	}
 
-	return int(r.Val()), nil
+	r = client.ZCount(queue, fmt.Sprintf("%d", score), "+inf")
+	place, err := r.Result()
+	if err != nil {
+		return 0, errors.Wrap(err, "Failed to get count of queue for matchQueuePlace")
+	}
+
+	return int(place), nil
 }
 
 func SetMatchData(ctx context.Context, id MatchId, status, log, replayUrl string) error {
@@ -255,7 +263,7 @@ func MatchBots(ctx context.Context, id MatchId) ([]InputBot, error) {
 	}
 
 	totalNoBots := count / 2
-	if count % 2 != 0 {
+	if count%2 != 0 {
 		logging.WarningC(ctx, "Non even number of fields for bots list", logrus.Fields{"matchId": id})
 	}
 
@@ -273,6 +281,8 @@ func MatchBots(ctx context.Context, id MatchId) ([]InputBot, error) {
 
 		botsList[i].Source = r.Val()
 
+		botsList[i].SourceUrl = fmt.Sprintf("%s/internal/online-editor/match/%s/bot/%s",
+			viper.GetString("url"), id, botsList[i].Name)
 
 		r = redis.Client.HGet(submitDataKey(id), langKey)
 		if r.Err() != nil {

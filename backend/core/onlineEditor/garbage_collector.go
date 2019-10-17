@@ -39,7 +39,7 @@ func CollectGarbage() error {
 					logrus.Fields{"matchId": v})
 			} else {
 				logging.Warning("Failed to remove garbage online editor match key from queue",
-				logrus.Fields{"matchId": v})
+					logrus.Fields{"matchId": v})
 			}
 		}
 	}
@@ -55,7 +55,7 @@ func GarbageCollector(interval time.Duration, shutdown chan bool) {
 
 	for {
 		select {
-		case <- shutdown:
+		case <-shutdown:
 			logging.Info("Shutting down garbage collector", logging.EmptyFields)
 			ticker.Stop()
 			return

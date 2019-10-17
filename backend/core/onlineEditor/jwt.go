@@ -15,9 +15,9 @@ func generateMatchJwtToken(ctx context.Context, id MatchId) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"matchId": string(id),
-		"aud": "online-editor",
-		"iat": time.Now().Unix(),
-		"iss": "backend-core",
+		"aud":     "online-editor",
+		"iat":     time.Now().Unix(),
+		"iss":     "backend-core",
 	})
 
 	tokenString, err := token.SignedString([]byte(viper.GetString("jwt-internal")))

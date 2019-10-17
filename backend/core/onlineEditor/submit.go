@@ -16,13 +16,14 @@ type MatchId string
 
 const queue = "q:online-editor"
 const submitPrefix = "online-editor-session:"
-//const submitDefaultTTL = time.Second * 5
-const submitDefaultTTL = time.Second * 5000
+
+const SubmitDefaultTTL = time.Second * 5
 
 type InputBot struct {
-	Name string
+	Name     string
 	Language string
-	Source string
+	Source   string
+	SourceUrl string
 }
 
 func Submit(ctx context.Context, game string, bots []InputBot) (MatchId, error) {
@@ -47,10 +48,10 @@ func Submit(ctx context.Context, game string, bots []InputBot) (MatchId, error) 
 	}
 
 	redis.Client.HMSet(key, data)
-	redis.Client.Expire(key, submitDefaultTTL)
+	redis.Client.Expire(key, SubmitDefaultTTL)
 
 	logging.InfoC(ctx, "Created HM for online editor match details",
-		logrus.Fields{"ttl": submitDefaultTTL, "key": key, "game": game, "noBots": len(bots)})
+		logrus.Fields{"ttl": SubmitDefaultTTL, "key": key, "game": game, "noBots": len(bots)})
 
 	m := _redis.Z{
 		Score:  float64(queueScore(now)),

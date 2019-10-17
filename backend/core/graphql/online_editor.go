@@ -8,16 +8,15 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-
 var onlineEditorSubmitInputBotObject = graphql.NewInputObject(graphql.InputObjectConfig{
-	Name:        "OnlineEditorSubmitInputBot",
-	Fields:      graphql.InputObjectConfigFieldMap{
+	Name: "OnlineEditorSubmitInputBot",
+	Fields: graphql.InputObjectConfigFieldMap{
 		"language": &graphql.InputObjectFieldConfig{
 			Type: graphql.NewNonNull(LanguageType),
 		},
 		"source": &graphql.InputObjectFieldConfig{
 			Description: "Base64 encoded bot source code",
-			Type: graphql.NewNonNull(graphql.String),
+			Type:        graphql.NewNonNull(graphql.String),
 		},
 	},
 })
@@ -115,25 +114,25 @@ var onlineEditorMatchStateObject = graphql.NewObject(
 				},
 			},
 			"game": &graphql.Field{
-				Type:        graphql.String,
+				Type: graphql.String,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					m := p.Source.(onlineEditor.Match)
 					return m.Game, nil
 				},
 			},
 			"bots": &graphql.Field{
-				Type:              graphql.NewList(graphql.NewObject(graphql.ObjectConfig{
-					Name:        "Bot",
-					Fields:      graphql.Fields{
+				Type: graphql.NewList(graphql.NewObject(graphql.ObjectConfig{
+					Name: "Bot",
+					Fields: graphql.Fields{
 						"name": &graphql.Field{
-							Type:              graphql.String,
+							Type: graphql.String,
 							Resolve: func(p graphql.ResolveParams) (i interface{}, e error) {
 								b := p.Source.(onlineEditor.InputBot)
 								return b.Name, nil
 							},
 						},
 						"language": &graphql.Field{
-							Type:              LanguageType,
+							Type: LanguageType,
 							Resolve: func(p graphql.ResolveParams) (i interface{}, e error) {
 								b := p.Source.(onlineEditor.InputBot)
 								return b.Language, nil
@@ -155,7 +154,7 @@ var onlineEditorMatchStateObject = graphql.NewObject(
 				},
 			},
 			"status": &graphql.Field{
-				Type:        OnlineEditorMatchStatus,
+				Type: OnlineEditorMatchStatus,
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
 					m := p.Source.(onlineEditor.Match)
 					return m.Status, nil
@@ -174,9 +173,9 @@ var onlineEditorMatchStateObject = graphql.NewObject(
 )
 
 var onlineEditorMatchStateField = graphql.Field{
-	Name: "OnlineEditorMatchState",
+	Name:        "OnlineEditorMatchState",
 	Description: "State of an online editor match",
-	Type: onlineEditorMatchStateObject,
+	Type:        onlineEditorMatchStateObject,
 	Args: map[string]*graphql.ArgumentConfig{
 		"matchId": {
 			Type: graphql.ID,
@@ -193,7 +192,7 @@ var onlineEditorMatchStateField = graphql.Field{
 			return nil, err
 		}
 
-		err = onlineEditor.ExtendExpirationMatchState(p.Context, mId)
+		err = onlineEditor.ExtendExpirationMatchState(p.Context, mId, onlineEditor.SubmitDefaultTTL)
 		if err != nil {
 			logging.ErrorC(p.Context, "Failed to extend expiration of online editor match key",
 				logrus.Fields{"error": err, "matchId": mId})

@@ -70,7 +70,7 @@ func graphqlMiddleware(next http.Handler) http.Handler {
 		}
 		r.Body.Close()
 
-		logging.InfoC(r.Context(), "Log query", logrus.Fields{"query": string(bodyRaw)})
+		logging.DebugC(r.Context(), "Log query", logrus.Fields{"query": string(bodyRaw)})
 
 		next.ServeHTTP(w, r)
 	})
