@@ -27,6 +27,8 @@ func NewClient() *minio.Client {
 		logging.Fatal("Failed to create Minio client", logrus.Fields{"error": err})
 	}
 
+	logging.Info("Successfully created Minio client", logrus.Fields{"host": host, "port": port})
+
 	return client
 }
 

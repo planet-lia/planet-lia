@@ -35,6 +35,8 @@ func CreateBucket(c *minio.Client, name string, policy string) error {
 }
 
 func InitialBuckets(c *minio.Client) error {
+	logging.Info("Creating initial buckets if they don't exist", logging.EmptyFields)
+
 	if err := CreateBucket(c, "replays", anonymousReadBucketPolicy("replays")); err != nil {
 		return errors.Wrap(err, "failed to create replays bucket")
 	}
