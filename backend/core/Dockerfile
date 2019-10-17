@@ -2,7 +2,7 @@ FROM golang:1.13 AS builder
 ARG COMMIT_ID=""
 
 # CA-certificates is required to call HTTPS endpoints.
-RUN apk update && apk add --no-cache git ca-certificates
+RUN apt-get update && apt-get -y install ca-certificates
 
 COPY . /app
 WORKDIR /app

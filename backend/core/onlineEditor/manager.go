@@ -60,7 +60,7 @@ func ManagerGarbageCollectorStart(client *kubernetes.Clientset, shutdown <-chan 
 	for {
 		select {
 		case <-shutdown:
-			logging.InfoC(ctx,"Shutting down online editor garbage collector", logging.EmptyFields)
+			logging.InfoC(ctx, "Shutting down online editor garbage collector", logging.EmptyFields)
 			ticker.Stop()
 			return
 		case <-ticker.C:
@@ -96,7 +96,7 @@ func getNextMatch(ctx context.Context) (Match, error) {
 		return Match{}, errors.Wrap(err, "failed to get match data")
 	}
 
-	err = ExtendExpirationMatchState(ctx, matchId, time.Minute * 10)
+	err = ExtendExpirationMatchState(ctx, matchId, time.Minute*10)
 	if err != nil {
 		return Match{}, errors.Wrap(err, "failed to disable match expiration")
 	}

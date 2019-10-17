@@ -17,13 +17,13 @@ import (
 )
 
 const (
-	JobLabelMatchIdKey = "k8s.planetlia.com/match-id"
-	JobLabelTypeKey   = "k8s.planetlia.com/job-type"
-	JobLabelTypeValue = "online-editor-match"
-	JobLabelCpuAllocation   = "k8s.planetlia.com/cpu-allocation"
-	noCpuForMatch = 3  // TODO - do this dynamically
-	noMemoryForMatch = 2048 // 2 GiB of RAM
-	oldJobCleanup = 5 * time.Minute
+	JobLabelMatchIdKey    = "k8s.planetlia.com/match-id"
+	JobLabelTypeKey       = "k8s.planetlia.com/job-type"
+	JobLabelTypeValue     = "online-editor-match"
+	JobLabelCpuAllocation = "k8s.planetlia.com/cpu-allocation"
+	noCpuForMatch         = 3    // TODO - do this dynamically
+	noMemoryForMatch      = 2048 // 2 GiB of RAM
+	oldJobCleanup         = 5 * time.Minute
 )
 
 // We use Kubernetes Pods instead of Jobs since they are more appropriate for our "try to run a match and if we fail
@@ -62,14 +62,14 @@ func canSpawnMatch(ctx context.Context) (bool, error) {
 		return false, errors.Wrap(err, "failed to check how many cpu are in usage")
 	}
 
-	return maxNoCpu - currentNoCpu >= noCpuForMatch, nil
+	return maxNoCpu-currentNoCpu >= noCpuForMatch, nil
 }
 
 func noUsedCPU(ctx context.Context, c *kubernetes.Clientset) (int, error) {
 	namespace := viper.GetString("online-editor-k8s-namespace")
 
 	lst, err := c.CoreV1().Pods(namespace).List(metav1.ListOptions{
-		LabelSelector: fmt.Sprintf("%s=%s", JobLabelTypeKey,JobLabelTypeValue),
+		LabelSelector: fmt.Sprintf("%s=%s", JobLabelTypeKey, JobLabelTypeValue),
 	})
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to list online editor match jobs")
@@ -120,32 +120,32 @@ func createJobSpecForMatch(ctx context.Context, match Match, jwt string) *corev1
 		ObjectMeta: metav1.ObjectMeta{
 			Name: name,
 			Labels: map[string]string{
-				JobLabelTypeKey:   JobLabelTypeValue,
-				JobLabelMatchIdKey: string(match.Id),
+				JobLabelTypeKey:       JobLabelTypeValue,
+				JobLabelMatchIdKey:    string(match.Id),
 				JobLabelCpuAllocation: strconv.Itoa(noCpuForMatch),
 			},
 		},
-		Spec:       corev1.PodSpec{
-			Containers:                    []corev1.Container{{
-				Name:                     "online-editor",
-				Image:                    viper.GetString("online-editor-image"),
-				Args:                     []string{string(match.Id), "lia-1",
+		Spec: corev1.PodSpec{
+			Containers: []corev1.Container{{
+				Name:  "online-editor",
+				Image: viper.GetString("online-editor-image"),
+				Args: []string{string(match.Id), "lia-1",
 					match.Bots[0].Language, match.Bots[0].SourceUrl,
 					match.Bots[1].Language, match.Bots[1].SourceUrl,
 					"--root-backend-endpoint", viper.GetString("url"),
 					"--jwt", jwt},
 				Resources: corev1.ResourceRequirements{},
 			}},
-			RestartPolicy:                 corev1.RestartPolicyNever,
-			ActiveDeadlineSeconds:         &activeDeadlineSeconds,
-			AutomountServiceAccountToken:  &autoMountServiceAccountToken,
+			RestartPolicy:                corev1.RestartPolicyNever,
+			ActiveDeadlineSeconds:        &activeDeadlineSeconds,
+			AutomountServiceAccountToken: &autoMountServiceAccountToken,
 		},
 	}
 
 	if !viper.GetBool("online-editor-ignore-resource-requests") {
 		job.Spec.Containers[0].Resources.Requests = corev1.ResourceList{
-				corev1.ResourceName("cpu"): resource.MustParse(resourceNoCpu),
-				corev1.ResourceName("memory"): resource.MustParse(resourceNoMemory),
+			corev1.ResourceName("cpu"):    resource.MustParse(resourceNoCpu),
+			corev1.ResourceName("memory"): resource.MustParse(resourceNoMemory),
 		}
 	} else {
 		logging.InfoC(ctx, "Ignoring online editor resource requests when generating pod spec", logging.EmptyFields)
@@ -153,7 +153,7 @@ func createJobSpecForMatch(ctx context.Context, match Match, jwt string) *corev1
 
 	if !viper.GetBool("online-editor-ignore-resource-limits") {
 		job.Spec.Containers[0].Resources.Limits = corev1.ResourceList{
-			corev1.ResourceName("cpu"): resource.MustParse(resourceNoCpu),
+			corev1.ResourceName("cpu"):    resource.MustParse(resourceNoCpu),
 			corev1.ResourceName("memory"): resource.MustParse(resourceNoMemory),
 		}
 	} else {
@@ -166,7 +166,7 @@ func createJobSpecForMatch(ctx context.Context, match Match, jwt string) *corev1
 func oldJobs(client *kubernetes.Clientset, duration time.Duration) ([]corev1.Pod, error) {
 	namespace := viper.GetString("online-editor-k8s-namespace")
 	jobs, err := client.CoreV1().Pods(namespace).List(metav1.ListOptions{
-		LabelSelector: fmt.Sprintf("%s=%s", JobLabelTypeKey,JobLabelTypeValue),
+		LabelSelector: fmt.Sprintf("%s=%s", JobLabelTypeKey, JobLabelTypeValue),
 	})
 
 	if err != nil {
@@ -187,7 +187,7 @@ func oldJobs(client *kubernetes.Clientset, duration time.Duration) ([]corev1.Pod
 func jobsWithErrors(client *kubernetes.Clientset) ([]corev1.Pod, error) {
 	namespace := viper.GetString("online-editor-k8s-namespace")
 	jobs, err := client.CoreV1().Pods(namespace).List(metav1.ListOptions{
-		LabelSelector: fmt.Sprintf("%s=%s", JobLabelTypeKey,JobLabelTypeValue),
+		LabelSelector: fmt.Sprintf("%s=%s", JobLabelTypeKey, JobLabelTypeValue),
 	})
 
 	if err != nil {

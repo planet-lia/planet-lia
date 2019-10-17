@@ -20,9 +20,9 @@ const submitPrefix = "online-editor-session:"
 const SubmitDefaultTTL = time.Second * 5
 
 type InputBot struct {
-	Name     string
-	Language string
-	Source   string
+	Name      string
+	Language  string
+	Source    string
 	SourceUrl string
 }
 

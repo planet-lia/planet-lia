@@ -72,7 +72,7 @@ func matchStateHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Everything is authenticated and authorized...finally
 
-	err := ExtendExpirationMatchState(ctx, mId, time.Minute * 10)
+	err := ExtendExpirationMatchState(ctx, mId, time.Minute*10)
 	if err != nil {
 		logging.ErrorC(ctx, "Failed to extend expiration of online editor match key",
 			logrus.Fields{"matchId": mId, "error": err})
