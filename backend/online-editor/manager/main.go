@@ -12,6 +12,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
 
@@ -39,6 +40,13 @@ var rootCmd = &cobra.Command{
 		checkVerbose()
 		logrus.WithField("version", version.Ver.String()).Info("Running Online Editor Manager")
 		logrus.WithFields(viper.AllSettings()).Info("Config")
+
+		argMap := make(logrus.Fields)
+		for i, arg := range args {
+			argMap[strconv.Itoa(i)] = arg
+		}
+
+		logrus.WithFields(argMap).Info("Arguments")
 
 		m := game.Match{
 			MatchId:  args[0],
@@ -80,7 +88,7 @@ func init() {
 
 	rootCmd.Flags().String("jwt", "foo", "JWT to access Backend Core")
 	rootCmd.Flags().String("root-backend-endpoint", "http://localhost:8080", "Root Backend Core endpoint")
-	rootCmd.Flags().String("lia-sdk", "/home/app/lia-sdk-linux/lia", "Filepath of lia-sdk executable")
+	rootCmd.Flags().String("lia-sdk", "/home/app/lia", "Filepath of lia-sdk executable")
 
 	envPrefix := "LIA"
 	viper.SetEnvPrefix(envPrefix)

@@ -7,7 +7,7 @@ import (
 const (
 	versionMajor  = 0
 	versionMinor  = 0
-	versionBugfix = 0
+	versionBugfix = 4
 )
 
 var (

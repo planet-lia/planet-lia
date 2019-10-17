@@ -6,6 +6,11 @@ GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 
+VERSION_MAJOR:=$(shell cat manager/version/version.go | awk '/versionMajor.* = / {print $$3}')
+VERSION_MINOR:=$(shell cat manager/version/version.go | awk '/versionMinor.* = / {print $$3}')
+VERSION_BUGFIX:=$(shell cat manager/version/version.go | awk '/versionBugfix.* = / {print $$3}')
+VERSION:=$(VERSION_MAJOR).$(VERSION_MINOR).$(VERSION_BUGFIX)
+
 BINARY_NAME=planet-lia-online-editor-manager
 BINARY_MACOS=$(BINARY_NAME)_macos
 BINARY_LINUX=$(BINARY_NAME)_linux_amd64
@@ -36,4 +41,4 @@ clean:
 
 .PHONY: online-editor-v1
 online-editor-v1:
-	docker build -t $(DOCKER_IMAGE):0.0.0 -f ./v1/Dockerfile .
+	docker build -t $(DOCKER_IMAGE):${VERSION} -f ./v1/Dockerfile .

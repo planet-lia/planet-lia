@@ -2,6 +2,7 @@ package game
 
 import (
 	"encoding/base64"
+	"fmt"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -33,23 +34,31 @@ func VerifyGameExists(gameName string) bool {
 	return exists
 }
 
+var hiddenDirRegex, _ = regexp.Compile("^\\..*$")
+
 // Checks if the bots dir has the appropriate combination of bots and languages.
 func VerifyGameBots(gameName string) (noBots int, err error) {
+	gameBotsDir := GameBotsDir(gameName)
+	logrus.WithField("gameBotsDir", gameBotsDir).Info("Verifying game bots directory")
+
 	if !VerifyGameExists(gameName) {
 		return 0, errors.New("game does not exist")
 	}
 
-	fi, err := ioutil.ReadDir(GameBotsDir(gameName))
+	fi, err := ioutil.ReadDir(gameBotsDir)
 	if err != nil {
 		return 0, errors.Wrap(err, "failed to read game bot's dir")
 	}
 
 	botDirs := make([]string, 0)
 	for _, f := range fi {
-		if f.IsDir() {
+		// Ignore hidden directories (e.g. .git, .svn)
+		if f.IsDir() && !hiddenDirRegex.MatchString(f.Name()) {
 			botDirs = append(botDirs, f.Name())
 		}
 	}
+
+	logrus.WithFields(logrus.Fields{"botDirs": botDirs, "noBotDirs": len(botDirs)}).Info("Game bot dirs")
 
 	noLanguages := 0 // according to the number of '*_bot1' directories
 	langRegex, err := regexp.Compile(".*_bot1")
@@ -63,13 +72,16 @@ func VerifyGameBots(gameName string) (noBots int, err error) {
 		}
 	}
 
+	logrus.WithField("noLanguages", noLanguages).Info("No languages detected")
+
 	if noLanguages == 0 {
 		return 0, errors.New("no bot languages detected")
 	}
 
 	noBots = len(botDirs) / noLanguages
 	if noBots*noLanguages != len(botDirs) {
-		return 0, errors.New("number of languages and bots mismatch")
+		return 0, errors.New(fmt.Sprintf("number of languages and bots mismatch: %d != %d",
+			noBots*noLanguages, len(botDirs)))
 	}
 
 	return noBots, nil
