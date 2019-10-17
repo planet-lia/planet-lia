@@ -20,7 +20,7 @@ func NewClient() *minio.Client {
 
 	accessKey := viper.GetString("minio-access-key")
 	secretKey := viper.GetString("minio-secret-key")
-	useSSL := viper.GetBool("minio-ssl")
+	useSSL := !viper.GetBool("minio-disable-ssl")
 
 	client, err := minio.New(endpoint, accessKey, secretKey, useSSL)
 	if err != nil {
@@ -37,7 +37,7 @@ func GetEndpoint() string {
 	port := viper.GetInt("minio-port")
 	endpoint := net.JoinHostPort(host, strconv.Itoa(port))
 
-	useSSL := viper.GetBool("minio-ssl")
+	useSSL := !viper.GetBool("minio-disable-ssl")
 
 	if useSSL {
 		endpoint = "https://" + endpoint

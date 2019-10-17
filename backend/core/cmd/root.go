@@ -99,7 +99,7 @@ func init() {
 	rootCmd.Flags().Int("minio-port", 9000, "Minio port")
 	rootCmd.Flags().String("minio-access-key", "admin", "Minio access key")
 	rootCmd.Flags().String("minio-secret-key", "password", "Minio secret key")
-	rootCmd.Flags().Bool("minio-ssl", true, "Use SSL when connecting to Minio")
+	rootCmd.Flags().Bool("minio-disable-ssl", false, "Disable SSL when connecting to Minio")
 
 	rootCmd.Flags().String("k8s-kubeconfig", "", "Use external Kubernetes cluster, provide kubeconfig file")
 
