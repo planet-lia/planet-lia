@@ -27,7 +27,7 @@ scopes = [
     "backend",
     "cli",
     "match-viewer",
-    "game-template",
+    "game-example",
     "game-utils",
     "game-.+"
 ]
