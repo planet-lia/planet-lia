@@ -48,6 +48,12 @@ var onlineEditorSubmitMutationObject = graphql.Field{
 		game := p.Args["game"].(string)
 		bots := p.Args["bots"].([]interface{})
 
+		// TODO - do this dynamically
+		if game != "lia-1" {
+			return nil, errors.New("only lia-1 is currently supported")
+		}
+
+		// TODO - do this dynamically
 		if len(bots) < 2 {
 			return nil, errors.New("at least two bots required")
 		}

@@ -129,7 +129,8 @@ func createJobSpecForMatch(ctx context.Context, match Match, jwt string) *corev1
 			Containers: []corev1.Container{{
 				Name:  "online-editor",
 				Image: viper.GetString("online-editor-image"),
-				Args: []string{string(match.Id), "lia-1",
+				Args: []string{string(match.Id), match.Game,
+					// TODO - do not hardcore the bot's indexes, do it dynamically
 					match.Bots[0].Language, match.Bots[0].SourceUrl,
 					match.Bots[1].Language, match.Bots[1].SourceUrl,
 					"--root-backend-endpoint", viper.GetString("url"),
