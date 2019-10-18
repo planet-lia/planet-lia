@@ -192,11 +192,13 @@ var onlineEditorMatchStateField = graphql.Field{
 			return nil, err
 		}
 
-		err = onlineEditor.ExtendExpirationMatchState(p.Context, mId, onlineEditor.SubmitDefaultTTL)
-		if err != nil {
-			logging.ErrorC(p.Context, "Failed to extend expiration of online editor match key",
-				logrus.Fields{"error": err, "matchId": mId})
-			return nil, errors.New("failed to extend expiration")
+		if m.Status == onlineEditor.MatchStatusQueued {
+			err = onlineEditor.ExtendExpirationMatchState(p.Context, mId, onlineEditor.SubmitDefaultTTL)
+			if err != nil {
+				logging.ErrorC(p.Context, "Failed to extend expiration of online editor match key",
+					logrus.Fields{"error": err, "matchId": mId})
+				return nil, errors.New("failed to extend expiration")
+			}
 		}
 
 		return m, nil
