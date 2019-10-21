@@ -108,7 +108,7 @@ func init() {
 	rootCmd.Flags().Bool("online-editor-k8s-namespace-create", false, "Creates online editor k8s namespace if it doesn't exist")
 	rootCmd.Flags().Int("online-editor-max-cpu", 3, "Maximum number of cpu's for online editor's manager to allocate")
 	rootCmd.Flags().Duration("online-editor-match-max-duration", time.Minute, "Maximum duration an online editor match can be executing (rounds down to nearest second)")
-	rootCmd.Flags().String("online-editor-image", "planetlia/online-editor:0.0.4", "Online editor Docker image")
+	rootCmd.Flags().String("online-editor-image", "planetlia/online-editor:0.0.5", "Online editor Docker image")
 	rootCmd.Flags().Bool("online-editor-disable-manager-gc", false, "Disable the online editor manager garbage collector")
 	rootCmd.Flags().Bool("online-editor-ignore-resource-requests", false, "Does not place K8s pod resource requests on the online editors container")
 	rootCmd.Flags().Bool("online-editor-ignore-resource-limits", false, "Does not place K8s pod resource limits on the online editors container")

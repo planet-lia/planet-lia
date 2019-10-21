@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Peforms the setup of the Docker image container for the online editor.
+
 set -e
 
 # Download Lia-SDK
@@ -9,7 +11,7 @@ curl -s "https://api.github.com/repos/planet-lia/lia-SDK/releases/latest" | \
 unzip lia-sdk-linux.zip
 mv lia-sdk-linux/* .
 wget -O ./data/game-config.json "https://files.production.cloud.planetlia.com/games/lia-1/game-config.json"
-wget -O ./data/game-engine.jar "https://files.production.cloud.planetlia.com/games/lia-1/game-engine.jar"
+wget -O ./data/game-engine.jar "https://files.production.cloud.planetlia.com/games/lia-1/game-engine-v2.jar"
 
 echo -n '{"analyticsallow": false, "analyticsallowedversion": "1.0.1", "trackingid": "29b36ae5-1a1c-4fa5-ac52-e64fafc6783a"}' > .lia.json
 echo -n '{"analyticsallow": false, "analyticsallowedversion": "1.0.1", "trackingid": "29b36ae5-1a1c-4fa5-ac52-e64fafc6783a"}' > ~/.lia.json

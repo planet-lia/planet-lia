@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# This script is used to build basic bots for all languages during the Docker
+# image creation process. This speeds up the build process when building user's
+# bots since maven, pip, etc. have been initilized.
+
 set -e
 
 # Pre-build bots for all langauges so that it will be faster for subseqent matches
