@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    
     <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
@@ -37,6 +38,12 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>Planet Lia</title>
+    
+    <script>
+    if (window.location.href.indexOf("/slt2019") != -1) {
+        window.location.replace("http://liagame.com/leaderboard");
+    }
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
