@@ -1,25 +1,20 @@
-package com.planet_lia.match_generator;
+package com.planet_lia.match_generator.game;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.planet_lia.match_generator.libs.*;
 import com.planet_lia.match_generator.libs.replays.*;
-import com.planet_lia.match_generator.logic.Assets;
-import com.planet_lia.match_generator.logic.GameConfig;
-import com.planet_lia.match_generator.logic.ReplayCreator;
-import com.planet_lia.match_generator.logic.api.InitialMessage;
-import com.planet_lia.match_generator.logic.api.MatchStateMessage;
-import com.planet_lia.match_generator.logic.api.MoveCommand;
-import com.planet_lia.match_generator.logic.api.UnitData;
-import com.planet_lia.match_generator.logic.entities.Background;
-import com.planet_lia.match_generator.logic.entities.Coin;
-import com.planet_lia.match_generator.logic.entities.Unit;
-import com.planet_lia.match_generator.logic.MatchTools;
+import com.planet_lia.match_generator.game.api.InitialMessage;
+import com.planet_lia.match_generator.game.api.MatchStateMessage;
+import com.planet_lia.match_generator.game.api.MoveCommand;
+import com.planet_lia.match_generator.game.api.UnitData;
+import com.planet_lia.match_generator.game.entities.Background;
+import com.planet_lia.match_generator.game.entities.Coin;
+import com.planet_lia.match_generator.game.entities.Unit;
 
-public class GameLogic {
+public class GameLogic extends GameLogicBase {
 
-    Replay replay = ReplayCreator.newReplay();
+    Replay replay = ReplayManager.newReplay();
 
-    MatchTools tools;
     SpriteBatch batch;
 
     Background background;
@@ -32,15 +27,16 @@ public class GameLogic {
      * Setup your game logic
      * @param tools match related details
      */
-    public GameLogic(MatchTools tools) {
-        this.tools = tools;
+    @Override
+    public void setup(MatchTools tools) {
+        super.setup(tools);
 
         // Register supported bot commands
         Class[] supportedBotCommands = new Class[]{MoveCommand.class};
         this.tools.server.registerBotCommands(supportedBotCommands);
 
         // If this is a debug mode, setup graphics
-        if (tools.args.debug) {
+        if (Args.values.debug) {
             setupGraphics();
         }
 
@@ -72,6 +68,13 @@ public class GameLogic {
         replay.sections.add(new StepSection(cameraId, CameraAttribute.X, 0f, mapWidth / 2f));
         replay.sections.add(new StepSection(cameraId, CameraAttribute.Y, 0f, mapHeight / 2f));
 
+        // Store the size of the map as a match detail
+        // Check the documentation for all the details about the replay files format:
+        // - https://github.com/planet-lia/planet-lia/blob/master/game-utils/match-viewer/docs/writing_replay_files.md#replay-file-format
+        replay.matchDetails.add(new MatchDetail(
+                "Map size",
+                GameConfig.values.mapWidth + " x " + GameConfig.values.mapHeight));
+
         // Send initial information to bots
         tools.server.sendToAll(new InitialMessage());
         tools.server.waitForBotsToRespond();
@@ -88,6 +91,7 @@ public class GameLogic {
     }
 
     /** Called repeatedly to update match state */
+    @Override
     public void update(Timer timer, float delta) {
         int winningTeamIndex = getWinningTeamIndex();
         if (winningTeamIndex != -1) {
@@ -120,6 +124,7 @@ public class GameLogic {
     }
 
     /** In debug mode it draws the match state to the screen */
+    @Override
     public void draw() {
         // Draw your match here
         // IMPORTANT: Do not update any logic here as this method will
@@ -167,7 +172,7 @@ public class GameLogic {
         int[] teamsFinalOrder = new int[]{winningTeamIndex, loosingTeamIndex};
 
         // Save replay file
-        ReplayWriter.saveReplayFile(replay, teamsFinalOrder, tools.server, tools.args.replay);
+        ReplayManager.saveReplayFile(replay, teamsFinalOrder, tools.server, Args.values.replay);
 
         System.exit(0);
     }
@@ -212,6 +217,7 @@ public class GameLogic {
     }
 
     /** Cleanup necessary stuff before exiting */
+    @Override
     public void dispose() {
         Assets.dispose();
     }

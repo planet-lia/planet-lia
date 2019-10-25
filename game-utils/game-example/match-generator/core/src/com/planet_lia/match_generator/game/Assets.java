@@ -1,4 +1,4 @@
-package com.planet_lia.match_generator.logic;
+package com.planet_lia.match_generator.game;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;

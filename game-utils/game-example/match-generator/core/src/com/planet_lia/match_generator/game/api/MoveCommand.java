@@ -1,7 +1,7 @@
-package com.planet_lia.match_generator.logic.api;
+package com.planet_lia.match_generator.game.api;
 
 import com.planet_lia.match_generator.libs.BotCommand;
-import com.planet_lia.match_generator.logic.api.commands.Direction;
+import com.planet_lia.match_generator.game.api.commands.Direction;
 
 public class MoveCommand implements BotCommand {
     public Direction direction;

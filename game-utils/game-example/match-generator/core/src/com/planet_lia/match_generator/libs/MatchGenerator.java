@@ -1,4 +1,4 @@
-package com.planet_lia.match_generator;
+package com.planet_lia.match_generator.libs;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -11,14 +11,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.kotcrab.vis.ui.VisUI;
-import com.planet_lia.match_generator.libs.*;
-import com.planet_lia.match_generator.logic.Args;
-import com.planet_lia.match_generator.logic.GameConfig;
-import com.planet_lia.match_generator.logic.MatchTools;
+import com.planet_lia.match_generator.game.GameConfig;
 
 public class MatchGenerator extends ApplicationAdapter {
 
-    Args args;
+    DefaultArgs args;
     BotDetails[] botsDetails;
 
     Timer timer = new Timer();
@@ -41,13 +38,14 @@ public class MatchGenerator extends ApplicationAdapter {
     ControlsStage controlsStage;
     EntityDetailsSystem entityDetailsSystem;
 
-    GameLogic gameLogic;
+    GameLogicBase gameLogic;
 
     ShapeRenderer shapeRenderer;
 
-    public MatchGenerator(Args args, BotDetails[] botsDetails) throws Exception {
+    public MatchGenerator(DefaultArgs args, BotDetails[] botsDetails, GameLogicBase gameLogic) throws Exception {
         this.args = args;
         this.botsDetails = botsDetails;
+        this.gameLogic = gameLogic;
 
         server = new BotServer(GameConfig.values.general, timer, args.port, botsDetails);
         server.start();
@@ -87,7 +85,7 @@ public class MatchGenerator extends ApplicationAdapter {
             server.setDebugGuiStage(debugGuiStage);
         }
 
-        gameLogic = new GameLogic(new MatchTools(args, botsDetails, server, gameViewport, entityDetailsSystem));
+        gameLogic.setup(new MatchTools(botsDetails, server, gameViewport, entityDetailsSystem));
     }
 
     private void centerCamera(Camera camera, Viewport viewport) {

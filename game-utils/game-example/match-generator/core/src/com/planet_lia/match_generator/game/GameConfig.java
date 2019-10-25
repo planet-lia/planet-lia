@@ -1,4 +1,4 @@
-package com.planet_lia.match_generator.logic;
+package com.planet_lia.match_generator.game;
 
 import com.google.gson.Gson;
 import com.planet_lia.match_generator.libs.GeneralConfig;
@@ -25,10 +25,7 @@ public class GameConfig {
     public int mapHeight;
     public int backgroundTileSize;
     public float coinSize;
-    public float coinPositionChangePeriod;
     public int unitSize;
-    public float unitRotationSpeed;
-    public float unitSpeed;
 
     /** Initializes static fields in GameConfig class */
     public static void load(String configPath) throws IOException {

@@ -1,4 +1,4 @@
-package com.planet_lia.match_generator.logic.api.commands;
+package com.planet_lia.match_generator.game.api.commands;
 
 import com.google.gson.*;
 import com.planet_lia.match_generator.libs.BotCommand;

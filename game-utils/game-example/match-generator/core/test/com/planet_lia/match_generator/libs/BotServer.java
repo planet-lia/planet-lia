@@ -3,7 +3,6 @@ package com.planet_lia.match_generator.libs;
 import com.beust.jcommander.JCommander;
 import com.google.gson.Gson;
 import com.planet_lia.match_generator.libs.BotListener.MessageSender;
-import com.planet_lia.match_generator.logic.api.MoveCommand;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 import org.junit.jupiter.api.Test;

@@ -1,5 +1,7 @@
 package com.planet_lia.match_generator.libs;
 
+import com.planet_lia.match_generator.libs.replays.ShowEntityPathSettings;
+
 public class GeneralConfig {
     /**
      * A name of the game that will display on top of debug viewer.
@@ -25,6 +27,11 @@ public class GeneralConfig {
      * directory for that game are introduced
      */
     public String assetsVersion;
+
+    /**
+     * The default background color
+     */
+    public String backgroundColor;
 
     /**
      * Configuration for debug window if it is enabled
@@ -88,6 +95,12 @@ public class GeneralConfig {
      * the same index
      */
     public String[] botColors;
+
+    /**
+     * Configure the path that is shown when the entity is clicked.
+     * If null this feature is disabled.
+     */
+    public ShowEntityPathSettings showEntityPathSettings;
 
     /**
      * Returns ArrayList of allowed numbers of bots
