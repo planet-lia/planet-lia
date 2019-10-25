@@ -1,4 +1,4 @@
-package com.planet_lia.match_generator.logic.entities;
+package com.planet_lia.match_generator.game.entities;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -8,11 +8,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.planet_lia.match_generator.libs.Clickable;
 import com.planet_lia.match_generator.libs.replays.*;
-import com.planet_lia.match_generator.logic.Assets;
-import com.planet_lia.match_generator.logic.GameConfig;
-import com.planet_lia.match_generator.logic.api.commands.Direction;
+import com.planet_lia.match_generator.game.Assets;
+import com.planet_lia.match_generator.game.GameConfig;
+import com.planet_lia.match_generator.game.api.commands.Direction;
 
-import static com.planet_lia.match_generator.logic.GameConfig.shortenImagePath;
+import static com.planet_lia.match_generator.game.GameConfig.shortenImagePath;
 
 public class Unit implements Clickable {
 

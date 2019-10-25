@@ -1,4 +1,4 @@
-package com.planet_lia.match_generator.logic.entities;
+package com.planet_lia.match_generator.game.entities;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -7,10 +7,10 @@ import com.planet_lia.match_generator.libs.replays.Replay;
 import com.planet_lia.match_generator.libs.replays.StepSection;
 import com.planet_lia.match_generator.libs.replays.TextSection;
 import com.planet_lia.match_generator.libs.replays.TextureEntityAttribute;
-import com.planet_lia.match_generator.logic.Assets;
-import com.planet_lia.match_generator.logic.GameConfig;
+import com.planet_lia.match_generator.game.Assets;
+import com.planet_lia.match_generator.game.GameConfig;
 
-import static com.planet_lia.match_generator.logic.GameConfig.shortenImagePath;
+import static com.planet_lia.match_generator.game.GameConfig.shortenImagePath;
 
 public class Background {
 

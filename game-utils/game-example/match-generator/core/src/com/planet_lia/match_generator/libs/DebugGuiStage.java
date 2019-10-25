@@ -3,7 +3,6 @@ package com.planet_lia.match_generator.libs;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -13,7 +12,6 @@ import com.kotcrab.vis.ui.widget.*;
 import com.planet_lia.match_generator.libs.BotListener.MessageSender;
 
 import java.util.ArrayList;
-import java.util.SimpleTimeZone;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 

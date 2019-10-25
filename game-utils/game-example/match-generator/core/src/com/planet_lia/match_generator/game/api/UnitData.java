@@ -1,4 +1,4 @@
-package com.planet_lia.match_generator.logic.api;
+package com.planet_lia.match_generator.game.api;
 
 public class UnitData {
     public float x;

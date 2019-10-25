@@ -4,11 +4,20 @@
         "gameName": "game-example",
         "gameVersion": "1.0",
         "assetsVersion": "1.0",
+        "backgroundColor": "#000000",
         "debugWindow": {
             "framesPerSecond": 60,
             "logsToGameRatio": 0.3,
             "entityDetailsToScreenHeight": 0.3,
             "controlsToWindowHeightRatio": 0.08
+        },
+        "showEntityPathSettings": {
+            "pathColor": "#FFFFFF", 
+            "pathAlpha": 0.6, 
+            "clickedEntityTint": "#FF0000", 
+            "pathWidth": 0.2, 
+            "drawingTimeInterval": 0.2
+
         },
         "gameUpdatesPerSecond": 1,
         "connectingBotsTimeout": 10,
@@ -30,8 +39,5 @@
     "mapHeight": 9,
     "backgroundTileSize": 1,
     "coinSize": 0.5,
-    "coinPositionChangePeriod": 4, 
-    "unitSize": 1,
-    "unitRotationSpeed": 120,
-    "unitSpeed": 2
+    "unitSize": 1
 }

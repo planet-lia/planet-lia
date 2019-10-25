@@ -1,9 +1,8 @@
 package com.planet_lia.match_generator.libs;
 
 import com.google.gson.Gson;
-import com.planet_lia.match_generator.libs.replays.BotReplayDetails;
-import com.planet_lia.match_generator.libs.replays.Replay;
-import com.planet_lia.match_generator.logic.GameConfig;
+import com.planet_lia.match_generator.libs.replays.*;
+import com.planet_lia.match_generator.game.GameConfig;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,7 +11,25 @@ import java.util.ArrayList;
 
 import static com.planet_lia.match_generator.libs.math.MathHelpers.round;
 
-public class ReplayWriter {
+public class ReplayManager {
+
+    public static Replay newReplay() {
+        GameDetails gameDetails = new GameDetails(
+                GameConfig.values.general.gameNamePretty,
+                GameConfig.values.general.gameName,
+                GameConfig.values.general.gameVersion,
+                GameConfig.values.general.assetsVersion,
+                GameConfig.values.general.backgroundColor,
+                new CameraSettings(
+                        GameConfig.values.cameraViewWidth,
+                        GameConfig.values.cameraViewHeight
+                ),
+                GameConfig.values.general.showEntityPathSettings
+        );
+
+        return new Replay(gameDetails);
+    }
+
     public static void saveReplayFile(Replay replay, int[] teamsFinalOrder, BotServer server, String filePath) {
         // Save winning team index
         replay.teamsFinalOrder = teamsFinalOrder;
