@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css';
+import './components/matchViewer.css';
 import {Col, Row} from "react-bootstrap";
 import {MatchAdvanced} from './components/MatchAdvanced';
 
@@ -9,7 +9,7 @@ const App: React.FC = () => {
             <Col md={2}/>
             <Col md={8}>
                 <MatchAdvanced
-                    replayUrl={"http://localhost:3333/assets/1.0/replay-example.json"}
+                    replayUrl={"http://localhost:3333/file.json"}
                     replayFile={null}
                     loopMatch={false}
                     assetsBaseUrl={"http://localhost:3333"}
