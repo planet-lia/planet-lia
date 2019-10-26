@@ -1,13 +1,14 @@
-package cliref
+package releases
 
 import (
 	"encoding/json"
+	"github.com/planet-lia/planet-lia/cli/internal/config"
 	"io/ioutil"
 	"net/http"
 	"time"
 )
 
-type CliRef struct {
+type Releases struct {
 	Cli   BaseData   `json:"cli"`
 	Games []GameData `json:"games"`
 }
@@ -29,8 +30,8 @@ type BotData struct {
 	DownloadURL string `json:"downloadUrl"`
 }
 
-func Get() (*CliRef, error) {
-	url := "http://localhost:8000/cli-ref.json"
+func Get() (*Releases, error) {
+	url := config.ReleasesUrl
 
 	client := http.Client{
 		Timeout: time.Second * 2,
@@ -51,11 +52,11 @@ func Get() (*CliRef, error) {
 		return nil, err
 	}
 
-	cliRef := &CliRef{}
-	err = json.Unmarshal(body, cliRef)
+	releases := &Releases{}
+	err = json.Unmarshal(body, releases)
 	if err != nil {
 		return nil, err
 	}
 
-	return cliRef, nil
+	return releases, nil
 }

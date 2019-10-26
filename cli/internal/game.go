@@ -6,8 +6,9 @@ import (
 	"github.com/hashicorp/go-version"
 	"github.com/mholt/archiver"
 	"github.com/planet-lia/planet-lia/cli"
-	"github.com/planet-lia/planet-lia/cli/internal/cliref"
 	"github.com/planet-lia/planet-lia/cli/internal/config"
+	"github.com/planet-lia/planet-lia/cli/internal/releases"
+	"github.com/spf13/viper"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -16,13 +17,13 @@ import (
 )
 
 func GameDownload(gameName string) {
-	ref, err := cliref.Get()
+	releases, err := releases.Get()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to get CliRef: %s\n", err)
+		fmt.Fprintf(os.Stderr, "failed to get Releases: %s\n", err)
 		os.Exit(cli.CliRefFailed)
 	}
 
-	game, err := findGame(gameName, ref.Games)
+	game, err := findGame(gameName, releases.Games)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, err.Error())
 		os.Exit(cli.Default)
@@ -34,7 +35,7 @@ func GameDownload(gameName string) {
 	}
 }
 
-func findGame(gameName string, games []cliref.GameData) (*cliref.GameData, error) {
+func findGame(gameName string, games []releases.GameData) (*releases.GameData, error) {
 	for _, game := range games {
 		if game.Name == gameName {
 			return &game, nil
@@ -43,7 +44,7 @@ func findGame(gameName string, games []cliref.GameData) (*cliref.GameData, error
 	return nil, fmt.Errorf("game %s not found, run `./lia game list` to see supported games", gameName)
 }
 
-func download(game cliref.GameData) error {
+func download(game releases.GameData) error {
 	fmt.Printf("Downloading game: %s\n", game.Name)
 
 	// Create games directory where executable is located
@@ -91,17 +92,36 @@ func download(game cliref.GameData) error {
 }
 
 func GamesList() {
-	ref, err := cliref.Get()
+	releases, err := releases.Get()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to get CliRef: %s\n", err)
+		fmt.Fprintf(os.Stderr, "failed to get Releases: %s\n", err)
 		os.Exit(cli.CliRefFailed)
 	}
 
 	fmt.Println("Supported games:")
 
 	// Display all games
-	for _, game := range ref.Games {
+	for _, game := range releases.Games {
 		fmt.Printf("- %s\n", game.Name)
+	}
+}
+
+func GameSet(gameName string) {
+	pathToGame := filepath.Join(config.PathToGames, gameName)
+
+	// Abort if game does not exist
+	if _, err := os.Stat(pathToGame); os.IsNotExist(err) {
+		fmt.Fprintf(os.Stderr, "failed to set game %s, directory %s does not exist\n error: %s\n",
+			gameName, pathToGame, err)
+		os.Exit(cli.Default)
+	}
+
+	// Set selected game
+	viper.Set("selectedGame", gameName)
+	if err := viper.WriteConfig(); err != nil {
+		fmt.Fprintf(os.Stderr, "failed to set selected game in config file: %s\n", err)
+	} else {
+		fmt.Printf("Game %s is now selected.\n", gameName)
 	}
 }
 
@@ -120,13 +140,13 @@ func GameDelete(gameName string) {
 }
 
 func GameUpdate(gameName string) {
-	ref, err := cliref.Get()
+	releases, err := releases.Get()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to get CliRef: %s\n", err)
+		fmt.Fprintf(os.Stderr, "failed to get Releases: %s\n", err)
 		os.Exit(cli.CliRefFailed)
 	}
 
-	game, err := findGame(gameName, ref.Games)
+	game, err := findGame(gameName, releases.Games)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, err.Error())
 		os.Exit(cli.Default)
