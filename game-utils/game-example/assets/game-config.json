@@ -27,7 +27,7 @@
         "botResponseTotalDurationMax": 45,
         "gameUpdatesPerBotsUpdate": 3,
         "allowedTeamFormats": [
-            {"format": "1:1", "weight": 1},
+            {"format": "1:1", "weight": 1}
         ],
         "botColors": ["#D9C72E", "#019170"]
     },

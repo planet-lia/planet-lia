@@ -1,0 +1,29 @@
+{
+  "cli": {
+    "version": "0.1.0"
+  },
+  "games": [
+    {
+      "name": "game-example",
+      "version": "1.0.0",
+      "downloadUrl": "https://uc0d5d26d1680b5a8d0c7ee2ddd2.dl.dropboxusercontent.com/cd/0/get/ArK55ejuBRbYnR8L_ExCB-G-FJ65N6tdPK64O5rQS-QKuX_dXJUD4wJ4EVLnyMqHM4JinaDs9tUqGhD8yzcwTT2KTlBRvq-In_GYd7ObaMbjBo-JNLf23EjRgPlWXq-DBlQ/file?dl=1#",
+      "bots": [
+        {
+          "language": "java",
+          "version": "1.0.0",
+          "downloadUrl": "https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/planet-lia/planet-lia/tree/master/game-utils/game-example/bots/java"
+        },
+        {
+          "language": "kotlin",
+          "version": "1.0.0",
+          "downloadUrl": "https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/planet-lia/planet-lia/tree/master/game-utils/game-example/bots/kotlin"
+        },
+        {
+          "language": "python3",
+          "version": "1.0.0",
+          "downloadUrl": "https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/planet-lia/planet-lia/tree/master/game-utils/game-example/bots/python3"
+        }
+      ]
+    }
+  ]
+}
