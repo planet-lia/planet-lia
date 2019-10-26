@@ -1,0 +1,38 @@
+body {
+    font-family: 'Exo 2';
+}
+
+#logo {
+    background: #ffffff;
+    padding: 1.5rem 0;
+    text-align: center;
+}
+
+#logo img {
+    height: 4rem;
+}
+
+.replay-picker-item:hover {
+    cursor: pointer;
+}
+
+.custom-btn,
+.btn.custom-btn:active,
+.btn.custom-btn:focus {
+    border: none;
+    border-radius: 0;
+    background-color: #019170;
+    color: #eee;
+}
+
+.btn.custom-btn:hover {
+    background-color: #007e5a;
+    color: #e6e6e6;
+}
+
+a.custom-btn,
+a.custom-btn:active,
+a.custom-btn:focus,
+a.custom-btn:hover {
+    text-decoration: none;
+}

@@ -7,6 +7,7 @@ import {colorToNumber} from "./util/color";
 test('ParsedReplay.parse', () => {
     let data = {
         "gameDetails": {
+            "gameNamePretty": "Super Game",
             "gameName": "super_game",
             "gameVersion": "1.0",
             "assetsVersion": "1.0",
@@ -21,12 +22,14 @@ test('ParsedReplay.parse', () => {
                 "clickedEntityTint": "#FF00FF",
                 "pathWidth": 2,
                 "drawingTimeInterval": 0.1,
-            }
+            },
         },
         "matchDetails": [
             {"description": "Map seed", "value": 12},
             {"description": "Game seed", "value": 3}
         ],
+        "botDetails": [],
+        "teamsFinalOrder": [0,1],
         "charts": [
             {
                 "name": "Power",
