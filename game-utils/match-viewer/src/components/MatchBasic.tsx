@@ -16,6 +16,23 @@ export interface MatchBaseProps {
     assetsBaseUrl: string;
 }
 
+interface MatchBaseState {
+    app: MatchViewerApplication | null;
+    duration: number,
+    time: number,
+    playbackSpeed: number,
+    cameraIndex: number,
+    isPlaying: boolean,
+    insideSpeedSlider: boolean,
+    speedSliderTabId: number,
+    showCameras: boolean,
+    isFull: boolean,
+    overlayOpacity: number,
+    forceViewerWidth: string,
+    numberOfCameras: number,
+    errorMessage: string
+}
+
 interface MatchBasicProps extends MatchBaseProps {
     setApplication: ((app: MatchViewerApplication) => void) | null;
 }
@@ -23,10 +40,10 @@ interface MatchBasicProps extends MatchBaseProps {
 export class MatchBasic extends Component<MatchBasicProps, {}> {
 
     // Parses the replay file and displays the gameName
-    app: MatchViewerApplication | null = null;
     gameCanvas: HTMLDivElement | null = null;
 
-    state = {
+    state: MatchBaseState = {
+        app: null,
         duration: 0,
         time: 0,
         playbackSpeed: 1,
@@ -38,7 +55,8 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
         isFull: false,
         overlayOpacity: 0,
         forceViewerWidth: "100%",
-        numberOfCameras: 0
+        numberOfCameras: 0,
+        errorMessage: ""
     };
 
     puiRef: RefObject<HTMLDivElement> = createRef();
@@ -53,8 +71,9 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
 
     componentWillUnmount = () => {
         window.removeEventListener("resize", this.updateViewerWidth);
-        if (this.app) {
-            this.app!.destroy(true);
+        if (this.state.app) {
+            this.state.app!.destroy(true);
+            this.setState({app: null});
         }
     };
 
@@ -81,38 +100,46 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
 
         // Parse replay file
         try {
-            let data = (response !== null)
-                ? await response.arrayBuffer()
-                : rawData as ArrayBuffer;
             try {
-                // Try gzip
-                replay = JSON.parse(Pako.inflate(new Uint8Array(data), {to: "string"}));
+                let data = (response !== null)
+                    ? await response.arrayBuffer()
+                    : rawData as ArrayBuffer;
+                try {
+                    // Try gzip
+                    replay = JSON.parse(Pako.inflate(new Uint8Array(data), {to: "string"}));
+                } catch (e) {
+                    // Try zip
+                    let replayFileZip = Object.values((await JSZip.loadAsync(data)).files)[0];
+                    replay = JSON.parse(await replayFileZip.async("text"));
+                }
+            } catch (e) {
+                // Try plain json
+                let data = (responseClone !== null)
+                    ? await responseClone.text()
+                    : rawData as string;
+                replay = JSON.parse(data);
             }
-            catch (e) {
-                // Try zip
-                let replayFileZip = Object.values((await JSZip.loadAsync(data)).files)[0];
-                replay = JSON.parse(await replayFileZip.async("text"));
+
+
+            let app = startGame(replay!, this.props.assetsBaseUrl);
+            this.gameCanvas!.appendChild(app.view);
+            this.setState({
+                app: app,
+                duration: app.matchDuration
+            });
+
+            this.state.numberOfCameras = app.gameCameras.length;
+            this.onCameraChange(0);
+            this.setTime();
+
+            // Send back application application
+            if (this.props.setApplication != null) {
+                this.props.setApplication(app);
             }
         }
         catch (e) {
-            // Try plain json
-            let data = (responseClone !== null)
-                ? await responseClone.text()
-                : rawData as string;
-            replay = JSON.parse(data);
-        }
-
-        this.app = startGame(replay!, this.props.assetsBaseUrl);
-        this.gameCanvas!.appendChild(this.app.view);
-        this.setState({duration: this.app.matchDuration});
-
-        this.state.numberOfCameras = this.app.gameCameras.length;
-        this.onCameraChange(0);
-        this.setTime();
-
-        // Send back application application
-        if (this.props.setApplication != null) {
-            this.props.setApplication(this.app);
+            console.error(`ERROR: ${e}`);
+            this.setState({errorMessage: "Failed to view the replay. Check if the file is in the correct format."});
         }
     };
 
@@ -134,17 +161,19 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
 
     // Calls itself recursively and syncs gameName time and timeline
     setTime = () => {
+        let app = this.state.app;
+
         // this.app is null only when it is destroyed as this
         // method is only called after this.app has been initialized
-        if (this.app == null) return;
+        if (app == null) return;
 
-        let time = this.app.time;
+        let time = app.time;
 
         if (this.props.loopMatch && time === this.state.duration) {
             // Infinitely loop the match
-            this.app.time = 0;
+            app.time = 0;
             if (!this.state.isPlaying) {
-                this.app.ticker.update();
+                app.ticker.update();
             }
             this.setState({time: 0});
         } else {
@@ -157,11 +186,13 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
 
     // When user picks new time via timeline
     onChangeTime = (event) => {
-        if (this.app === null) return;
+        let app = this.state.app;
 
-        this.app.time = event.target.value;
+        if (app === null) return;
+
+        app.time = event.target.value;
         if (!this.state.isPlaying) {
-            this.app.ticker.update();
+            app.ticker.update();
         }
 
         this.setState({
@@ -170,17 +201,19 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
     };
 
     onTogglePlay = () => {
-        if (this.app === null) return;
+        let app = this.state.app;
+
+        if (app === null) return;
 
         if (this.state.isPlaying) {
             //this.app!.stop();
-            this.app.playbackSpeed = 0;
+            app.playbackSpeed = 0;
             this.setState({
                 isPlaying: false,
             });
         } else {
             // this.app!.start();
-            this.app.playbackSpeed = this.state.playbackSpeed;
+            app.playbackSpeed = this.state.playbackSpeed;
             this.setState({
                 isPlaying: true,
             });
@@ -192,10 +225,12 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
     };
 
     onResetSpeed = () => {
-        if (this.app === null) return;
+        let app = this.state.app;
 
-        if (this.app) {
-            this.app.playbackSpeed = 1;
+        if (app === null) return;
+
+        if (app) {
+            app.playbackSpeed = 1;
         }
         this.setState({
             playbackSpeed: 1,
@@ -204,10 +239,12 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
     };
 
     onSpeedChange = (event) => {
-        if (this.app === null) return;
+        let app = this.state.app;
 
-        if (this.app) {
-            this.app.playbackSpeed = event.target.value;
+        if (app === null) return;
+
+        if (app) {
+            app.playbackSpeed = event.target.value;
         }
         this.setState({
             playbackSpeed: event.target.value,
@@ -216,17 +253,21 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
     };
 
     onCameraChange = (camIndex) => {
-        if (this.app === null) return;
+        let app = this.state.app;
 
-        this.app.currentCamera = this.app.gameCameras[camIndex];
+        if (app === null) return;
+
+        app.currentCamera = app.gameCameras[camIndex];
         if (!this.state.isPlaying) {
-            this.app.ticker.update();
+            app.ticker.update();
         }
         this.setState({cameraIndex: camIndex});
     };
 
     goFull = () => {
-        if (this.app === null) return;
+        let app = this.state.app;
+
+        if (app === null) return;
 
         let goFullScreen = !this.state.isFull;
         this.setState({isFull: goFullScreen});
@@ -234,13 +275,15 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
 
     render() {
         let component = this;
+        let {app} = this.state;
 
         return (
             <Fullscreen
                 enabled={this.state.isFull}
                 onChange={isFull => this.setState({isFull})}
             >
-                <div className={this.app === null ? "cont-match-viewer viewer-not-loaded" : "cont-match-viewer"}>
+                {this.state.errorMessage !== "" ? <div> {this.state.errorMessage} </div> : null}
+                <div className={app === null ? "cont-match-viewer viewer-not-loaded" : "cont-match-viewer"}>
 
                     {/* Displaying match */}
                     <div className="row-match-viewer">
@@ -285,7 +328,7 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
                                         <span className="pui-text">{this.state.playbackSpeed + "x"}</span>
                                     </div>
                                     {/* Playback playbackSpeed slider */}
-                                    {(this.app !== null) && (this.state.insideSpeedSlider || this.state.speedSliderTabId > 0) ? (
+                                    {(app !== null) && (this.state.insideSpeedSlider || this.state.speedSliderTabId > 0) ? (
                                         <div className="pui-speed-slider"
                                              tabIndex={this.state.speedSliderTabId}
                                              onBlur={
@@ -320,9 +363,9 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
                                 {/* Cameras */}
                                 <div className="pui-cont" onMouseEnter={() => this.setState({showCameras: true})}
                                      onMouseLeave={() => this.setState({showCameras: false})}>
-                                    {(this.app !== null) && this.state.showCameras ? (
+                                    {(app !== null) && this.state.showCameras ? (
                                         <div className="pui-cont pui-cameras">
-                                            {this.app.gameCameras.map((camera: Camera, i: number) => {
+                                            {app.gameCameras.map((camera: Camera, i: number) => {
                                                 return <div className="pui-btn" key={i} onClick={() => this.onCameraChange(i)}
                                                             style={this.state.cameraIndex === i ? {color: "#facd3b"} : {}}>
                                                     <Glyphicon glyph="facetime-video"/>

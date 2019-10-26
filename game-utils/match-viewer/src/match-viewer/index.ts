@@ -88,60 +88,65 @@ export function startGame(replayRaw: JSON, assetsBaseUrl: string): MatchViewerAp
     let assets = new Assets(assetPath);
 
     let onAssetsLoaded = () => {
-        // Setup entities and add them to gameName or HUD viewport
-        entities.forEach((entity: Entity) => {
-            entity.finishSetup(assets);
-
-            let viewport = (isOnHUD(entity.id)) ? hudViewport : gameViewport;
-            if (entity instanceof TextureEntity) {
-                viewport.addChild((entity.sprite));
-            } else if (entity instanceof TextEntity) {
-                viewport.addChild((entity.textDisplay));
-            } else if (entity instanceof ParticleEntity) {
-                viewport.addChild(entity.container);
-            }
-        });
-
-        // When TextureEntity is clicked, draw its path on the screen
-        const graphics = new Graphics();
-        gameViewport.addChild(graphics);
-        if (gameDetails.showEntityPath != null) {
-            let settings = gameDetails.showEntityPath!;
-            registerOnEntityClickShowPath(settings, entities, graphics, screenHeight, worldToScreen);
-        }
-
-        let prevTime = 0;
-
-        // Add main gameName function to be called every tick
-        app.ticker.add((deltaScale) => {
-            let delta = 0;
-
-            // If user manually changed time
-            if (app.time !== prevTime) {
-                delta = app.time - prevTime;
-            }
-            // Normal gameName iteration
-            else {
-                delta = (1 / 60) * deltaScale * app.playbackSpeed;
-                app.time += delta;
-            }
-            // Check time bounds
-            if (app.time > app.matchDuration) app.time = app.matchDuration;
-            if (app.time < 0) app.time = 0;
-
-            prevTime = app.time;
-
-            // Update current gameName camera
-            app.currentCamera!.update(app.time, gameViewport, screenHeight, worldToScreen);
-
-            // Update entities
+        try {
+            // Setup entities and add them to gameName or HUD viewport
             entities.forEach((entity: Entity) => {
-                entity.update(app.time, delta, assets, screenHeight, worldToScreen)
-            });
-        });
+                entity.finishSetup(assets);
 
-        // Start the ticker
-        app.start();
+                let viewport = (isOnHUD(entity.id)) ? hudViewport : gameViewport;
+                if (entity instanceof TextureEntity) {
+                    viewport.addChild((entity.sprite));
+                } else if (entity instanceof TextEntity) {
+                    viewport.addChild((entity.textDisplay));
+                } else if (entity instanceof ParticleEntity) {
+                    viewport.addChild(entity.container);
+                }
+            });
+
+            // When TextureEntity is clicked, draw its path on the screen
+            const graphics = new Graphics();
+            gameViewport.addChild(graphics);
+            if (gameDetails.showEntityPath != null) {
+                let settings = gameDetails.showEntityPath!;
+                registerOnEntityClickShowPath(settings, entities, graphics, screenHeight, worldToScreen);
+            }
+
+            let prevTime = 0;
+
+            // Add main gameName function to be called every tick
+            app.ticker.add((deltaScale) => {
+                let delta = 0;
+
+                // If user manually changed time
+                if (app.time !== prevTime) {
+                    delta = app.time - prevTime;
+                }
+                // Normal gameName iteration
+                else {
+                    delta = (1 / 60) * deltaScale * app.playbackSpeed;
+                    app.time += delta;
+                }
+                // Check time bounds
+                if (app.time > app.matchDuration) app.time = app.matchDuration;
+                if (app.time < 0) app.time = 0;
+
+                prevTime = app.time;
+
+                // Update current gameName camera
+                app.currentCamera!.update(app.time, gameViewport, screenHeight, worldToScreen);
+
+                // Update entities
+                entities.forEach((entity: Entity) => {
+                    entity.update(app.time, delta, assets, screenHeight, worldToScreen)
+                });
+            });
+
+            // Start the ticker
+            app.start();
+        }
+        catch (e) {
+            console.error(`Failed to view replay: ${e}`)
+        }
     };
 
     // Load assets and call onAssetsLoaded when finished
