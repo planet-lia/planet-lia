@@ -17,3 +17,4 @@ build/
 .idea/
 .DS_Store
 data/
+releases-server/

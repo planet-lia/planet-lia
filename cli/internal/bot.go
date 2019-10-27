@@ -72,7 +72,7 @@ func FetchBot(gameName string, lang string, botPath string) {
 	}
 	defer func() {
 		if err := os.RemoveAll(tmpBotParentDir); err != nil {
-			fmt.Fprintf(os.Stderr, "failed to remove tmp bot parent dir '%s'\n%s\n", botZipFile.Name(), err)
+			fmt.Fprintf(os.Stderr, "failed to remove tmp bot parent dir '%s'\n%s\n", tmpBotParentDir, err)
 		}
 	}()
 

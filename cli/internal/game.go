@@ -51,18 +51,18 @@ func download(game releases.GameData) error {
 		return err
 	}
 
-	pathToGameZip := filepath.Join(config.PathToGames, game.Name+".zip")
 	pathToGame := filepath.Join(config.PathToGames, game.Name)
 
-	// Create the zip file
-	gameZipFile, err := os.Create(pathToGameZip)
+	// Create temporary game zip file
+	gameZipFile, err := ioutil.TempFile("", "planet-lia-game-*.zip")
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to create tmp file: %s\n", err)
 		return err
 	}
 	defer func() {
 		gameZipFile.Close()
-		if err := os.Remove(pathToGameZip); err != nil {
-			fmt.Fprintf(os.Stderr, "failed to remove game zip %s\n", pathToGameZip)
+		if err := os.Remove(gameZipFile.Name()); err != nil {
+			fmt.Fprintf(os.Stderr, "failed to remove game zip '%s'\n%s\n", gameZipFile.Name(), err)
 		}
 	}()
 
@@ -77,7 +77,7 @@ func download(game releases.GameData) error {
 	}
 
 	// Extract the zip
-	if err := archiver.NewZip().Unarchive(pathToGameZip, pathToGame); err != nil {
+	if err := archiver.NewZip().Unarchive(gameZipFile.Name(), config.PathToGames); err != nil {
 		return err
 	}
 
