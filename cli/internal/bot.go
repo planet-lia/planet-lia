@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 )
 
-func FetchBot(gameName string, lang string, botName string) {
+func FetchBot(gameName string, lang string, botPath string) {
 	// Allows running deferred functions before exiting
 	osExitStatus := -1
 	defer func() {
@@ -22,11 +22,11 @@ func FetchBot(gameName string, lang string, botName string) {
 	}()
 
 	// Check if the bot with name already exists
-	if exists, err := utils.DirectoryExists(botName); err != nil {
-		fmt.Fprintf(os.Stderr, "failed to check if directory with name '%s' exists\n%s\n", botName, err)
+	if exists, err := utils.DirectoryExists(botPath); err != nil {
+		fmt.Fprintf(os.Stderr, "failed to check if directory with path '%s' exists\n%s\n", botPath, err)
 		os.Exit(cli.Default)
 	} else if exists {
-		fmt.Fprintf(os.Stderr, "directory with name '%s' already exists, choose a different name\n", botName)
+		fmt.Fprintf(os.Stderr, "directory with path '%s' already exists, choose a different name\n", botPath)
 		os.Exit(cli.Default)
 	}
 
@@ -92,13 +92,13 @@ func FetchBot(gameName string, lang string, botName string) {
 	// Move bot dir and set new name
 	tmpBotDir := filepath.Join(tmpBotParentDir, botDirName)
 
-	if err := advancedcopy.Dir(tmpBotDir, botName); err != nil {
-		fmt.Fprintf(os.Stderr, "failed to copy bot dir from '%s' to '%s'\n%s\n", tmpBotDir, botName, err)
+	if err := advancedcopy.Dir(tmpBotDir, botPath); err != nil {
+		fmt.Fprintf(os.Stderr, "failed to copy bot dir from '%s' to '%s'\n%s\n", tmpBotDir, botPath, err)
 		osExitStatus = cli.OsCallFailed
 		return
 	}
 
-	fmt.Printf("Bot '%s' is ready!\n", botName)
+	fmt.Printf("Bot '%s' is ready!\n", botPath)
 }
 
 func FindBotData(gameName string, botLanguage string) (*releases.BotData, error) {
@@ -137,4 +137,30 @@ func getDirName(parentDir string) (string, error) {
 
 	return "", fmt.Errorf("there should be exactly 1 directory in parentDir"+
 		"(on mac osx can also be __MACOSX. nFiles: %v", len(files))
+}
+
+func DeleteBot(botPath string) {
+	// Check if the bot exists
+	if exists, err := utils.DirectoryExists(botPath); err != nil {
+		fmt.Fprintf(os.Stderr, "failed to check if directory with path '%s' exists\n%s\n", botPath, err)
+		os.Exit(cli.Default)
+	} else if !exists {
+		fmt.Fprintf(os.Stderr, "directory with path '%s' does not exist\n", botPath)
+		os.Exit(cli.Default)
+	}
+
+	// Check if directory contains a bot.json file
+	pathToBotJson := filepath.Join(botPath, "bot.json")
+	if _, err := os.Stat(pathToBotJson); err != nil {
+		fmt.Fprintf(os.Stderr, "'%s' is not a bot as it does not contain a bot.json file\n", botPath)
+		os.Exit(cli.Default)
+	}
+
+	if err := os.RemoveAll(botPath); err != nil {
+		fmt.Fprintf(os.Stderr, "failed to delete bot '%s'\n", botPath)
+		os.Exit(cli.Default)
+	}
+
+	fmt.Printf("Bot %s successfully deleted.\n", botPath)
+
 }
