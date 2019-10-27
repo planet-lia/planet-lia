@@ -27,4 +27,5 @@ const (
 	CliRefFailed                 = 23
 	GameDownloadFailed           = 24
 	GameConfigProblem            = 25
+	BotBuildFailed               = 26
 )

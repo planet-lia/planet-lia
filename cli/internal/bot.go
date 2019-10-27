@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"github.com/mholt/archiver"
 	"github.com/planet-lia/planet-lia/cli"
+	"github.com/planet-lia/planet-lia/cli/internal/config"
 	"github.com/planet-lia/planet-lia/cli/internal/releases"
 	"github.com/planet-lia/planet-lia/cli/pkg/advancedcopy"
 	"github.com/planet-lia/planet-lia/cli/pkg/utils"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 )
 
@@ -162,5 +164,33 @@ func DeleteBot(botPath string) {
 	}
 
 	fmt.Printf("Bot %s successfully deleted.\n", botPath)
+}
 
+func BuildBot(botPath string) {
+	fmt.Printf("Building bot '%s'...\n", botPath)
+
+	// Get build script path
+	scriptPath := config.PathToBotScripts
+	if config.OperatingSystem == "windows" {
+		scriptPath = filepath.Join(scriptPath, config.BuildScriptWindowsName)
+	} else {
+		scriptPath = filepath.Join(scriptPath, config.BuildScriptUnixName)
+	}
+
+	var cmd *exec.Cmd
+	if config.OperatingSystem == "windows" {
+		cmd = exec.Command(".\\" + scriptPath)
+	} else {
+		cmd = exec.Command("/bin/bash", scriptPath)
+	}
+	cmd.Dir = botPath
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	if err := cmd.Run(); err != nil {
+		fmt.Fprintf(os.Stderr, "failed to build bot '%s'\n", botPath)
+		os.Exit(cli.BotBuildFailed)
+	}
+
+	fmt.Printf("Bot '%s' built successfully.\n", botPath)
 }

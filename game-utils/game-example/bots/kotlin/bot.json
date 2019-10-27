@@ -1,4 +1,5 @@
 {
-  "language": "kotlin",
-  "mainFile": "src/MyBot.kt"
+    "language": "kotlin",
+    "version": "1.0.0",
+    "mainFile": "src/MyBot.kt"
 }

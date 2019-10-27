@@ -8,9 +8,17 @@ import (
 	"runtime"
 )
 
-const defaultReleasesPath = "http://localhost:8000/planet-lia-releases.json"
+const defaultReleasesPath = "http://localhost:8001/planet-lia-releases.json"
 const SettingsFileExtension = "json"
 const SettingsFile = ".planet-lia"
+
+const PathToBotScripts = ".scripts"
+const BuildScriptWindowsName = "build.bat"
+const BuildScriptUnixName = "build.sh"
+const CleanScriptWindowsName = "clean.bat"
+const CleanScriptUnixName = "clean.sh"
+const RunScriptWindowsName = "run.bat"
+const RunScriptUnixName = "run.sh"
 
 var OperatingSystem = runtime.GOOS
 
