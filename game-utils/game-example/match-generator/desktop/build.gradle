@@ -25,6 +25,7 @@ task debug(dependsOn: classes, type: JavaExec) {
 }
 
 task dist(type: Jar) {
+    archiveName = 'match-generator.jar'
     manifest {
         attributes 'Main-Class': project.mainClassName
     }

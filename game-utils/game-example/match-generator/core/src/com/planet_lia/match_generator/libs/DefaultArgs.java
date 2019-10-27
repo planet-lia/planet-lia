@@ -24,7 +24,7 @@ public class DefaultArgs {
     @Parameter(names = {"--debug", "-d"}, description = "Run match-generator in debug mode")
     public boolean debug = false;
 
-    @Parameter(names = {"--replay", "-r"}, description = "Specify the name and the path of a replay file for this\n" +
+    @Parameter(names = {"--replay", "-r"}, description = "Specify the name and the path of a replay file for this" +
             "match, if not specified, the replay file will be named using a timestamp")
     public String replay = LocalDateTime.now().toString() + ".json";
 

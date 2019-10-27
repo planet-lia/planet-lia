@@ -15,11 +15,8 @@ import com.planet_lia.match_generator.game.GameConfig;
 public class DesktopLauncher {
 
     public static void main (String[] arg) throws Exception {
-        // TODO replace with real arguments
-        String[] args = new String[]{"-d", "-r", "file.json", "ninja7", "_", "{}", "superGit", "_", "{}"};
-
         // Parse arguments
-        Args.parseArgs(args);
+        Args.parseArgs(arg);
 
         // Load configs
         GameConfig.load(Args.values.config);
