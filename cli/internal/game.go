@@ -8,22 +8,15 @@ import (
 	"github.com/planet-lia/planet-lia/cli"
 	"github.com/planet-lia/planet-lia/cli/internal/config"
 	"github.com/planet-lia/planet-lia/cli/internal/releases"
+	"github.com/planet-lia/planet-lia/cli/pkg/utils"
 	"github.com/spf13/viper"
-	"io"
 	"io/ioutil"
-	"net/http"
 	"os"
 	"path/filepath"
 )
 
 func GameDownload(gameName string) {
-	releases, err := releases.Get()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to get Releases: %s\n", err)
-		os.Exit(cli.CliRefFailed)
-	}
-
-	game, err := findGame(gameName, releases.Games)
+	game, err := GetGameData(gameName)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, err.Error())
 		os.Exit(cli.Default)
@@ -35,13 +28,19 @@ func GameDownload(gameName string) {
 	}
 }
 
-func findGame(gameName string, games []releases.GameData) (*releases.GameData, error) {
-	for _, game := range games {
+func GetGameData(gameName string) (*releases.GameData, error) {
+	rel, err := releases.Get()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to get Releases: %s\n", err)
+		os.Exit(cli.CliRefFailed)
+	}
+
+	for _, game := range rel.Games {
 		if game.Name == gameName {
 			return &game, nil
 		}
 	}
-	return nil, fmt.Errorf("game %s not found, run `./lia game list` to see supported games", gameName)
+	return nil, fmt.Errorf("game '%s' not found, run `./lia game list` to see supported games", gameName)
 }
 
 func download(game releases.GameData) error {
@@ -55,26 +54,22 @@ func download(game releases.GameData) error {
 	pathToGameZip := filepath.Join(config.PathToGames, game.Name+".zip")
 	pathToGame := filepath.Join(config.PathToGames, game.Name)
 
-	resp, err := http.Get(game.DownloadURL)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
 	// Create the zip file
-	out, err := os.Create(pathToGameZip)
+	gameZipFile, err := os.Create(pathToGameZip)
 	if err != nil {
 		return err
 	}
 	defer func() {
-		out.Close()
+		gameZipFile.Close()
 		if err := os.Remove(pathToGameZip); err != nil {
 			fmt.Fprintf(os.Stderr, "failed to remove game zip %s\n", pathToGameZip)
 		}
 	}()
 
-	// Write the body to file
-	_, err = io.Copy(out, resp.Body)
+	// Download file
+	if err := utils.DownloadFile(game.DownloadURL, gameZipFile, 60); err != nil {
+		return err
+	}
 
 	// Remove old game directory if it exists
 	if err := os.RemoveAll(pathToGame); err != nil {
@@ -86,13 +81,13 @@ func download(game releases.GameData) error {
 		return err
 	}
 
-	fmt.Printf("Game %s is ready.\n", game.Name)
+	fmt.Printf("Game '%s' is ready.\n", game.Name)
 
 	return err
 }
 
 func GamesList() {
-	releases, err := releases.Get()
+	rel, err := releases.Get()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to get Releases: %s\n", err)
 		os.Exit(cli.CliRefFailed)
@@ -101,7 +96,7 @@ func GamesList() {
 	fmt.Println("Supported games:")
 
 	// Display all games
-	for _, game := range releases.Games {
+	for _, game := range rel.Games {
 		fmt.Printf("- %s\n", game.Name)
 	}
 }
@@ -110,8 +105,8 @@ func GameSet(gameName string) {
 	pathToGame := filepath.Join(config.PathToGames, gameName)
 
 	// Abort if game does not exist
-	if _, err := os.Stat(pathToGame); os.IsNotExist(err) {
-		fmt.Fprintf(os.Stderr, "failed to set game %s, directory %s does not exist\n error: %s\n",
+	if exists, err := utils.DirectoryExists(pathToGame); err != nil || !exists {
+		fmt.Fprintf(os.Stderr, "failed to set game '%s', directory '%s' does not exist\n%s\n",
 			gameName, pathToGame, err)
 		os.Exit(cli.Default)
 	}
@@ -140,13 +135,7 @@ func GameDelete(gameName string) {
 }
 
 func GameUpdate(gameName string) {
-	releases, err := releases.Get()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to get Releases: %s\n", err)
-		os.Exit(cli.CliRefFailed)
-	}
-
-	game, err := findGame(gameName, releases.Games)
+	game, err := GetGameData(gameName)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, err.Error())
 		os.Exit(cli.Default)
@@ -154,7 +143,7 @@ func GameUpdate(gameName string) {
 
 	versionCurrentStr, err := getCurrentGameVersion(gameName)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to get version for game %s with error: %s\n", gameName, err)
+		fmt.Fprintf(os.Stderr, "failed to get version for game '%s' with error: %s\n", gameName, err)
 		os.Exit(cli.GameConfigProblem)
 	}
 

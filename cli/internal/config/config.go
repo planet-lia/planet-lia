@@ -17,23 +17,32 @@ var OperatingSystem = runtime.GOOS
 var ExecutableDirPath string
 var PathToGames string
 var ReleasesUrl string
+var CurrentWorkingDirectory string
 
 func init() {
 	// Setup executable path
 	ex, err := os.Executable()
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to get executable location\n %s", err)
-		os.Exit(cli.FailedToGetEnvironment)
+		fmt.Fprintf(os.Stderr, "failed to get executable location\n%s\n", err)
+		os.Exit(cli.OsCallFailed)
 	}
 	ExecutableDirPath = filepath.Dir(ex)
 
 	PathToGames = filepath.Join(ExecutableDirPath, "games")
 
 	// Planet Lia releases URL
-	ReleasesUrl := os.Getenv("RELEASES_URL")
+	ReleasesUrl = os.Getenv("RELEASES_URL")
 	if ReleasesUrl == "" {
 		ReleasesUrl = defaultReleasesPath
 	} else {
 		fmt.Printf("ReleasesURL set to %s\n", ReleasesUrl)
 	}
+
+	// Current working directory
+	cwd, err := os.Getwd()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to get current working directory\n%s\n", err)
+		os.Exit(cli.OsCallFailed)
+	}
+	CurrentWorkingDirectory = cwd
 }

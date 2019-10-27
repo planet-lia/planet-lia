@@ -1,13 +1,9 @@
 package internal
 
 //
-//
 //import (
 //	"fmt"
 //	"github.com/mholt/archiver"
-//	"github.com/pkg/errors"
-//	"github.com/planet-lia/planet-lia/cli"
-//	"github.com/planet-lia/planet-lia/cli/internal/config"
 //	"github.com/planet-lia/planet-lia/cli/pkg/advancedcopy"
 //	"io"
 //	"io/ioutil"
@@ -74,7 +70,7 @@ package internal
 //	}
 //
 //	// Check if the bot with chosen name already exists
-//	if isUsed, err := isNameUsed(name); err != nil {
+//	if isUsed, err := DirectoryExists(name); err != nil {
 //		fmt.Fprintf(os.Stderr, "failed to check if name isUsed. %s", err)
 //		osExitStatus = lia_SDK.Generic
 //		return
@@ -107,7 +103,7 @@ package internal
 //	fmt.Printf("Bot %s is ready!\n", name)
 //}
 //
-//func isNameUsed(name string) (bool, error) {
+//func DirectoryExists(name string) (bool, error) {
 //	path := filepath.Join(config.PathToBots, name)
 //	_, err := os.Stat(path)
 //	if err == nil {
@@ -147,27 +143,4 @@ package internal
 //	}
 //
 //	return nil
-//}
-//
-//func getDirName(parentDir string) (string, error) {
-//	files, err := ioutil.ReadDir(parentDir)
-//	if err != nil {
-//		fmt.Fprintf(os.Stderr, "failed to read files from dir: %s", parentDir)
-//		return "", err
-//	}
-//
-//	switch len(files) {
-//	case 1:
-//		return files[0].Name(), nil
-//	case 2:
-//		switch {
-//		case files[0].Name() == "__MACOSX":
-//			return files[1].Name(), nil
-//		case files[1].Name() == "__MACOSX":
-//			return files[0].Name(), nil
-//		}
-//	}
-//
-//	return "", fmt.Errorf("there should be exactly 1 directory in parentDir"+
-//		"(on mac osx can also be __MACOSX. nFiles: %v", len(files))
 //}
