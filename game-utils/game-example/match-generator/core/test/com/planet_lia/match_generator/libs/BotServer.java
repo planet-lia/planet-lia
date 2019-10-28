@@ -27,7 +27,7 @@ class BotServerTest {
         GeneralConfig config = new GeneralConfig();
         config.allowedTeamFormats = new TeamFormat[] {new TeamFormat("1:1", 1)};
 
-        assertThrows(Error.class, () -> argsToBotDetails(config, "b1", "t1", "{}", "b2"));
+        assertThrows(Exception.class, () -> argsToBotDetails(config, "b1", "t1", "{}", "b2"));
     }
 
     @Test
@@ -36,11 +36,11 @@ class BotServerTest {
         Timer timer = new Timer();
 
         config.allowedTeamFormats = new TeamFormat[] {new TeamFormat("1:1", 1)};
-        assertThrows(Error.class, () ->
+        assertThrows(Exception.class, () ->
                 new BotServer(config, timer, 9000, argsToBotDetails(config, "b1", "t1", "{}")));
-        assertThrows(Error.class, () ->
+        assertThrows(Exception.class, () ->
                 new BotServer(config, timer, 9000, argsToBotDetails(config, "b1", "t1", "{}", "b2", "t2")));
-        assertThrows(Error.class, () ->
+        assertThrows(Exception.class, () ->
                 new BotServer(config, timer, 9000, argsToBotDetails(config, "b1", "t1", "{}", "b2")));
         assertDoesNotThrow(() ->
                 new BotServer(config, timer, 9000, argsToBotDetails(config, "b1", "t1",  "{}", "b2", "t2", "{}")));
@@ -64,7 +64,7 @@ class BotServerTest {
         connectBot(port, "t1");
         connectBot(port, "t2");
 
-        assertThrows(Error.class, server::waitForBotsToConnect);
+        assertThrows(Exception.class, server::waitForBotsToConnect);
         server.stop();
     }
 
@@ -82,7 +82,7 @@ class BotServerTest {
         connectBot(port, "a");
         connectBot(port, "_");
 
-        assertThrows(Error.class, server::waitForBotsToConnect);
+        assertThrows(Exception.class, server::waitForBotsToConnect);
 
         connectBot(port, "_");
         assertDoesNotThrow(server::waitForBotsToConnect);
@@ -213,7 +213,7 @@ class BotServerTest {
 
 
     @Test
-    void botListenerDisabledTest() {
+    void botListenerDisabledTest() throws Exception {
         GeneralConfig config = new GeneralConfig();
         config.allowedTeamFormats = new TeamFormat[] {new TeamFormat("1:1", 1)};
         BotDetails[] botsDetails = argsToBotDetails(config, "b1", "t1", "{}", "b2", "t2", "{}");
@@ -345,7 +345,9 @@ class BotServerTest {
         bot1.send(toJson(new BotResponseMock("response1", 0)));
         bot2.send(toJson(new BotResponseMock("response2", 0)));
 
-        assertThrows(Error.class, () -> server.sendToAll(new InitialMessageMock("request2")));
+        server.sendToAll(new InitialMessageMock("request2"));
+        assertEquals(1, bot1.receivedData.size());
+        assertEquals(1, bot2.receivedData.size());
 
         server.stop();
     }
@@ -362,7 +364,7 @@ class BotServerTest {
         return client;
     }
 
-    BotDetails[] argsToBotDetails(GeneralConfig config, String... args) {
+    BotDetails[] argsToBotDetails(GeneralConfig config, String... args) throws Exception {
         // Parse arguments
         DefaultArgs defaultArgs = new DefaultArgs();
         JCommander jCommander = JCommander.newBuilder()

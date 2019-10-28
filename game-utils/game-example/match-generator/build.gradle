@@ -70,6 +70,7 @@ project(":core") {
         compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
         compile "com.beust:jcommander:$jCommanderVersion"
         compile "org.java-websocket:Java-WebSocket:$javaWebSocketVersion"
+        compile 'org.slf4j:slf4j-simple:1.6.1'
         compile "com.google.code.gson:gson:$gsonVersion"
         compile "com.kotcrab.vis:vis-ui:$visuiVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"

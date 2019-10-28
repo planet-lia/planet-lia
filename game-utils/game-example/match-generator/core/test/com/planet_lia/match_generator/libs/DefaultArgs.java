@@ -26,7 +26,13 @@ class DefaultArgsTest {
         GeneralConfig config = new GeneralConfig();
         config.allowedTeamFormats = new TeamFormat[] {new TeamFormat("1:3:1", 1)};
 
-        BotDetails[] botsDetails = parsedArgs.getBotsDetails(config);
+        BotDetails[] botsDetails = null;
+        try {
+            botsDetails = parsedArgs.getBotsDetails(config);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
 
         assertBotDetailsAdvanced(botsDetails[0], "b1", "t1", 0, -1);
         assertBotDetailsAdvanced(botsDetails[1], "b2", "t2", 1,-1);
@@ -59,7 +65,7 @@ class DefaultArgsTest {
             GeneralConfig config = new GeneralConfig();
             config.allowedTeamFormats = new TeamFormat[] {new TeamFormat("1:3", 1)};
 
-            assertThrows(Error.class, () -> parsedArgs.getBotsDetails(config));
+            assertThrows(Exception.class, () -> parsedArgs.getBotsDetails(config));
         }
     }
 

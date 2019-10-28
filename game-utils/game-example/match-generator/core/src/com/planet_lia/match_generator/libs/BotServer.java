@@ -119,7 +119,7 @@ public class BotServer {
                         System.err.printf("Bot with name '%s' did not connect in time\n", bot.details.botName);
                     }
                 }
-                throw new Error("Some bots failed to connect in time");
+                throw new Exception("Some bots failed to connect in time");
             }
         }
 
@@ -192,7 +192,7 @@ public class BotServer {
                 bot.initialMessageSent = true;
             }
             else {
-                throw new Error(String.format("Bot '%s' already received initial message\n", bot.details.botName));
+                System.err.printf("Bot '%s' already received initial message\n", bot.details.botName);
             }
         }
         if (bot.currentRequestIndex == currentRequestIndex) {

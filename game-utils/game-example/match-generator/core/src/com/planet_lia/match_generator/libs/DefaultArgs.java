@@ -47,10 +47,10 @@ public class DefaultArgs {
      * Sets up BotDetails for each bot and assigns them to teams.
      * @return list of BotDetails objects
      */
-    public BotDetails[] getBotsDetails(GeneralConfig generalConfig) {
+    public BotDetails[] getBotsDetails(GeneralConfig generalConfig) throws Exception {
         // For each bot a token and details need to be provided
         if (bots.size() % 3 != 0) {
-            throw new Error("Not all bots have token and details provided as parameters");
+            throw new Exception("Not all bots have token and details provided as parameters");
         }
 
         int numberOfBots = bots.size() / 3;
@@ -72,8 +72,7 @@ public class DefaultArgs {
 
         // Check if numbers of bots is allowed
         if (!generalConfig.isNumberOfBotsAllowed(botsDetails.length)) {
-            throw new Error("Number of provided bots " + botsDetails.length +
-                    " is not supported by this game");
+            throw new Exception("Number of provided bots " + botsDetails.length + " is not supported by this game");
         }
 
         // Assign bots to teams
@@ -88,7 +87,7 @@ public class DefaultArgs {
      * Parses teams argument to array of team sizes.
      * @return array of team sizes or null if argument not provided
      */
-    private int[] getTeamSizes(GeneralConfig generalConfig, int numberOfBots) {
+    private int[] getTeamSizes(GeneralConfig generalConfig, int numberOfBots) throws Exception {
         if (teams.equals("")) {
                 teams = createDefaultTeams(generalConfig, numberOfBots);
         }
@@ -112,21 +111,21 @@ public class DefaultArgs {
      * Returns a first format provided in general config that
      * fits the provided numbers of bots
      */
-    private String createDefaultTeams(GeneralConfig generalConfig, int numberOfBots) {
+    private String createDefaultTeams(GeneralConfig generalConfig, int numberOfBots) throws Exception {
         for (TeamFormat format : generalConfig.allowedTeamFormats) {
             if (format.getNumberOfBots() == numberOfBots) {
                 return format.format;
             }
         }
-        throw new Error("Provided number of bots (" + numberOfBots + ") does not fit any supported teams formats");
+        throw new Exception("Provided number of bots (" + numberOfBots + ") does not fit any supported teams formats");
     }
 
     /**
      * Assign bots to teams, this modifies teamIndex field in BotDetails
      */
-    private static void setTeams(int[] teamSizes, BotDetails[] botsDetails) {
+    private static void setTeams(int[] teamSizes, BotDetails[] botsDetails) throws Exception {
         if (teamSizes == null) {
-            throw new Error("teamSizes is null, provide a --teams flag with parameters or specify custom teamSizes");
+            throw new Exception("teamSizes is null, provide a --teams flag with parameters or specify custom teamSizes");
         }
 
         // Check that teamSizes matches with number of bots in botsDetails
@@ -135,7 +134,7 @@ public class DefaultArgs {
             numTeamBotSlots += size;
         }
         if (numTeamBotSlots != botsDetails.length) {
-            throw new Error("Number of bot slots in teams does not match with number of provided bots");
+            throw new Exception("Number of bot slots in teams does not match with number of provided bots");
         }
 
         // Assign bots to teams
@@ -144,7 +143,7 @@ public class DefaultArgs {
         }
     }
 
-    private static int findTeam(int botIndex, int[] teamSizes) {
+    private static int findTeam(int botIndex, int[] teamSizes) throws Exception {
         int count = 0;
         for (int teamIndex = 0; teamIndex < teamSizes.length; teamIndex++) {
             count += teamSizes[teamIndex];
@@ -152,7 +151,7 @@ public class DefaultArgs {
                 return teamIndex;
             }
         }
-        throw new Error("There are more bots provided than slots in all teams");
+        throw new Exception("There are more bots provided than slots in all teams");
     }
 
     /**

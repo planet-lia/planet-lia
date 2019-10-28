@@ -56,7 +56,8 @@ public class MatchGenerator extends ApplicationAdapter {
     public void create() {
         // Create game camera and viewport
         if (GameConfig.values.cameraViewWidth / GameConfig.values.cameraViewHeight != 16/9f) {
-            throw new Error("cameraViewWidth / cameraViewHeight should be in 16/9 ratio");
+            System.err.println("cameraViewWidth / cameraViewHeight should be in 16/9 ratio");
+            System.exit(1);
         }
         gameViewport = new FitViewport(GameConfig.values.cameraViewWidth, GameConfig.values.cameraViewHeight, gameCamera);
         // gameCamera is be positioned in GameLogic
