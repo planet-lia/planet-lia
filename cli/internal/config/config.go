@@ -21,6 +21,8 @@ const CleanScriptUnixName = "clean.sh"
 const RunScriptWindowsName = "run.bat"
 const RunScriptUnixName = "run.sh"
 
+const LineSeparator = "----------------------------"
+
 var OperatingSystem = runtime.GOOS
 
 var ExecutableDirPath string

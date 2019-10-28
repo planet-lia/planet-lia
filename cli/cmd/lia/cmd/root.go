@@ -101,5 +101,5 @@ func initConfig() {
 	} else {
 		fmt.Println("No game selected (to select the game use `game set` command)")
 	}
-	fmt.Println("----------------------------")
+	fmt.Println(config.LineSeparator)
 }

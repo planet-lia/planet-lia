@@ -1,28 +1,20 @@
 package internal
 
-//
-//import (
-//	"fmt"
-//	"github.com/planet-lia/planet-lia/cli"
-//	"os"
-//)
-//
-//func Play(bot1Dir string, bot2Dir string, gameFlags *MatchFlags, viewReplay bool, replayViewerWidth string) {
-//	if err := Compile(bot1Dir); err != nil {
-//		fmt.Printf("%s\n", err)
-//		os.Exit(lia_SDK.PreparingBotFailed)
-//	}
-//
-//	if bot1Dir != bot2Dir {
-//		if err := Compile(bot2Dir); err != nil {
-//			fmt.Printf("%s\n", err)
-//			os.Exit(lia_SDK.PreparingBotFailed)
-//		}
-//	}
-//
-//	GenerateMatch(bot1Dir, bot2Dir, gameFlags)
-//
-//	if viewReplay {
-//		ShowReplayViewer(gameFlags.ReplayPath, replayViewerWidth)
-//	}
-//}
+import (
+	"fmt"
+	"github.com/planet-lia/planet-lia/cli/internal/config"
+)
+
+func Play(botPaths []string, gameFlags *MatchFlags, viewReplay bool) {
+	for _, botPath := range botPaths {
+		BuildBot(botPath)
+		fmt.Println(config.LineSeparator)
+	}
+
+	GenerateMatch(botPaths, gameFlags)
+
+	if viewReplay {
+		fmt.Println("Displaying the replay...")
+		//ShowReplayViewer(gameFlags.ReplayPath, replayViewerWidth)
+	}
+}
