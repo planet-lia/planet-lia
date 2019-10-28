@@ -47,10 +47,10 @@ project(":desktop") {
     apply plugin: "kotlin"
 
     dependencies {
-        implementation project(":core")
+        compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+        compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
         compile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
     }
@@ -66,11 +66,11 @@ project(":core") {
     }
 
     dependencies {
-        api "com.badlogicgames.gdx:gdx:$gdxVersion"
-        api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
         compile "com.beust:jcommander:$jCommanderVersion"
         compile "org.java-websocket:Java-WebSocket:$javaWebSocketVersion"
-        implementation "com.google.code.gson:gson:$gsonVersion"
+        compile "com.google.code.gson:gson:$gsonVersion"
         compile "com.kotcrab.vis:vis-ui:$visuiVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         compile "net.dermetfan.libgdx-utils:libgdx-utils:$gdxUtilsVersion"

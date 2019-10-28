@@ -7,6 +7,10 @@ sourceSets.main.resources.srcDirs = ["../core/assets"]
 project.ext.mainClassName = "com.planet_lia.match_generator.desktop.DesktopLauncher"
 project.ext.assetsDir = new File("../core/assets")
 
+static def libgdxArchiveName() {
+    "match-generator.jar"
+}
+
 task run(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
@@ -25,14 +29,15 @@ task debug(dependsOn: classes, type: JavaExec) {
 }
 
 task dist(type: Jar) {
-    archiveName = 'match-generator.jar'
+    from files(sourceSets.main.output.classesDirs)
+    from files(sourceSets.main.output.resourcesDir)
+    from {configurations.compile.collect {zipTree(it)}}
+    // Removed so that there are no assets in final jar
+    //from files(project.assetsDir)
+    archiveName = libgdxArchiveName()
     manifest {
         attributes 'Main-Class': project.mainClassName
     }
-    from {
-        configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-    with jar
 }
 
 

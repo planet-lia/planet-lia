@@ -19,7 +19,7 @@ public class DefaultArgs {
             "which means that first x provided bots belongs to the team 0, next y bots to team 1, " +
             "next z to team 3 etc. Note that the teams format must be supported by the game in order to work. " +
             "If the parameter is not provided, the teams are set up automatically depending on the game.")
-    private String teams = null;
+    private String teams = "";
 
     @Parameter(names = {"--debug", "-d"}, description = "Run match-generator in debug mode")
     public boolean debug = false;
@@ -89,7 +89,7 @@ public class DefaultArgs {
      * @return array of team sizes or null if argument not provided
      */
     private int[] getTeamSizes(GeneralConfig generalConfig, int numberOfBots) {
-        if (teams == null) {
+        if (teams.equals("")) {
                 teams = createDefaultTeams(generalConfig, numberOfBots);
         }
 
