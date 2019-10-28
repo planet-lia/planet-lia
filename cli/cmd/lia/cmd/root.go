@@ -96,8 +96,8 @@ func initConfig() {
 
 	settings.Load()
 
-	if settings.Cli.SelectedGame != "" {
-		fmt.Printf("Selected game: %s (to change the game use `game set` command)\n", settings.Cli.SelectedGame)
+	if settings.Lia.SelectedGame != "" {
+		fmt.Printf("Selected game: %s (to change the game use `game set` command)\n", settings.Lia.SelectedGame)
 	} else {
 		fmt.Println("No game selected (to select the game use `game set` command)")
 	}

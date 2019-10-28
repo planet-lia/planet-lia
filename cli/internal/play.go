@@ -7,7 +7,7 @@ package internal
 //	"os"
 //)
 //
-//func Play(bot1Dir string, bot2Dir string, gameFlags *GameFlags, viewReplay bool, replayViewerWidth string) {
+//func Play(bot1Dir string, bot2Dir string, gameFlags *MatchFlags, viewReplay bool, replayViewerWidth string) {
 //	if err := Compile(bot1Dir); err != nil {
 //		fmt.Printf("%s\n", err)
 //		os.Exit(lia_SDK.PreparingBotFailed)
@@ -20,7 +20,7 @@ package internal
 //		}
 //	}
 //
-//	GenerateGame(bot1Dir, bot2Dir, gameFlags)
+//	GenerateMatch(bot1Dir, bot2Dir, gameFlags)
 //
 //	if viewReplay {
 //		ShowReplayViewer(gameFlags.ReplayPath, replayViewerWidth)

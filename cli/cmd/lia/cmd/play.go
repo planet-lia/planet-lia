@@ -1,6 +1,7 @@
 package cmd
 
 //
+//
 //import (
 //	"github.com/planet-lia/planet-lia/cli/internal"
 //	"github.com/planet-lia/planet-lia/cli/internal/analytics"
@@ -29,7 +30,7 @@ package cmd
 //			"width":      analytics.ParseStringFlag(cmd, "width"),
 //		})
 //
-//		internal.Play(bot1Dir, bot2Dir, &gameFlags, viewReplay, replayViewerWidth)
+//		internal.Play(bot1Dir, bot2Dir, &matchFlags, viewReplay, replayViewerWidth)
 //	},
 //}
 //
@@ -37,13 +38,13 @@ package cmd
 //	rootCmd.AddCommand(playCmd)
 //
 //	playCmd.Flags().BoolVarP(&viewReplay, "viewReplay", "v", true, "if set, the replay will not be opened in replay viewer")
-//	playCmd.Flags().IntVarP(&gameFlags.GameSeed, "gseed", "g", 0, "game seed. 0 means random")
-//	playCmd.Flags().IntVarP(&gameFlags.MapSeed, "mseed", "m", 0, "map seed. 0 means random")
-//	playCmd.Flags().IntVarP(&gameFlags.Port, "port", "p", 0, "port on which game engine will run. Default is 8887")
-//	playCmd.Flags().StringVarP(&gameFlags.MapPath, "map", "M", "", "path to custom map settings")
-//	playCmd.Flags().StringVarP(&gameFlags.ReplayPath, "replay", "r", "", "choose custom replay name and location")
-//	playCmd.Flags().StringVarP(&gameFlags.ConfigPath, "config", "c", "", "choose custom config")
-//	playCmd.Flags().IntSliceVarP(&gameFlags.DebugBots, "debug", "d", []int{}, "specify which bots you want to run manually, "+
+//	playCmd.Flags().IntVarP(&matchFlags.GameSeed, "gseed", "g", 0, "game seed. 0 means random")
+//	playCmd.Flags().IntVarP(&matchFlags.MapSeed, "mseed", "m", 0, "map seed. 0 means random")
+//	playCmd.Flags().IntVarP(&matchFlags.Port, "port", "p", 0, "port on which game engine will run. Default is 8887")
+//	playCmd.Flags().StringVarP(&matchFlags.MapPath, "map", "M", "", "path to custom map settings")
+//	playCmd.Flags().StringVarP(&matchFlags.ReplayPath, "replay", "r", "", "choose custom replay name and location")
+//	playCmd.Flags().StringVarP(&matchFlags.ConfigPath, "config", "c", "", "choose custom config")
+//	playCmd.Flags().IntSliceVarP(&matchFlags.ManualBots, "debug", "d", []int{}, "specify which bots you want to run manually, "+
 //		"Examples: -d 1,2 -- debug bot1 and bot2, -d 2 -- debug bot2)")
 //	playCmd.Flags().StringVarP(&replayViewerWidth, "width", "w", "", "choose width of replay window,"+
 //		" height will be calculated automatically")

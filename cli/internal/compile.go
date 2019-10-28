@@ -10,10 +10,10 @@ package internal
 //	"path/filepath"
 //)
 //
-//func Compile(botDir string) error {
-//	botDirAbsPath := botDir
-//	if !filepath.IsAbs(botDir) {
-//		botDirAbsPath = filepath.Join(config.PathToBots, botDir)
+//func Compile(botPath string) error {
+//	botDirAbsPath := botPath
+//	if !filepath.IsAbs(botPath) {
+//		botDirAbsPath = filepath.Join(config.PathToBots, botPath)
 //	}
 //
 //	lang, err := GetBotLanguage(botDirAbsPath)
@@ -38,7 +38,7 @@ package internal
 //	return nil
 //}
 //
-//func prepareBot(botDir string, lang *config.Language) error {
+//func prepareBot(botPath string, lang *config.Language) error {
 //	prepareScript := lang.PrepareUnix
 //	if config.OperatingSystem == "windows" {
 //		prepareScript = lang.PrepareWindows
@@ -48,23 +48,23 @@ package internal
 //
 //	var cmd *exec.Cmd
 //	if config.OperatingSystem == "windows" {
-//		cmd = exec.Command(".\\"+prepareScript, botDir)
+//		cmd = exec.Command(".\\"+prepareScript, botPath)
 //	} else {
-//		cmd = exec.Command("/bin/bash", prepareScript, botDir)
+//		cmd = exec.Command("/bin/bash", prepareScript, botPath)
 //	}
 //	cmd.Dir = pathToLanguages
 //	cmd.Stdout = os.Stdout
 //	cmd.Stderr = os.Stderr
 //
 //	if err := cmd.Run(); err != nil {
-//		fmt.Fprintf(os.Stderr, "Prepare script failed %s\n", botDir)
+//		fmt.Fprintf(os.Stderr, "Prepare script failed %s\n", botPath)
 //		return err
 //	}
 //
 //	return nil
 //}
 //
-//func copyRunScript(botDir string, lang *config.Language) error {
+//func copyRunScript(botPath string, lang *config.Language) error {
 //	runScript := lang.RunUnix
 //	runScriptName := "run.sh"
 //	if config.OperatingSystem == "windows" {
@@ -73,7 +73,7 @@ package internal
 //	}
 //
 //	globalRunScriptPath := filepath.Join(config.PathToData, "languages", runScript)
-//	botRunScriptPath := filepath.Join(botDir, runScriptName)
+//	botRunScriptPath := filepath.Join(botPath, runScriptName)
 //
 //	// Copy run script to bot
 //	if err := advancedcopy.File(globalRunScriptPath, botRunScriptPath); err != nil {

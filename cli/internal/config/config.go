@@ -11,6 +11,7 @@ import (
 const defaultReleasesPath = "http://localhost:8001/planet-lia-releases.json"
 const SettingsFileExtension = "json"
 const SettingsFile = ".planet-lia"
+const DefaultMatchPort = 8887
 
 const PathToBotScripts = ".scripts"
 const BuildScriptWindowsName = "build.bat"
@@ -24,6 +25,7 @@ var OperatingSystem = runtime.GOOS
 
 var ExecutableDirPath string
 var PathToGames string
+var PathToReplayFiles string
 var ReleasesUrl string
 var CurrentWorkingDirectory string
 
@@ -37,6 +39,7 @@ func init() {
 	ExecutableDirPath = filepath.Dir(ex)
 
 	PathToGames = filepath.Join(ExecutableDirPath, "games")
+	PathToReplayFiles = filepath.Join(ExecutableDirPath, "replays")
 
 	// Planet Lia releases URL
 	ReleasesUrl = os.Getenv("RELEASES_URL")

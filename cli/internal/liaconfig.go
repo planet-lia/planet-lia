@@ -12,11 +12,11 @@ package internal
 //	Language string `json:"language"`
 //}
 //
-//func getConfig(botDir, path string) (*LiaConfig, error) {
+//func getConfig(botPath, path string) (*LiaConfig, error) {
 //	configFile, err := ioutil.ReadFile(path)
 //	if err != nil {
 //		fmt.Fprintf(os.Stderr, "Error: Bot that you have provided does not seem like an actual bot. "+
-//			"Please check if you have misspelled it or if it is missing the lia.json file. (bot dir = %s)\n", botDir)
+//			"Please check if you have misspelled it or if it is missing the lia.json file. (bot dir = %s)\n", botPath)
 //		fmt.Fprintf(os.Stderr, "Couldn't open file. Location: %s.", path)
 //		return nil, err
 //	}

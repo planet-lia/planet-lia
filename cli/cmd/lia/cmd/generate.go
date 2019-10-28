@@ -1,44 +1,46 @@
 package cmd
 
-//
-//import (
-//	"github.com/planet-lia/planet-lia/cli/internal"
-//	"github.com/planet-lia/planet-lia/cli/internal/analytics"
-//	"github.com/spf13/cobra"
-//)
-//
-//var gameFlags = internal.GameFlags{}
-//
-//var generateCmd = &cobra.Command{
-//	Use:   "generate <bot1Dir> <bot2Dir>",
-//	Short: "Generates a game",
-//	Long:  `Generates a game. This is a low level command.`,
-//	Args:  cobra.ExactArgs(2),
-//	Run: func(cmd *cobra.Command, args []string) {
-//		bot1Dir := args[0]
-//		bot2Dir := args[1]
-//
-//		analytics.Log("command", "generate", map[string]string{
-//			"gseed": analytics.ParseIntFlagToString(cmd, "gseed"),
-//			"mseed": analytics.ParseIntFlagToString(cmd, "mseed"),
-//			"port":  analytics.ParseIntFlagToString(cmd, "port"),
-//			"map":   analytics.TrimPath(analytics.ParseStringFlag(cmd, "map")),
-//			"debug": analytics.ParseIntSliceFlagToString(cmd, "debug"),
-//		})
-//
-//		internal.GenerateGame(bot1Dir, bot2Dir, &gameFlags)
-//	},
-//}
-//
-//func init() {
-//	rootCmd.AddCommand(generateCmd)
-//
-//	generateCmd.Flags().IntVarP(&gameFlags.GameSeed, "gseed", "g", 0, "game seed. 0 means random")
-//	generateCmd.Flags().IntVarP(&gameFlags.MapSeed, "mseed", "m", 0, "map seed. 0 means random")
-//	generateCmd.Flags().IntVarP(&gameFlags.Port, "port", "p", 0, "port on which game engine will run. Default is 8887")
-//	generateCmd.Flags().StringVarP(&gameFlags.MapPath, "map", "M", "", "path to custom map settings")
-//	generateCmd.Flags().StringVarP(&gameFlags.ReplayPath, "replay", "r", "", "choose custom replay name and location")
-//	generateCmd.Flags().StringVarP(&gameFlags.ConfigPath, "config", "c", "", "choose custom config")
-//	generateCmd.Flags().IntSliceVarP(&gameFlags.DebugBots, "debug", "d", []int{}, "specify which bots you want to run manually, "+
-//		"examples: -d 1,2 -- debug bot1 and bot2, -d 2 -- debug bot2)")
-//}
+import (
+	"github.com/planet-lia/planet-lia/cli/internal"
+	"github.com/planet-lia/planet-lia/cli/internal/settings"
+	"github.com/spf13/cobra"
+)
+
+var matchFlags = internal.MatchFlags{}
+
+var generateCmd = &cobra.Command{
+	Use:   "generate <bot-1-path> <bot-2-path> ... <bot-n-path>",
+	Short: "Generates a match",
+	Long:  `Generates a match without first building the bots`,
+	Args:  cobra.MinimumNArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		settings.ExitIfNoGameSelected("generate", settings.Lia.SelectedGame)
+
+		internal.GenerateMatch(args, &matchFlags)
+	},
+}
+
+func init() {
+	rootCmd.AddCommand(generateCmd)
+
+	generateCmd.Flags().BoolVarP(&matchFlags.Debug, "debug", "d", false, "show debug window")
+	generateCmd.Flags().IntVarP(&matchFlags.Port, "port", "p", 0,
+		"Port on which match generator will run")
+	generateCmd.Flags().StringVarP(&matchFlags.ReplayPath, "replay", "r", "",
+		"Choose custom replay name and location")
+	generateCmd.Flags().StringVarP(&matchFlags.ConfigPath, "config", "c", "",
+		"Specify custom config path")
+	generateCmd.Flags().IntSliceVarP(&matchFlags.ManualBots, "manual-bots", "m", nil,
+		"Set which bots need to be connected manually, examples: `-d 0,1` will debug bot1 and "+
+			"bot2, `-d 1` will debug bot2, `-d` will only open a debug view but will connect all bots automatically)")
+	generateCmd.Flags().Float32VarP(&matchFlags.WindowToScreenRatio, "window-to-screen", "w", 0,
+		"Specify the ratio between debug view and the size of the monitor, it only works when also `-d/--debug` is provided")
+	generateCmd.Flags().StringVarP(&matchFlags.BotListenerToken, "--bot-listener-token", "b", "",
+		"Token with which an external service can connect and listen all communications between match-generator"+
+			" and all bots. Disabled if not provided")
+	generateCmd.Flags().StringVarP(&matchFlags.Teams, "--teams", "t", "",
+		"Specify the teams for the bots in a format x:y:z:... which means that first x provided bots belongs "+
+			"to the team 0, next y bots to team 1, next z to team 3 etc. Note that the teams format must be supported "+
+			"by the game in order to work. If the parameter is not provided, the teams are set up automatically "+
+			"depending on the game.")
+}

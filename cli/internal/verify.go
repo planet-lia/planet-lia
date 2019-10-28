@@ -8,10 +8,10 @@ package internal
 //	"path/filepath"
 //)
 //
-//func GetBotLanguage(botDir string) (*config.Language, error) {
-//	botConfigPath := filepath.Join(botDir, "lia.json")
+//func GetBotLanguage(botPath string) (*config.Language, error) {
+//	botConfigPath := filepath.Join(botPath, "lia.json")
 //
-//	liaConfig, err := getConfig(botDir, botConfigPath)
+//	liaConfig, err := getConfig(botPath, botConfigPath)
 //	if err != nil {
 //		fmt.Fprintf(os.Stderr, "failed to read %s\n", botConfigPath)
 //		return nil, err

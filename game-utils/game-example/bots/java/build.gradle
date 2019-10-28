@@ -11,6 +11,7 @@ sourceSets.main.java.srcDirs = ['src']
 
 dependencies {
     compile 'org.java-websocket:Java-WebSocket:1.4.0'
+    compile 'org.slf4j:slf4j-simple:1.6.1'	
     compile 'com.google.code.gson:gson:2.8.5'
     compile 'com.beust:jcommander:1.71'
 }

@@ -15,10 +15,10 @@ type DefaultSettings struct {
 	SelectedGame string `json:"selectedGame"`
 }
 
-var Cli DefaultSettings
+var Lia DefaultSettings
 
 func Load() {
-	err := viper.Unmarshal(&Cli)
+	err := viper.Unmarshal(&Lia)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "unable to decode Planet Lia config to struct: %s\n", err)
 		os.Exit(cli.Default)
@@ -49,11 +49,15 @@ func Create() error {
 }
 
 func ExitIfNoGameSelected(commandName string, SelectedGame string) {
-	if SelectedGame == "" {
+	printHelp := func() {
 		fmt.Printf("Command `%s` cannot work without a game being selected.\n", commandName)
 		fmt.Println("To select a game use `game set` command.")
 		fmt.Println("If you don't have a game installed use `game download` command.")
 		fmt.Println("List all supported games with `game list` command.")
+	}
+
+	if SelectedGame == "" {
+		printHelp()
 		os.Exit(cli.Default)
 	}
 
@@ -63,6 +67,7 @@ func ExitIfNoGameSelected(commandName string, SelectedGame string) {
 	if _, err := os.Stat(pathToGame); os.IsNotExist(err) {
 		fmt.Fprintf(os.Stderr, "game %s does not exist, directory %s does not exist\n error: %s\n",
 			SelectedGame, pathToGame, err)
+		printHelp()
 		os.Exit(cli.Default)
 	}
 }
