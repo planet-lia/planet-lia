@@ -2,12 +2,14 @@ package internal
 
 import (
 	"bytes"
+	"compress/gzip"
 	"fmt"
 	"github.com/planet-lia/planet-lia/cli"
 	"github.com/planet-lia/planet-lia/cli/internal/config"
 	"github.com/planet-lia/planet-lia/cli/internal/settings"
 	uuid "github.com/satori/go.uuid"
 	"io"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -90,8 +92,7 @@ func GenerateMatch(botPaths []string, gameFlags *MatchFlags) {
 		killProcess(botDetails.cmdRef)
 	}
 
-	// Wait for outputs to appear on the console (nicer way to fix this?)
-	time.Sleep(time.Millisecond * 100)
+	gzipReplayFile(gameFlags.ReplayPath)
 }
 
 func getBotsDetails(botDirs []string, gameFlags *MatchFlags) []BotDetails {
@@ -133,8 +134,43 @@ func configureReplayFilePath(gameFlags *MatchFlags) {
 			fmt.Fprintf(os.Stderr, "failed to create directories for path '%s'\n", path)
 		}
 		//"2006-01-02T15:04:05Z07:00"
-		fileName := time.Now().Format("2006-01-02T15-04-05") + ".gz"
+		fileName := time.Now().Format("2006-01-02T15-04-05") + ".json.gz"
 		gameFlags.ReplayPath = filepath.Join(path, fileName)
+	} else {
+		absPath, err := filepath.Abs(gameFlags.ReplayPath)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "failed to create an aboslute path from path '%s'\n", gameFlags.ReplayPath)
+		} else {
+			gameFlags.ReplayPath = absPath
+		}
+	}
+}
+
+func gzipReplayFile(replayPath string) {
+	// Read replay file
+	replayData, err := ioutil.ReadFile(replayPath)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to read the replay file for path '%s'\n%s\n", replayPath, err)
+	}
+
+	// Open a file for writing.
+	outFile, err := os.Create(replayPath)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to create and truncate the replay file for path '%s'\n%s\n", replayPath, err)
+		return
+	}
+
+	// Create gzip writer.
+	w := gzip.NewWriter(outFile)
+
+	// Write bytes in compressed form to the file.
+	if _, err := w.Write(replayData); err != nil {
+		fmt.Fprintf(os.Stderr, "failed to gzip replay to path '%s'\n%s\n", replayPath, err)
+	}
+
+	// Close the file.
+	if err := w.Close(); err != nil {
+		fmt.Fprintf(os.Stderr, "failed to close replay file '%s'\n%s\n", replayPath, err)
 	}
 }
 
@@ -283,6 +319,8 @@ func runMatchGenerator(started chan bool, cmdRef *CommandRef, gameFlags *MatchFl
 		fmt.Fprintf(os.Stderr, "match generator failed\n")
 		return err
 	}
+
+	// Copy replay file to the required destination
 
 	if errStdout != nil {
 		fmt.Fprintf(os.Stderr, "failed to capture stdout\n")
