@@ -120,7 +120,6 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
                 replay = JSON.parse(data);
             }
 
-
             let app = startGame(replay!, this.props.assetsBaseUrl);
             this.gameCanvas!.appendChild(app.view);
             this.setState({

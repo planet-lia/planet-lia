@@ -4,6 +4,10 @@
  */
 export abstract class Section<T> {
 
+    // Cannot use YourClassName.name due to minification problems in build
+    // Override it in a class that extends this
+    static NAME: string;
+
     // The time at the end of the sections.
     endTime: number;
 

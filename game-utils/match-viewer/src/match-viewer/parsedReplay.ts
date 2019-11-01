@@ -123,12 +123,13 @@ function parseSections(sections: JSON, cameraWidth: number, cameraHeight: number
     let standaloneCurves = new Map<string, Curve<any>>();
 
     (sections as any).forEach(sectionRaw => {
+
         // Try parsing this section
         try {
             // Find the correct Section
             let section: Section<any>;
             for (let sectionType of SUPPORTED_SECTION_TYPES) {
-                if (sectionRaw.type === sectionType.name) {
+                if (sectionRaw.type === sectionType.NAME) {
                     section = sectionType.parse(sectionRaw);
                     break;
                 }
@@ -163,6 +164,7 @@ function parseSections(sections: JSON, cameraWidth: number, cameraHeight: number
                     let getEntity = (id: string) => {
                         return entities.get(id)!.attachable
                     };
+
 
                     let entity: Entity;
                     if (isTextEntity(entityId)) entity = new TextEntity(entityId, getEntity);

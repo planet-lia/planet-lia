@@ -6,6 +6,8 @@ import {round} from "../../math/round";
  */
 export class LinearSection extends Section<number> {
 
+    static readonly NAME: string = "LinearSection";
+
     getValue(time: number, prevSection: Section<number>): number {
         let sectionDuration = this.endTime - prevSection.endTime;
         let elapsedDuration = time - prevSection.endTime;

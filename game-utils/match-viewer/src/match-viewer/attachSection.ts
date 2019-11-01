@@ -11,6 +11,8 @@ import {round} from "./math/round";
  */
 export class AttachSection extends Section<Attach> {
 
+    static readonly NAME: string = "AttachSection";
+
     getValue(_time: number, prevSection: Section<Attach>): Attach {
         return prevSection.endRangeValue;
     }

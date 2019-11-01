@@ -31,6 +31,10 @@ export class LocalMatchViewer extends Component<LocalMatchViewerProps, LocalMatc
         const search = new URLSearchParams(this.props.location.search);
         let replayUrl = search.get("replayUrl");
 
+        let assetsUrl = (this.props.assetsServerPort === undefined)
+            ? `games`
+            : `http://localhost:${this.props.assetsServerPort}`;
+
         return (
             <div>
                 <Row>
@@ -43,7 +47,7 @@ export class LocalMatchViewer extends Component<LocalMatchViewerProps, LocalMatc
                                 replayUrl={replayUrl}
                                 replayFile={null}
                                 loopMatch={false}
-                                assetsBaseUrl={`http://localhost:${this.props.assetsServerPort}`}
+                                assetsBaseUrl={assetsUrl}
                             />
                         </Row>
                     </Col>

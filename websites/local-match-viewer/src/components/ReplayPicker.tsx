@@ -4,7 +4,7 @@ import {Col, Image, Row} from "react-bootstrap";
 import {Redirect, RouteComponentProps} from 'react-router-dom';
 
 interface ReplayPickerProps extends RouteComponentProps<{}> {
-    replayFilesServerPort: number
+    replayFilesServerPort: number | undefined
 }
 
 interface ReplayPickerState {
@@ -36,15 +36,16 @@ export class ReplayPicker extends Component<ReplayPickerProps, ReplayPickerState
             return;
         }
 
-        const port = this.props.replayFilesServerPort;
-        let url = `http://localhost:${port}/${path}`;
+        let url = (this.props.replayFilesServerPort === undefined)
+            ? `replays${path}`
+            : `http://localhost:${this.props.replayFilesServerPort}/replays${path}`;
         let response = await fetch(url);
         let text = await response.text();
 
         let el = document.createElement( 'html' );
         el.innerHTML = text;
 
-        let list = el.getElementsByTagName( 'li' );
+        let list = el.getElementsByTagName( 'a' );
         let list2: string[] = [];
 
         for (let i = 0; i < list.length; i++) {
@@ -73,7 +74,9 @@ export class ReplayPicker extends Component<ReplayPickerProps, ReplayPickerState
 
         if (chosenReplayPath !== "") {
             this.props.history.push(this.props.location);
-            let replayUrl = `http://localhost:${replayFilesServerPort}${chosenReplayPath}`;
+            let replayUrl = (this.props.replayFilesServerPort === undefined)
+                ? `replays${chosenReplayPath}`
+                : `http://localhost:${replayFilesServerPort}/replays${chosenReplayPath}`;
             return <Redirect to={`/viewer?replayUrl=${replayUrl}`} />;
         }
 
@@ -84,7 +87,7 @@ export class ReplayPicker extends Component<ReplayPickerProps, ReplayPickerState
                     <Col md={8}>
                         <Row>
                             <div id="logo">
-                                <Image src="logo-black-512.png"/>
+                                <Image src="assets/logo-black-512.png"/>
                             </div>
                         </Row>
                         <Row>
@@ -92,6 +95,9 @@ export class ReplayPicker extends Component<ReplayPickerProps, ReplayPickerState
                         </Row>
                         <Row>
                             <h5>Choose a replay file that you want to view.</h5>
+                        </Row>
+                        <Row>
+                            <h5>If you want to run a file outside of a replays/ directory run <b>lia -r [path-to-replay]</b></h5>
                         </Row>
                         <Row>
                             {(currentPath !== "/")

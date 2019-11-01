@@ -7,6 +7,8 @@ import {round} from "../../math/round";
  */
 export class StepSection extends Section<number> {
 
+    static readonly NAME: string = "StepSection";
+
     getValue(_time: number, prevSection: Section<number>): number {
         return prevSection.endRangeValue;
     }

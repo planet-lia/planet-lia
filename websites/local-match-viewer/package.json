@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": false,
   "scripts": {
-    "start": "make setup && react-scripts start",
-    "build": "make setup && react-scripts build",
-    "test": "make setup && react-scripts test",
+    "start": "REACT_APP_REPLAY_FILES_SERVER_PORT=4444 REACT_APP_ASSETS_SERVER_PORT=3333 react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

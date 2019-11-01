@@ -7,6 +7,8 @@ import {SineEquation} from "../../math/sineEquation";
 
 export class SineSection extends Section<number> {
 
+    static readonly NAME: string = "SineSection";
+
     sine: SineEquation;
 
     constructor(endTime: number, sine: SineEquation) {

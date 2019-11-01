@@ -6,6 +6,8 @@ import {round} from "../../math/round";
  */
 export class BooleanSection extends Section<boolean> {
 
+    static readonly NAME: string = "BooleanSection";
+
     getValue(_time: number, prevSection: Section<boolean>): boolean {
         return prevSection.endRangeValue;
     }
