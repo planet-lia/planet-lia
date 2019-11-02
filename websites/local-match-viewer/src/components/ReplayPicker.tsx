@@ -1,10 +1,10 @@
 import * as React from "react";
 import {Component} from "react";
-import {Col, Image, Row} from "react-bootstrap";
+import {Col, Grid, Image, Row} from "react-bootstrap";
 import {Redirect, RouteComponentProps} from 'react-router-dom';
 
 interface ReplayPickerProps extends RouteComponentProps<{}> {
-    replayFilesServerPort: number | undefined
+    assetsServerPort: number | undefined
 }
 
 interface ReplayPickerState {
@@ -36,9 +36,9 @@ export class ReplayPicker extends Component<ReplayPickerProps, ReplayPickerState
             return;
         }
 
-        let url = (this.props.replayFilesServerPort === undefined)
+        let url = (this.props.assetsServerPort === undefined)
             ? `replays${path}`
-            : `http://localhost:${this.props.replayFilesServerPort}/replays${path}`;
+            : `http://localhost:${this.props.assetsServerPort}${path}`;
         let response = await fetch(url);
         let text = await response.text();
 
@@ -70,21 +70,20 @@ export class ReplayPicker extends Component<ReplayPickerProps, ReplayPickerState
 
     render() {
         const {directoryItems, chosenReplayPath, currentPath} = this.state;
-        const {replayFilesServerPort} = this.props;
+        const {assetsServerPort} = this.props;
 
         if (chosenReplayPath !== "") {
             this.props.history.push(this.props.location);
-            let replayUrl = (this.props.replayFilesServerPort === undefined)
+            let replayUrl = (this.props.assetsServerPort === undefined)
                 ? `replays${chosenReplayPath}`
-                : `http://localhost:${replayFilesServerPort}/replays${chosenReplayPath}`;
+                : `http://localhost:${assetsServerPort}${chosenReplayPath}`;
             return <Redirect to={`/viewer?replayUrl=${replayUrl}`} />;
         }
 
         return (
-            <div>
+            <Grid>
                 <Row>
-                    <Col md={2}/>
-                    <Col md={8}>
+                    <Col md={12}>
                         <Row>
                             <div id="logo">
                                 <Image src="assets/logo-black-512.png"/>
@@ -118,9 +117,8 @@ export class ReplayPicker extends Component<ReplayPickerProps, ReplayPickerState
                             })}
                         </Row>
                     </Col>
-                    <Col md={2}/>
                 </Row>
-            </div>
+            </Grid>
         )
     }
 }

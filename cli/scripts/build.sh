@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-runTests=$1
+quickMode=$1
 
 platforms=("linux/386" "windows/386" "darwin/amd64" "linux/amd64/static")
 
@@ -10,16 +10,12 @@ cd "${pathToScript}"/.. || exit
 
 go fmt ./...
 
-# Run tests
-if [[ $runTests != "false" ]]; then
-    go test ./...
+if [[ $quickMode != "quick" ]]; then
+    echo "Running tests"
+    #go test ./... || exit
 
-    exit_status=$?
-    if [[ ${exit_status} != 0 ]]; then
-        echo ${exit_status}
-        (>&2 echo "Running tests failed.")
-        exit ${exit_status}
-    fi
+    echo "Building local-match-viewer"
+    make -C ../websites/local-match-viewer/ build || exit
 fi
 
 # Try to make build dir
@@ -67,6 +63,17 @@ do
         echo 'An error has occurred! Aborting the script execution...'
         exit $?
     fi
+
+    # Copy match-viewer to build
+    if [[ $quickMode != "quick" ]]; then
+        pathToData="${buildDir}/data"
+        mkdir -p ${pathToData}
+        matchViewerPath="${pathToData}/match-viewer"
+        rm -r "${matchViewerPath}"
+        cp -r ../websites/local-match-viewer/build ${matchViewerPath}
+    fi
+
+
 done
 
 

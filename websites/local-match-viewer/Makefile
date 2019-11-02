@@ -19,4 +19,4 @@ build:
 .PHONY: dev
 dev:
 	make setup
-	npm run-script start
+	REACT_APP_ASSETS_SERVER_PORT=4444 npm run-script start

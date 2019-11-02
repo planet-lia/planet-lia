@@ -39,7 +39,6 @@ type BotDetails struct {
 func GenerateMatch(botPaths []string, gameFlags *MatchFlags) {
 	configureReplayFilePath(gameFlags)
 	configureGameConfig(gameFlags)
-	configurePort(gameFlags)
 	botsDetails := getBotsDetails(botPaths, gameFlags)
 
 	// Create channel that will listen to results
@@ -116,13 +115,6 @@ func configureGameConfig(gameFlags *MatchFlags) {
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "failed to make config path '%s' absolute: %s\n", gameFlags.ConfigPath, err)
 		}
-	}
-}
-
-func configurePort(gameFlags *MatchFlags) {
-	if gameFlags.Port == 0 {
-		gameFlags.Port = config.DefaultMatchPort
-		// TODO find a port that is free
 	}
 }
 

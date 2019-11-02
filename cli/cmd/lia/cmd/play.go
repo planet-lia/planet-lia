@@ -6,7 +6,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var viewReplay bool
+var noMatchViewer bool
+var skipBotBuilds bool
 
 var playCmd = &cobra.Command{
 	Use:   "play <bot-1-path> <bot-2-path> ... <bot-n-path>",
@@ -16,14 +17,17 @@ var playCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		settings.ExitIfNoGameSelected("play", settings.Lia.SelectedGame)
 
-		internal.Play(args, &matchFlags, viewReplay)
+		internal.Play(args, &matchFlags, noMatchViewer, skipBotBuilds, serverPort)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(playCmd)
 
+	registerReplayFlags(&serverPort, playCmd)
 	registerGenerateFlags(&matchFlags, playCmd)
-	playCmd.Flags().BoolVarP(&viewReplay, "view", "v", true,
-		"show replay when match is generated")
+	playCmd.Flags().BoolVarP(&noMatchViewer, "no-viewer", "n", false,
+		"do not open match viewer to view the replay once the match is generated")
+	playCmd.Flags().BoolVar(&skipBotBuilds, "skip-build", false,
+		"skip building bots before generating the match")
 }

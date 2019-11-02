@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Component} from "react";
-import {Button, Col, Row} from "react-bootstrap";
+import {Button, Col, Grid, Row} from "react-bootstrap";
 import {MatchAdvanced} from "../_dependencies/components/MatchAdvanced";
 import {Redirect, RouteComponentProps} from "react-router-dom";
 
@@ -36,24 +36,20 @@ export class LocalMatchViewer extends Component<LocalMatchViewerProps, LocalMatc
             : `http://localhost:${this.props.assetsServerPort}`;
 
         return (
-            <div>
+            <Grid>
                 <Row>
-                    <Col md={2}/>
-                    <Col md={8}>
-                        <Row><h2>Local Match Viewer</h2></Row>
-                        <Row><Button onClick={this.home} className="btn btn-lg custom-btn">Replays List</Button></Row>
-                        <Row>
-                            <MatchAdvanced
-                                replayUrl={replayUrl}
-                                replayFile={null}
-                                loopMatch={false}
-                                assetsBaseUrl={assetsUrl}
-                            />
-                        </Row>
+                    <Col md={12}>
+                        <h2>Local Match Viewer</h2>
+                        <Button onClick={this.home} className="btn btn-lg custom-btn">Replays List</Button>
+                        <MatchAdvanced
+                            replayUrl={replayUrl}
+                            replayFile={null}
+                            loopMatch={false}
+                            assetsBaseUrl={assetsUrl}
+                        />
                     </Col>
-                    <Col md={2}/>
                 </Row>
-            </div>
+            </Grid>
         )
     }
 }

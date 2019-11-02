@@ -14,8 +14,8 @@ Are you developing your own game for Planet Lia or are you just interested in ho
 1. `git clone REPO_URL`
 2. `cd games-utils/match-viewer/`
 3. `npm install`
-4. `python3 serve_games_assets.py ../../games/` 
-    * This will serve assets from `games/` directory at port `3333` which is used in `src/App.tsx` file by default. 
+4. `python3 serve_games_assets.py -p 3337 ../../games/` 
+    * This will serve assets from `games/` directory at port `3337` which is used in `src/App.tsx` file by default. 
     It will also allow CORS for easier development.
 5. `npm start`
 6. Visit http://localhost:3000/

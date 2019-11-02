@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/planet-lia/planet-lia/cli/internal"
+	"github.com/planet-lia/planet-lia/cli/internal/config"
 	"github.com/planet-lia/planet-lia/cli/internal/settings"
 	"github.com/spf13/cobra"
 )
@@ -28,7 +29,7 @@ func init() {
 
 func registerGenerateFlags(matchFlags *internal.MatchFlags, command *cobra.Command) {
 	command.Flags().BoolVarP(&matchFlags.Debug, "debug", "d", false, "show debug window")
-	command.Flags().IntVarP(&matchFlags.Port, "port", "p", 0,
+	command.Flags().IntVarP(&matchFlags.Port, "port", "p", config.DefaultMatchPort,
 		"Port on which match generator will run")
 	command.Flags().StringVarP(&matchFlags.ReplayPath, "replay", "r", "",
 		"Choose custom replay name and location")

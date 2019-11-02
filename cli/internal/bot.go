@@ -188,7 +188,7 @@ func BuildBot(botPath string) {
 	cmd.Stderr = os.Stderr
 
 	if err := cmd.Run(); err != nil {
-		fmt.Fprintf(os.Stderr, "failed to build bot '%s'\n", botPath)
+		fmt.Fprintf(os.Stderr, "failed to build bot '%s'\n%s\n", botPath, err)
 		os.Exit(cli.BotBuildFailed)
 	}
 

@@ -19,17 +19,17 @@ go get -u ./...
 
 ### Build
 ```bash
-chmod +x scrpits/build.sh
 ./scripts/build.sh
 ```
 
- 
-#### Custom Releases File
+If you want to run build without testing and redeploying local-match-viewer run `./scripts/build.sh quick`.
 
-In the terminal where you will be running the tool you need to export environment variable `RELEASES_URL`` with 
-url to your self hosted releases file.
+ 
+#### Serve Releases Locally
+
+Run the command below. It will build game-example match-generator and java, kotlin and python3 bots for that game 
+and serve them as a release on port `4447`.
 
 ```bash
-export RELEASES_URL="http://127.0.0.1:8000/planet-lia-releases.json"
+./scripts/serveReleases.sh
 ```
-

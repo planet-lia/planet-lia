@@ -6,9 +6,7 @@ A wrapper around `game-utils/match-viewer` react project that serves as a local 
 1. `git clone REPO_URL`
 2. `cd websites/local-match-viewer/`
 3. `make install`
-4. Serve some replay files: `python3 ../../game-utils/match-viewer/serve_games_assets.py -p 4444 ../../games/lia-1
-/assets/1.0/`
-5. Serve assets: `python3 ../../game-utils/match-viewer/serve_games_assets.py ../../games/`
+4. Serve games directory files: `python3 ../../game-utils/match-viewer/serve_games_assets.py -p 4444 ../../games/`
 6. `make dev`
 7. Visit http://localhost:3000/
 
