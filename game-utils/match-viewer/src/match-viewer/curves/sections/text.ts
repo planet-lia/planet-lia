@@ -7,6 +7,8 @@ import {round} from "../../math/round";
  */
 export class TextSection extends Section<string> {
 
+    static readonly NAME: string = "TextSection";
+
     getValue(_time: number, prevSection: Section<string>): string {
         return prevSection.endRangeValue;
     }

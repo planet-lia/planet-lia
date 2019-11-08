@@ -1,5 +1,35 @@
-# Command Line Interface
+# Planet Lia - CLI
 
-CLI for Planet Lia Platform. It can download games, bots, generate matches, upload bots to the leaderboard and much more.
+The CLI tool for Planet Lia platform.
+The tool is called `lia`.
 
-WIP 
+## Planet Lia CLI
+```bash
+TODO paste the result of --help command
+```
+
+
+## Development
+### Dependencies
+Install all dependencies and update them by cd-ing into the repository
+root and running:
+```bash
+go get -u ./...
+```
+
+### Build
+```bash
+./scripts/build.sh
+```
+
+If you want to run build without testing and redeploying local-match-viewer run `./scripts/build.sh quick`.
+
+ 
+#### Serve Releases Locally
+
+Run the command below. It will build game-example match-generator and java, kotlin and python3 bots for that game 
+and serve them as a release on port `4447`.
+
+```bash
+./scripts/serveReleases.sh
+```

@@ -1,0 +1,29 @@
+{
+  "cli": {
+    "version": "0.1.0"
+  },
+  "games": [
+    {
+      "name": "game-example",
+      "version": "1.0.0",
+      "downloadUrl": "http://localhost:4447/serveReleasesBuild/game-example.zip",
+      "bots": [
+        {
+          "language": "java",
+          "version": "1.0.0",
+          "downloadUrl": "http://localhost:4447/serveReleasesBuild/bots/java.zip"
+        },
+        {
+          "language": "kotlin",
+          "version": "1.0.0",
+          "downloadUrl": "http://localhost:4447/serveReleasesBuild/bots/kotlin.zip"
+        },
+        {
+          "language": "python3",
+          "version": "1.0.0",
+          "downloadUrl": "http://localhost:4447/serveReleasesBuild/bots/python3.zip"
+        }
+      ]
+    }
+  ]
+}

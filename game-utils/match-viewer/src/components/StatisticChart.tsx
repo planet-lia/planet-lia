@@ -42,18 +42,18 @@ export class StatisticChart extends Component<StatisticChartProps, StatisticChar
         }));
 
         return (
-            <ReactEcharts
+            <ReactEcharts style={{minWidth: "300px"}}
                 option={{
-                    title: {
-                        top: "4%",
-                        text: stat.name + ""
-                    },
+                    // title: {
+                    //     top: "4%",
+                    //     text: stat.name + ""
+                    // },
                     tooltip: {
                         trigger: "axis"
                     },
                     legend: {
                         type: "scroll",
-                        top: "15%",
+                        // top: "15%",
                         data: stat.series.map((s: ChartSeriesElement) => {
                             return s.name;
                         })
@@ -62,7 +62,7 @@ export class StatisticChart extends Component<StatisticChartProps, StatisticChar
                         left: "0%",
                         right: "0%",
                         bottom: "0%",
-                        top: "27%",
+                        top: "12%", // top: "27%",
                         containLabel: true
                     },
                     xAxis: {

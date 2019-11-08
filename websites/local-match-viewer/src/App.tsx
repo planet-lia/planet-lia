@@ -7,14 +7,13 @@ import {ReplayPicker} from "./components/ReplayPicker";
 
 
 const App: React.FC = () => {
-    let replayFilesServerPort = process.env.REACT_APP_REPLAY_FILES_SERVER_PORT;
     let assetsServerPort = process.env.REACT_APP_ASSETS_SERVER_PORT;
 
     return (
         <Router>
             <Switch>
                 <Route exact path="/" component={(props) =>
-                    <ReplayPicker replayFilesServerPort={replayFilesServerPort} {...props} />}
+                    <ReplayPicker assetsServerPort={assetsServerPort} {...props} />}
                 />
                 <Route exact path="/viewer" component={(props) =>
                     <LocalMatchViewer assetsServerPort={assetsServerPort} {...props} />}

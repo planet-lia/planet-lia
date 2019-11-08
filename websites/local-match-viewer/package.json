@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": false,
   "scripts": {
-    "start": "make setup && react-scripts start",
-    "build": "make setup && react-scripts build",
-    "test": "make setup && react-scripts test",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {

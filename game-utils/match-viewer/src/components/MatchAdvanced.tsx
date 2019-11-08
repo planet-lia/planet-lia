@@ -74,10 +74,13 @@ export class MatchAdvanced extends Component<MatchAdvancedProps, MatchAdvancedSt
                     ? <div className="statistics">
                         <Row>
                             {app!.charts.map((stat: Chart, i: number) => {
-                                return <Col md={4} key={i} className="statistic-col"><StatisticChart
-                                    stat={stat}
-                                    matchDuration={matchDuration}
-                                /></Col>;
+                                return <Col md={4} key={i} className="statistic-col">
+                                    <h3>{stat.name}</h3>
+                                    <StatisticChart
+                                        stat={stat}
+                                        matchDuration={matchDuration}
+                                    />
+                                </Col>;
                             })}
                         </Row>
                     </div>
