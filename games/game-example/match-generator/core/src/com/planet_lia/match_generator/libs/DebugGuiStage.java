@@ -105,7 +105,7 @@ public class DebugGuiStage extends Stage {
             }
         });
 
-        entityDetails = new ScrollableTextArea("Hover entity to display its details.");
+        entityDetails = new ScrollableTextArea("Click on an entity to display its details.");
         entityDetailsScrollPane = entityDetails.createCompatibleScrollPane();
         mainTable.add(entityDetailsScrollPane).height(entityDetailsPaneHeight).row();
     }

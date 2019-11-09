@@ -1,0 +1,56 @@
+{
+    "general": {
+        "gameNamePretty": "Planetization",
+        "gameName": "planetization",
+        "gameVersion": "1.0",
+        "assetsVersion": "1.0",
+        "backgroundColor": "#000000",
+        "debugWindow": {
+            "framesPerSecond": 60,
+            "logsToGameRatio": 0.3,
+            "entityDetailsToScreenHeight": 0.3,
+            "controlsToWindowHeightRatio": 0.08
+        },
+        "showEntityPathSettings": {
+            "pathColor": "#FFFFFF", 
+            "pathAlpha": 0.6, 
+            "clickedEntityTint": "#FF0000", 
+            "pathWidth": 0.2, 
+            "drawingTimeInterval": 0.2
+
+        },
+        "gameUpdatesPerSecond": 5,
+        "connectingBotsTimeout": 15,
+        "botFirstResponseTimeout": 2,
+        "botResponseTimeout": 1,
+        "maxTimeoutsPerBot": 8,
+        "botResponseTotalDurationMax": 45,
+        "gameUpdatesPerBotsUpdate": 3,
+        "allowedTeamFormats": [
+            {"format": "1:1", "weight": 1}
+        ],
+        "botColors": ["#74B732", "#B74254"]
+    },
+    "gameUpdatesPerBotRequest": 1,
+    "cameraViewWidth": 96,
+    "cameraViewHeight": 54,
+    "defaultFontSize": 0.2,
+    "mapWidth": 96,
+    "mapHeight": 54,
+    "planetSize": 5,
+    "unitIndicatorSize": 0.6,
+    "unitIndicatorOffset": 2.9,
+    "planetGapWidth": 12,
+    "planetGapHeight": 5,
+    "planetPositionsOnGrid": [0,2,3,5,7,10,12,14,15,17,19,22,24,26,27,29,31,34,36,38,39,41],
+    "greenPlanetOnStart": 19,
+    "redPlanetOnStart": 22,
+    "unitSize": 1.2,
+    "unitSpeed": 4,
+    "unitRotationSpeed": 50,
+    "numberOfWorkersOnStart": 3,
+    "resourcesForNewUnit": 5,
+    "resourcesGenerationSpeed": 1,
+    "maxActiveWorkersPerPlanet": 5,
+    "maxNumberOfUnitsPerTeam": 500 
+}

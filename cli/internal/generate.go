@@ -235,8 +235,14 @@ func runBot(cmdRef *CommandRef, botPath, token string, port int) error {
 func runMatchGenerator(started chan bool, cmdRef *CommandRef, gameFlags *MatchFlags, botsDetails []BotDetails) error {
 	pathToMatchGenerator := filepath.Join(config.PathToGames, settings.Lia.SelectedGame)
 
-	cmd := exec.Command(
-		"java",
+	var cmd *exec.Cmd
+	if config.OperatingSystem == "darwin" {
+		cmd = exec.Command("java", "-XstartOnFirstThread", "-Dorg.lwjgl.system.allocator=system")
+	} else {
+		cmd = exec.Command("java", "-XstartOnFirstThread", "-Dorg.lwjgl.system.allocator=system")
+	}
+
+	cmd.Args = append(cmd.Args,
 		"-jar", filepath.Join(pathToMatchGenerator, "match-generator.jar"),
 		"-p", fmt.Sprint(gameFlags.Port),
 		"-r", gameFlags.ReplayPath,
