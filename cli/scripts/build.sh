@@ -36,7 +36,7 @@ do
         osName="macos"
     fi
 
-    buildDir="build/lia-"${osName}
+    buildDir="build/${osName}/planet-lia"
 
     if [[ ${#platformSplit[@]} == 3 ]]; then
        CGO_ENABLED=0

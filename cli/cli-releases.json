@@ -1,0 +1,32 @@
+{
+  "cli": {
+    "version": "1.0.0",
+    "planet-lia-windows-download-url": "https://files.production.cloud.planetlia.com/games/planetization/1.0/windows/planet-lia.zip",
+    "planet-lia-linux-download-url": "https://files.production.cloud.planetlia.com/games/planetization/1.0/linux/planet-lia.zip",
+    "planet-lia-macos-download-url": "https://files.production.cloud.planetlia.com/games/planetization/1.0/macos/planet-lia.zip"
+  },
+  "games": [
+    {
+      "name": "planetization",
+      "version": "1.0.0",
+      "downloadUrl": "https://files.production.cloud.planetlia.com/games/planetization/1.0/planetization.zip",
+      "bots": [
+        {
+          "language": "java",
+          "version": "1.0.0",
+          "downloadUrl": "https://files.production.cloud.planetlia.com/games/planetization/1.0/java.zip"
+        },
+        {
+          "language": "kotlin",
+          "version": "1.0.0",
+          "downloadUrl": "https://files.production.cloud.planetlia.com/games/planetization/1.0/kotlin.zip"
+        },
+        {
+          "language": "python3",
+          "version": "1.0.0",
+          "downloadUrl": "https://files.production.cloud.planetlia.com/games/planetization/1.0/python3.zip"
+        }
+      ]
+    }
+  ]
+}
