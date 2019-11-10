@@ -31,6 +31,7 @@ allprojects {
         visuiVersion = '1.4.2'
         junitVersion = '5.3.1'
         gdxUtilsVersion = '0.13.4'
+        gdxAiVersion = '1.6.0'
     }
 
     repositories {
@@ -76,7 +77,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         compile "net.dermetfan.libgdx-utils:libgdx-utils:$gdxUtilsVersion"
         compile "net.dermetfan.libgdx-utils:libgdx-utils-box2d:$gdxUtilsVersion"
-        compile 'es.usc.citius.hipster:hipster-all:1.0.1'
+        compile "com.badlogicgames.gdx:gdx-ai:$gdxAiVersion"
 
         testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"

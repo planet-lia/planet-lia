@@ -4,9 +4,9 @@
   },
   "games": [
     {
-      "name": "game-example",
+      "name": "planetization",
       "version": "1.0.0",
-      "downloadUrl": "http://localhost:4447/serveReleasesBuild/game-example.zip",
+      "downloadUrl": "http://localhost:4447/serveReleasesBuild/planetization.zip",
       "bots": [
         {
           "language": "java",

@@ -33,3 +33,5 @@ and serve them as a release on port `4447`.
 ```bash
 ./scripts/serveReleases.sh
 ```
+
+Also expose the url on which releases are server: `export RELEASES_URL="http://localhost:4447/planet-lia-releases.json"`

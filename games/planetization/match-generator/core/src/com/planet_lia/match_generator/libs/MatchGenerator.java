@@ -27,10 +27,12 @@ public class MatchGenerator extends ApplicationAdapter {
     boolean isFirstUpdate = true;
 
     OrthographicCamera gameCamera = new OrthographicCamera();
+    OrthographicCamera gameHudCamera = new OrthographicCamera();
     OrthographicCamera logsCamera  = new OrthographicCamera();
     OrthographicCamera controlsCamera  = new OrthographicCamera();
 
     Viewport gameViewport;
+    Viewport gameHudViewport;
     Viewport logsViewport;
     Viewport controlsViewport;
 
@@ -48,8 +50,8 @@ public class MatchGenerator extends ApplicationAdapter {
         this.gameLogic = gameLogic;
 
         server = new BotServer(GameConfig.values.general, timer, args.port, botsDetails);
-        //server.start();
-        //server.waitForBotsToConnect();
+        server.start();
+        server.waitForBotsToConnect();
     }
 
     @Override
@@ -61,6 +63,9 @@ public class MatchGenerator extends ApplicationAdapter {
         }
         gameViewport = new FitViewport(GameConfig.values.cameraViewWidth, GameConfig.values.cameraViewHeight, gameCamera);
         // gameCamera is be positioned in GameLogic
+
+        gameHudViewport = new FitViewport(getGameViewWidth(), getGameViewHeight(), gameHudCamera);
+        centerCamera(gameHudCamera, gameHudViewport);
 
         // Create logs camera and viewport
         logsViewport = new FitViewport(getLogsViewWidth(), Gdx.graphics.getHeight(), logsCamera);
@@ -86,7 +91,7 @@ public class MatchGenerator extends ApplicationAdapter {
             server.setDebugGuiStage(debugGuiStage);
         }
 
-        gameLogic.setup(new MatchTools(botsDetails, server, gameViewport, entityDetailsSystem));
+        gameLogic.setup(new MatchTools(botsDetails, server, gameViewport, gameHudViewport, entityDetailsSystem));
     }
 
     private void centerCamera(Camera camera, Viewport viewport) {
@@ -206,6 +211,8 @@ public class MatchGenerator extends ApplicationAdapter {
         if (args.debug) {
             gameViewport.update(getGameViewWidth(), getGameViewHeight());
             gameViewport.setScreenY(getControlsViewHeight());
+            gameHudViewport.update(getGameViewWidth(), getGameViewHeight());
+            gameHudViewport.setScreenY(getControlsViewHeight());
             controlsViewport.update(getGameViewWidth(), getControlsViewHeight());
             logsViewport.update(getLogsViewWidth(), height);
             logsViewport.setScreenX(getGameViewWidth());

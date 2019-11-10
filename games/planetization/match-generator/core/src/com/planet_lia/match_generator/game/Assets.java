@@ -6,6 +6,7 @@ import com.badlogic.gdx.assets.loaders.TextureLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
@@ -40,6 +41,14 @@ public class Assets {
     public static String redIndicator = GameConfig.values.pathToImages + "red-indicator.png";
     @Asset(value = Texture.class, param = "defaultTextureParam")
     public static String whiteIndicator = GameConfig.values.pathToImages + "white-indicator.png";
+    @Asset(value = Texture.class, param = "defaultTextureParam")
+    public static String hudBg = GameConfig.values.pathToImages + "hud-bg.png";
+    @Asset(value = Texture.class, param = "defaultTextureParam")
+    public static String pbRed = GameConfig.values.pathToImages + "pb-red.png";
+    @Asset(value = Texture.class, param = "defaultTextureParam")
+    public static String pbGreen = GameConfig.values.pathToImages + "pb-green.png";
+    @Asset(value = BitmapFont.class, param = "defaultFontParameter")
+    public static String hudFont = GameConfig.values.pathToFonts + "medium.ttf";
 
     protected static AnnotationAssetManager assetManager;
 
@@ -49,7 +58,7 @@ public class Assets {
         defaultTextureParam.magFilter = Texture.TextureFilter.Linear;
 
         // Prepare default font parameter
-        defaultFontParameter.fontFileName = "fonts/medium.ttf";
+        defaultFontParameter.fontFileName = GameConfig.values.pathToFonts + "medium.ttf";
         defaultFontParameter.fontParameters.size = getFontHeight();
 
         // Prepare asset manager and load assets
@@ -63,7 +72,6 @@ public class Assets {
 
     private static int getFontHeight() {
         // Only calculate if debug mode
-        System.out.println(Gdx.app.getType());
         if (Gdx.app.getType() == Application.ApplicationType.HeadlessDesktop) return 0;
         return (int) (GameConfig.values.defaultFontSize *
                 (Gdx.graphics.getHeight() / GameConfig.values.cameraViewHeight));
@@ -74,6 +82,17 @@ public class Assets {
         if (assetManager == null) return null;
         // In debug mode, assets will be able to load
         return assetManager.get(fileName, type);
+    }
+
+    public static Sprite setTextureToSprite(Sprite sprite, String asset) {
+        Texture tex = Assets.get(asset, Texture.class);
+        if (tex != null) {
+            if (sprite == null) {
+                sprite = new Sprite(tex);
+            }
+            else sprite.setTexture(Assets.get(asset, Texture.class));
+        }
+        return sprite;
     }
 
     public static void dispose() {

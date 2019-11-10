@@ -90,6 +90,6 @@ public class MatchStateMessage extends ApiMessage {
         }
 
         return new PlanetData(planet.planetId, planet.owner, planet.x, planet.y, idsOfUnitsOnPlanet,
-                planet.resources, planet.resources >= GameConfig.values.resourcesForNewUnit);
+                planet.resources, planet.resources >= GameConfig.values.unitCost);
     }
 }

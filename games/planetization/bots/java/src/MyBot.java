@@ -11,14 +11,12 @@ import java.util.Random;
  */
 public class MyBot implements Bot {
 
-    Random rand = new Random();
     InitialData data;
 
     // Called only once before the match starts. It holds the data that you
-    // may need before the game starts.
+    // may need to setup your bot.
     @Override
         public void setup(InitialData data) {
-        System.out.println((new Gson()).toJson(data));
         this.data = data;
     }
 
@@ -27,33 +25,29 @@ public class MyBot implements Bot {
     @Override
     public void update(MatchState state, Response response) {
 
-        // Spawn new worker on your planets if possible
+        // Iterate through all of the planets that you currently own
         for (PlanetData planet : state.yourPlanets) {
-             if (planet.canSpawnNewUnit) {
-                 if (state.time < 30) response.spawnUnit(planet.id, UnitType.WORKER);
-                 else response.spawnUnit(planet.id, UnitType.WARRIOR);
 
-//                 response.spawnUnit(planet.id, UnitType.WORKER);
-             }
+            // If the planet has enough resources, spawn new unit on it, choose unit type randomly
+            if (planet.canSpawnNewUnit) {
+                UnitType type = (Math.random() < 0.5f) ? UnitType.WARRIOR : UnitType.WORKER;
+                response.spawnUnit(planet.id, type);
+            }
 
-             // Send redundant units to new planets
-             for (int i = data.maxActiveWorkersPerPlanet - 1; i < planet.idsOfUnitsOnPlanet.size(); i++) {
-//                 if (planet.id == 22) continue;
+            // Send redundant units to new planets. Only maxActiveWorkersPerPlanet workers help to collect
+            // resources other simply sit on the planet.
+            for (int i = data.maxActiveWorkersPerPlanet - 1; i < planet.idsOfUnitsOnPlanet.size(); i++) {
+                int unitId = planet.idsOfUnitsOnPlanet.get(i);
 
-                 if (!state.freePlanets.isEmpty()) {
-                     int destinationPlanetIndex = (int) (rand.nextFloat() * state.freePlanets.size());
-                     int destinationPlanetId = state.freePlanets.get(destinationPlanetIndex).id;
-                     response.sendUnit(planet.idsOfUnitsOnPlanet.get(i), destinationPlanetId);
-                 }
-                 else {
-                     ArrayList<PlanetData> allPlanets = new ArrayList<>();
-                     allPlanets.addAll(state.opponentPlanets);
-                     allPlanets.addAll(state.yourPlanets);
+                // Randomly select if you will send the unit to a free or opponent planet
+                ArrayList<PlanetData> planets = (Math.random() < 0.5f) ? state.freePlanets : state.opponentPlanets;
 
-                     int destinationPlanetIndex = (int) (rand.nextFloat() * allPlanets.size());
-                     int destinationPlanetId = allPlanets.get(destinationPlanetIndex).id;
-                     response.sendUnit(planet.idsOfUnitsOnPlanet.get(i), destinationPlanetId);
-                 }
+                if (!planets.isEmpty()) {
+                     // Select a random planet in planets and send your unit there
+                     int destinationPlanetIndex = (int) (Math.random() * planets.size());
+                     int destinationPlanetId = planets.get(destinationPlanetIndex).id;
+                     response.sendUnit(unitId, destinationPlanetId);
+                }
              }
         }
 

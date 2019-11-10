@@ -239,7 +239,7 @@ func runMatchGenerator(started chan bool, cmdRef *CommandRef, gameFlags *MatchFl
 	if config.OperatingSystem == "darwin" {
 		cmd = exec.Command("java", "-XstartOnFirstThread", "-Dorg.lwjgl.system.allocator=system")
 	} else {
-		cmd = exec.Command("java", "-XstartOnFirstThread", "-Dorg.lwjgl.system.allocator=system")
+		cmd = exec.Command("java")
 	}
 
 	cmd.Args = append(cmd.Args,

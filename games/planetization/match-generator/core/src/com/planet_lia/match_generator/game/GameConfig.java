@@ -15,6 +15,7 @@ public class GameConfig {
     // Setup on load(...) call
     public String pathToAssets;
     public String pathToImages;
+    public String pathToFonts;
 
     // Here you can add other configuration fields that will
     // load from a game-config.json
@@ -34,12 +35,18 @@ public class GameConfig {
     public float unitSpeed;
     public float unitRotationSpeed;
     public int numberOfWorkersOnStart;
-    public int resourcesForNewUnit;
-    public int resourcesGenerationSpeed;
+    public int unitCost;
+    public int resourceGenerationSpeed;
     public int maxActiveWorkersPerPlanet;
     public float unitIndicatorSize;
     public float unitIndicatorOffset;
     public float maxNumberOfUnitsPerTeam;
+    public float maxMatchDuration;
+    public float workerHealth;
+    public float workerAttack;
+    public float warriorHealth;
+    public float warriorAttack;
+    public float damageReductionRatioOnDefence;
 
     /** Initializes static fields in GameConfig class */
     public static void load(String configPath) throws IOException {
@@ -48,6 +55,7 @@ public class GameConfig {
 
         values.pathToAssets = "assets/" + values.general.assetsVersion;
         values.pathToImages = values.pathToAssets + "/images/";
+        values.pathToFonts = values.pathToAssets + "/fonts/";
     }
 
     /** Removes pathToImages from provided path */

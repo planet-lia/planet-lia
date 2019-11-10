@@ -19,9 +19,16 @@ public class InitialMessage extends BaseInitialMessage {
     public float unitSpeed;
     public float unitRotationSpeed;
     public int numberOfWorkersOnStart;
-    public int resourcesForNewUnit;
-    public int resourcesGenerationSpeed;
+    public int unitCost;
+    public int resourceGenerationSpeed;
     public int maxActiveWorkersPerPlanet;
+    public float maxNumberOfUnitsPerTeam;
+    public float maxMatchDuration;
+    public float workerHealth;
+    public float workerAttack;
+    public float warriorHealth;
+    public float warriorAttack;
+    public float damageReductionRatioOnDefence;
 
     public ArrayList<PlanetData> yourPlanets;
     public ArrayList<PlanetData> freePlanets;
@@ -45,9 +52,17 @@ public class InitialMessage extends BaseInitialMessage {
         msg.unitSpeed = GameConfig.values.unitSpeed;
         msg.unitRotationSpeed = GameConfig.values.unitRotationSpeed;
         msg.numberOfWorkersOnStart = GameConfig.values.numberOfWorkersOnStart;
-        msg.resourcesForNewUnit = GameConfig.values.resourcesForNewUnit;
-        msg.resourcesGenerationSpeed = GameConfig.values.resourcesGenerationSpeed;
+        msg.unitCost = GameConfig.values.unitCost;
+        msg.resourceGenerationSpeed = GameConfig.values.resourceGenerationSpeed;
         msg.maxActiveWorkersPerPlanet = GameConfig.values.maxActiveWorkersPerPlanet;
+
+        msg.maxNumberOfUnitsPerTeam = GameConfig.values.maxNumberOfUnitsPerTeam;
+        msg.maxMatchDuration = GameConfig.values.maxMatchDuration;
+        msg.workerHealth = GameConfig.values.workerHealth;
+        msg.workerAttack = GameConfig.values.workerAttack;
+        msg.warriorHealth = GameConfig.values.warriorHealth;
+        msg.warriorAttack = GameConfig.values.warriorAttack;
+        msg.damageReductionRatioOnDefence = GameConfig.values.damageReductionRatioOnDefence;
 
         MatchStateMessage matchMsg = MatchStateMessage.create(0f, owner, planets, redUnits, greenUnits);
         msg.yourPlanets = matchMsg.yourPlanets;

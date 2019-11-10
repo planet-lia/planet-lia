@@ -1,7 +1,6 @@
 package com.planet_lia.match_generator.game.entities;
 
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -10,6 +9,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.planet_lia.match_generator.game.Assets;
 import com.planet_lia.match_generator.game.GameConfig;
+import com.planet_lia.match_generator.game.GameLogic;
+import com.planet_lia.match_generator.game.pathfinding.PathNode;
 import com.planet_lia.match_generator.libs.Clickable;
 import com.planet_lia.match_generator.libs.replays.Replay;
 import com.planet_lia.match_generator.libs.replays.StepSection;
@@ -22,6 +23,7 @@ import static com.planet_lia.match_generator.game.GameConfig.shortenImagePath;
 
 public class Planet implements Clickable {
 
+    GameLogic gameLogic;
     Replay replay;
 
     public int planetId;
@@ -43,18 +45,22 @@ public class Planet implements Clickable {
 
     public ArrayList<Unit> unitsOnPlanet = new ArrayList<>();
 
+    public ArrayList<PathNode> closePathNodes = new ArrayList<>();
+
     private ArrayList<UnitIndicator> workerIndicators = new ArrayList<>();
     private ArrayList<UnitIndicator> warriorIndicators = new ArrayList<>();
 
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public Planet(Replay replay, int planetId, float x, float y, Owner owner) {
+    public Planet(GameLogic gameLogic, Replay replay, int planetId, float x, float y, Owner owner) {
+        this.gameLogic = gameLogic;
         this.planetId = planetId;
         this.eid = "planet_" + planetId;
         this.owner = owner;
         this.replay = replay;
 
         switchAsset(owner);
+        gameLogic.chartManager.planetTaken(owner, 0);
 
         this.size = GameConfig.values.planetSize;
         this.x = x;
@@ -158,6 +164,7 @@ public class Planet implements Clickable {
             case RED: {
                 asset = Assets.planetRed;
                 workerIndicatorAsset = Assets.redIndicator;
+
             } break;
             case GREEN: {
                 asset = Assets.planetGreen;
@@ -166,15 +173,11 @@ public class Planet implements Clickable {
         }
         warriorIndicatorAsset = Assets.whiteIndicator;
 
-        if (sprite == null) sprite = new Sprite(Assets.get(asset, Texture.class));
-        sprite.setTexture(Assets.get(asset, Texture.class));
+        sprite = Assets.setTextureToSprite(sprite, asset);
 
         if (owner != Owner.NONE) {
-            if (workerIndicatorSprite == null) workerIndicatorSprite = new Sprite(Assets.get(workerIndicatorAsset, Texture.class));
-            workerIndicatorSprite.setTexture(Assets.get(workerIndicatorAsset, Texture.class));
-
-            if (warriorIndicatorSprite == null) warriorIndicatorSprite = new Sprite(Assets.get(warriorIndicatorAsset, Texture.class));
-            warriorIndicatorSprite.setTexture(Assets.get(warriorIndicatorAsset, Texture.class));
+            workerIndicatorSprite = Assets.setTextureToSprite(workerIndicatorSprite, workerIndicatorAsset);
+            warriorIndicatorSprite = Assets.setTextureToSprite(warriorIndicatorSprite, warriorIndicatorAsset);
         }
     }
 
@@ -202,8 +205,9 @@ public class Planet implements Clickable {
                     // Preferably battle against the warrior else with the last worker
                     if (ownerUnit.type == Unit.Type.WARRIOR || i == unitsOnPlanet.size() - 1) {
                         // Battle
-                        ownerUnit.battle(unit.type, time);
-                        unit.battle(ownerUnit.type, time);
+                        ownerUnit.dealDamage(unit.attack * GameConfig.values.damageReductionRatioOnDefence, time);
+                        unit.dealDamage(ownerUnit.attack, time);
+                        if (unit.health <= 0) break;
                     }
                 }
             }
@@ -212,6 +216,7 @@ public class Planet implements Clickable {
         if (unitsOnPlanet.isEmpty() && unit.health > 0) {
             owner = unit.owner;
             switchAsset(owner);
+            gameLogic.chartManager.planetTaken(owner, time);
             unitsOnPlanet.add(unit);
             unit.currentPlanet = this;
             addUnitIndicator(unit.type, time);
@@ -238,9 +243,9 @@ public class Planet implements Clickable {
     public void update(float delta) {
         if (owner != Owner.NONE) {
             resources += Math.min(getNumberOfWorkers(), GameConfig.values.maxActiveWorkersPerPlanet)
-                    * GameConfig.values.resourcesGenerationSpeed * delta;
-            if (resources > GameConfig.values.resourcesForNewUnit) {
-                resources = GameConfig.values.resourcesForNewUnit;
+                    * GameConfig.values.resourceGenerationSpeed * delta;
+            if (resources > GameConfig.values.unitCost) {
+                resources = GameConfig.values.unitCost;
             }
         }
     }
@@ -251,6 +256,7 @@ public class Planet implements Clickable {
         if (unitsOnPlanet.isEmpty()) {
             owner = Owner.NONE;
             switchAsset(owner);
+            gameLogic.chartManager.planetLost(unit.owner, time);
             replay.sections.add(new TextSection(eid, TextureEntityAttribute.TEXTURE, time, shortenImagePath(asset)));
         }
     }
@@ -269,6 +275,15 @@ public class Planet implements Clickable {
                     indicator.location.x - indicatorSize / 2f,
                     indicator.location.y - indicatorSize / 2f,
                     indicatorSize, indicatorSize);
+        }
+    }
+
+    public void addCloseNodePaths(ArrayList<PathNode> nodes, int... indexes) {
+        for (int index : indexes) {
+            PathNode node = nodes.get(index);
+            if (node != null) {
+                closePathNodes.add(node);
+            }
         }
     }
 

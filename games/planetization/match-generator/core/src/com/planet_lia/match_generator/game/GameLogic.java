@@ -12,6 +12,8 @@ import com.planet_lia.match_generator.game.entities.Background;
 import com.planet_lia.match_generator.game.entities.Owner;
 import com.planet_lia.match_generator.game.entities.Planet;
 import com.planet_lia.match_generator.game.entities.Unit;
+import com.planet_lia.match_generator.game.hud.Hud;
+import com.planet_lia.match_generator.game.pathfinding.Grid;
 import com.planet_lia.match_generator.libs.*;
 import com.planet_lia.match_generator.libs.replays.*;
 
@@ -24,6 +26,7 @@ public class GameLogic extends GameLogicBase {
     Replay replay = ReplayManager.newReplay();
 
     SpriteBatch batch;
+    SpriteBatch batchHud;
 
     Background background;
     ArrayList<Planet> planets = new ArrayList<>();
@@ -42,6 +45,10 @@ public class GameLogic extends GameLogicBase {
 
     float previousTimePrint = 0f;
     long startTime;
+
+    Hud hud;
+    public ChartManager chartManager;
+    public Grid grid;
 
     /**
      * Setup the game logic
@@ -68,6 +75,9 @@ public class GameLogic extends GameLogicBase {
         replay.sections.add(new StepSection(cameraId, CameraAttribute.X, 0f, mapWidth / 2f));
         replay.sections.add(new StepSection(cameraId, CameraAttribute.Y, 0f, mapHeight / 2f));
 
+        hud = new Hud(replay, tools.botsDetails);
+        chartManager = new ChartManager(replay, hud, tools.botsDetails);
+
         // Setup background
         background = new Background(replay);
 
@@ -77,19 +87,23 @@ public class GameLogic extends GameLogicBase {
         int offsetY = (int) ((mapHeight - gapHeight * 6) / 2f);
         int offsetX = (int) ((mapWidth - gapWidth * 5) / 2f);
         int planetId = 0;
+        int gridIndex = 0;
         for (int y = 0; y <= 6 * gapHeight; y += gapHeight) {
             for (int x = 0; x <= 5 * gapWidth; x += gapWidth) {
-                if (GameConfig.values.planetPositionsOnGrid.contains(planetId)) {
-                    Planet planet = new Planet(replay, planetId, offsetX + x, offsetY + y, Owner.NONE);
+                if (GameConfig.values.planetPositionsOnGrid.contains(gridIndex)) {
+                    Planet planet = new Planet(this, replay, planetId, offsetX + x, offsetY + y, Owner.NONE);
                     planets.add(planet);
                     // Register it so that it will display data on click
                     if (Args.values.debug) {
                         tools.entityDetailsSystem.registerEntity(planet);
                     }
+                    planetId++;
                 }
-                planetId++;
+                gridIndex++;
             }
         }
+
+        grid = new Grid(planets);
 
         // Spawn starting units
         for (int i = 0; i < GameConfig.values.numberOfWorkersOnStart; i++) {
@@ -97,10 +111,12 @@ public class GameLogic extends GameLogicBase {
             createUnit(Unit.Type.WORKER, Owner.GREEN, GameConfig.values.greenPlanetOnStart, 0f);
         }
 
+        hud.updateUnits(greenUnits, redUnits);
+
         // Send initial information to bots
-//        tools.server.send(0, InitialMessage.create(botOwnerByBotIndex[0], planets, redUnits, greenUnits));
-//        tools.server.send(1, InitialMessage.create(botOwnerByBotIndex[1], planets, redUnits, greenUnits));
-//        tools.server.waitForBotsToRespond();
+        tools.server.send(0, InitialMessage.create(botOwnerByBotIndex[0], planets, redUnits, greenUnits));
+        tools.server.send(1, InitialMessage.create(botOwnerByBotIndex[1], planets, redUnits, greenUnits));
+        tools.server.waitForBotsToRespond();
     }
 
     private void createUnit(Unit.Type type, Owner owner, int planetId, float time) {
@@ -117,12 +133,15 @@ public class GameLogic extends GameLogicBase {
         if (owner == Owner.RED) redUnits.add(unit);
         else greenUnits.add(unit);
         planet.unitArrived(unit, time);
+        hud.updateUnits(greenUnits, redUnits);
+        chartManager.newUnitCreated(owner, time);
     }
 
     /** Load assets, prepare graphics objects, camera etc. */
     private void setupGraphics() {
         Assets.load();
         batch = new SpriteBatch();
+        batchHud = new SpriteBatch();
 
         // Center camera over the middle of the map
         tools.gameViewport.getCamera().position.x = GameConfig.values.mapWidth / 2f;
@@ -132,13 +151,15 @@ public class GameLogic extends GameLogicBase {
     /** Called repeatedly to update match state */
     @Override
     public void update(Timer timer, float delta) {
+        hud.updateTime(timer.getTime());
+
         // Print out time every 10 seconds
         if (previousTimePrint + 10 <= timer.getTime()) {
             System.out.printf("%d seconds generated.\n", (int) timer.getTime());
             previousTimePrint = timer.getTime();
         }
 
-        int winningTeamIndex = getWinningTeamIndex();
+        int winningTeamIndex = getWinningTeamIndex(timer.getTime());
         if (winningTeamIndex != -1) {
             matchOver(winningTeamIndex, timer.getTime());
         }
@@ -158,9 +179,9 @@ public class GameLogic extends GameLogicBase {
             for (Unit redUnit : redUnits) {
                 if (greenUnit.health > 0 && redUnit.health > 0) {
                     float unitSize = GameConfig.values.unitSize;
-                    if (Vector2.dst(greenUnit.x, greenUnit.y, redUnit.x, redUnit.y) < unitSize * 0.5f) {
-                        greenUnit.battle(redUnit.type, timer.getTime());
-                        redUnit.battle(greenUnit.type, timer.getTime());
+                    if (Vector2.dst(greenUnit.x, greenUnit.y, redUnit.x, redUnit.y) <= unitSize * 0.5f) {
+                        greenUnit.dealDamage(redUnit.attack, timer.getTime());
+                        redUnit.dealDamage(greenUnit.attack, timer.getTime());
                     }
                 }
             }
@@ -168,8 +189,11 @@ public class GameLogic extends GameLogicBase {
 
         // Remove dead units
         for (Unit unit : greenUnitsToRemove) greenUnits.remove(unit);
-        greenUnitsToRemove.clear();
         for (Unit unit : redUnitsToRemove) redUnits.remove(unit);
+        if (greenUnitsToRemove.size() + redUnitsToRemove.size() > 0) {
+            hud.updateUnits(greenUnits, redUnits);
+        }
+        greenUnitsToRemove.clear();
         redUnitsToRemove.clear();
 
         // Update planets
@@ -179,20 +203,20 @@ public class GameLogic extends GameLogicBase {
 
         if (shouldSendRequestsToBots(updatesCount)) {
             // Send match state to all bots
-//            for (int botIndex = 0; botIndex < tools.botsDetails.length; botIndex++) {
-//                tools.server.send(botIndex, MatchStateMessage.create(
-//                        timer.getTime(), botOwnerByBotIndex[botIndex], planets, redUnits, greenUnits)
-//                );
-//            }
-//
-//            // Wait for all bots to respond
-//            tools.server.waitForBotsToRespond();
-//
-//            // Handle bot responses
-//            for (int botIndex = 0; botIndex < tools.botsDetails.length; botIndex++) {
-//                BotResponse botResponse = tools.server.getLastResponseData(botIndex, BotResponse.class);
-//                handleBotResponse(botIndex, botResponse, timer.getTime());
-//            }
+            for (int botIndex = 0; botIndex < tools.botsDetails.length; botIndex++) {
+                tools.server.send(botIndex, MatchStateMessage.create(
+                        timer.getTime(), botOwnerByBotIndex[botIndex], planets, redUnits, greenUnits)
+                );
+            }
+
+            // Wait for all bots to respond
+            tools.server.waitForBotsToRespond();
+
+            // Handle bot responses
+            for (int botIndex = 0; botIndex < tools.botsDetails.length; botIndex++) {
+                BotResponse botResponse = tools.server.getLastResponseData(botIndex, BotResponse.class);
+                handleBotResponse(botIndex, botResponse, timer.getTime());
+            }
         }
 
         updatesCount++;
@@ -214,13 +238,30 @@ public class GameLogic extends GameLogicBase {
             unit.saveLocationAndRotation(time);
         }
 
+        hud.writeEndGameAnimation(winningTeamIndex);
+
+        chartManager.addChartsToReplayFile();
+
         // Save replay file
         ReplayManager.saveReplayFile(replay, teamsFinalOrder, tools.server, Args.values.replay);
 
         System.exit(0);
     }
 
-    private int getWinningTeamIndex() {
+    private int getWinningTeamIndex(float time) {
+        // If match is lasting to long then end it
+        if (time >= GameConfig.values.maxMatchDuration) {
+            if (greenUnits.size() > redUnits.size()) {
+                return tools.botsDetails[0].teamIndex;
+            }
+            else if (redUnits.size() > greenUnits.size()) {
+                return tools.botsDetails[1].teamIndex;
+            }
+            else {
+                return (int) (Math.random() * 2);
+            }
+        }
+
         for (int botIndex = 0; botIndex < tools.botsDetails.length; botIndex++) {
             Owner owner = botOwnerByBotIndex[botIndex];
             // If both teams lost all units then pick random winner
@@ -249,7 +290,7 @@ public class GameLogic extends GameLogicBase {
                         System.err.printf("Planet with id %d does not exist\n", spawnUnitCommand.planetId);
                         continue;
                     }
-                    if (planet.owner == owner && planet.resources >= GameConfig.values.resourcesForNewUnit) {
+                    if (planet.owner == owner && planet.resources >= GameConfig.values.unitCost) {
                         createUnit(spawnUnitCommand.type, owner, planet.planetId, time);
                         planet.resources = 0;
                     } else {
@@ -278,6 +319,7 @@ public class GameLogic extends GameLogicBase {
             catch (Exception e) {
                 System.err.printf("Failed to execute command sent from bot for a team %s. Command %s\n",
                         owner.toString(), gson.toJson(command));
+                e.printStackTrace();
             }
         }
     }
@@ -307,6 +349,7 @@ public class GameLogic extends GameLogicBase {
     @Override
     public void draw() {
         batch.setProjectionMatrix(tools.gameViewport.getCamera().combined);
+        batchHud.setProjectionMatrix(tools.gameHudViewport.getCamera().combined);
 
         batch.begin();
 
@@ -324,7 +367,13 @@ public class GameLogic extends GameLogicBase {
             planet.draw(batch);
         }
 
+        hud.draw(batch);
+        grid.draw(batch);
         batch.end();
+
+        batchHud.begin();
+        hud.drawFont(batchHud, tools.gameHudViewport);
+        batchHud.end();
     }
 
     private boolean shouldSendRequestsToBots(int updateIndex) {

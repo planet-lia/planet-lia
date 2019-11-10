@@ -15,9 +15,16 @@ public class InitialData {
     public float unitSpeed;
     public float unitRotationSpeed;
     public int numberOfWorkersOnStart;
-    public int resourcesForNewUnit;
-    public int resourcesGenerationSpeed;
+    public int unitResourcesCost;
+    public int resourceGenerationSpeed;
     public int maxActiveWorkersPerPlanet;
+    public float maxNumberOfUnitsPerTeam;
+    public float maxMatchDuration;
+    public float workerHealth;
+    public float workerAttack;
+    public float warriorHealth;
+    public float warriorAttack;
+    public float damageReductionRatioOnDefence;
 
     public ArrayList<PlanetData> yourPlanets;
     public ArrayList<PlanetData> freePlanets;

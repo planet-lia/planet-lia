@@ -1,9 +1,11 @@
 package com.planet_lia.match_generator.game.entities;
 
 
+import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -11,6 +13,7 @@ import com.google.gson.JsonObject;
 import com.planet_lia.match_generator.game.Assets;
 import com.planet_lia.match_generator.game.GameConfig;
 import com.planet_lia.match_generator.game.GameLogic;
+import com.planet_lia.match_generator.game.pathfinding.PathNode;
 import com.planet_lia.match_generator.libs.Clickable;
 import com.planet_lia.match_generator.libs.replays.*;
 
@@ -35,9 +38,13 @@ public class Unit implements Clickable {
     public float x, y, size;
     public float rotation;
     public float health;
+    public float attack;
 
     public Planet currentPlanet;
     public Planet destinationPlanet;
+
+    public DefaultGraphPath<PathNode> currentPath;
+    public int currentPathNodeIndex;
 
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -49,7 +56,8 @@ public class Unit implements Clickable {
         this.owner = owner;
         this.currentPlanet = planet;
         this.rotation = 0;
-        this.health = 100;
+        this.health = (type == Type.WORKER) ? GameConfig.values.workerHealth : GameConfig.values.warriorHealth;
+        this.attack = (type == Type.WORKER) ? GameConfig.values.workerAttack : GameConfig.values.warriorAttack;
         this.replay = replay;
 
         if (type == Type.WORKER && owner == Owner.RED) asset = Assets.redWorker;
@@ -63,8 +71,7 @@ public class Unit implements Clickable {
         }
 
         this.size = GameConfig.values.unitSize;
-        this.x = planet.x;
-        this.y = planet.y;
+        updateUnitPositionOnPlanet(planet, time);
 
         writeToReplay(time);
     }
@@ -81,49 +88,49 @@ public class Unit implements Clickable {
         replay.sections.add(new StepSection(eid, TextureEntityAttribute.VISIBILITY, time, 1));
     }
 
-    public void goTo(Planet planet, float time) {
+    public void goTo(Planet destination, float time) {
+        if (destination != currentPlanet && currentPlanet != null) {
+            destinationPlanet = destination;
 
-//        HipsterDirectedGraph<String,Double> graph =
-//                GraphBuilder.<String,Double>create()
-//                        .connect("A").to("B").withEdge(4d)
-//                        .connect("A").to("C").withEdge(2d)
-//                        .connect("B").to("C").withEdge(5d)
-//                        .connect("B").to("D").withEdge(10d)
-//                        .connect("C").to("E").withEdge(3d)
-//                        .connect("D").to("F").withEdge(11d)
-//                        .connect("E").to("D").withEdge(4d)
-//                        .createDirectedGraph();
-//
-//        SearchProblem p = GraphSearchProblem
-//                .startingFrom("A")
-//                .in(graph)
-//                .takeCostsFromEdges()
-//                .build();
-//
-//        System.out.println(Hipster.createDijkstra(p).search("F"));
+            // Find the path
+            PathNode startNode = findStartingPathNode(currentPlanet, destination.x, destination.y);
+            PathNode endNode = findStartingPathNode(destination, startNode.x, startNode.y);
+            currentPath = startNode.allPaths.get(endNode.getIndex());
 
+            currentPathNodeIndex = 0;
 
-        if (planet != currentPlanet) {
-            destinationPlanet = planet;
-            if (currentPlanet != null) {
-                startFromAPlanet(time);
-            }
+            startFromAPlanet(time);
             saveLocationAndRotation(time);
         }
     }
 
-    public void battle(Unit.Type opponentType, float time) {
-        if (type == Type.WORKER || opponentType == Type.WARRIOR) {
-            health = 0;
+    private PathNode findStartingPathNode(Planet start, float x, float y) {
+        PathNode startNode = null;
+        for (PathNode node : start.closePathNodes) {
+            if (startNode == null
+                    || Vector2.dst(startNode.x, startNode.y, x, y)
+                    > Vector2.dst(node.x, node.y, x, y)) {
+                startNode = node;
+            }
         }
-        else {
-            health -= 50;
-        }
+        return startNode;
+    }
+
+    public void dealDamage(float attack, float time) {
+        health -= attack;
+
         if (health <= 0) {
             if (owner == Owner.RED) gameLogic.redUnitsToRemove.add(this);
             else gameLogic.greenUnitsToRemove.add(this);
             if (currentPlanet != null) {
                 currentPlanet.removeUnit(this, time);
+            }
+            else {
+                String eidParticle = "PARTICLE_" + owner.toString() + "_" + unitId;
+                replay.sections.add(new StepSection(eidParticle, ParticleEntityAttribute.X, time, x));
+                replay.sections.add(new StepSection(eidParticle, ParticleEntityAttribute.Y, time, y));
+                replay.sections.add(new TextSection(eidParticle, ParticleEntityAttribute.EFFECT, time, "unit-died"));
+                replay.sections.add(new BooleanSection(eidParticle, ParticleEntityAttribute.EMIT, time, true));
             }
             saveLocationAndRotation(time);
             replay.sections.add(new StepSection(eid, TextureEntityAttribute.VISIBILITY, time, 0));
@@ -134,13 +141,41 @@ public class Unit implements Clickable {
         if (currentPlanet != null) {
             currentPlanet.removeUnit(this, time);
             currentPlanet = null;
-            rotation += angleBetweenUnitAndDestination(destinationPlanet.x, destinationPlanet.y);
+            PathNode nextNode = currentPath.get(currentPathNodeIndex);
+            rotation += angleBetweenUnitAndDestination(nextNode.x, nextNode.y);
         }
     }
 
     public void update(float time, float delta) {
-        if (destinationPlanet != null) {
-            moveToDestination(time, delta, destinationPlanet.x, destinationPlanet.y);
+        if (destinationPlanet == null || currentPath == null) return;
+
+        float nextX;
+        float nextY;
+        float minOffset;
+        if (currentPath.nodes.size <= currentPathNodeIndex) {
+            nextX = destinationPlanet.x;
+            nextY = destinationPlanet.y;
+            minOffset = destinationPlanet.size / 2f;
+        } else {
+            nextX = currentPath.get(currentPathNodeIndex).x;
+            nextY = currentPath.get(currentPathNodeIndex).y;
+            minOffset = GameConfig.values.unitSize * 0.6f;
+        }
+
+        boolean arrived = moveToDestination(time, delta, nextX, nextY, minOffset);
+        if (arrived) {
+            saveLocationAndRotation(time);
+            if (currentPath.nodes.size <= currentPathNodeIndex) {
+                destinationPlanet.unitArrived(this, time);
+                updateUnitPositionOnPlanet(destinationPlanet, time);
+                saveLocationAndRotation(time);
+                currentPath = null;
+                currentPathNodeIndex = 0;
+                destinationPlanet = null;
+            }
+            else {
+                currentPathNodeIndex++;
+            }
         }
     }
 
@@ -151,15 +186,11 @@ public class Unit implements Clickable {
     }
 
     /** Moves to destination. */
-    private void moveToDestination(float time, float delta, float destX, float destY) {
+    private boolean moveToDestination(float time, float delta, float destX, float destY, float minOffset) {
         // If we are already at the destination then stop the unit
         // (Method defined in point 1.)
-        if (atDestination()) {
-            saveLocationAndRotation(time);
-            addUnitToPlanet(destinationPlanet, time);
-            saveLocationAndRotation(time);
-            destinationPlanet = null;
-            return;
+        if (atDestination(destX, destY, minOffset)) {
+            return true;
         }
 
         // Calculate the angle between unit and next node
@@ -169,7 +200,7 @@ public class Unit implements Clickable {
         float rotationSpeed = GameConfig.values.unitRotationSpeed;
         float unitSpeed = GameConfig.values.unitSpeed;
 
-        if (absAngle > 5) {
+        if (absAngle > 9) {
             if (angle < 0) rotation -= rotationSpeed * delta;
             else rotation += rotationSpeed * delta;
         }
@@ -183,17 +214,19 @@ public class Unit implements Clickable {
             x += velX * delta;
             y += velY * delta;
         }
+
+        return false;
     }
 
-    private void addUnitToPlanet(Planet planet, float time) {
-        planet.unitArrived(this, time);
-        x = planet.x;
-        y = planet.y;
+    private void updateUnitPositionOnPlanet(Planet planet, float time) {
+        // Offset position of the unit a little bit for nicer visuals
+        float offset = GameConfig.values.planetSize * 0.25f;
+        x = planet.x + MathUtils.random(-offset, offset);
+        y = planet.y + MathUtils.random(-offset, offset);
     }
 
-    private boolean atDestination() {
-        float radius = destinationPlanet.size / 2f;
-        return (destinationPlanet.x - x) * (destinationPlanet.x - x) + (destinationPlanet.y - y) * (destinationPlanet.y - y) < radius * radius;
+    private boolean atDestination(float destX, float destY, float minOffset) {
+        return (destX - x) * (destX - x) + (destY - y) * (destY - y) < minOffset * minOffset;
     }
 
     private Vector2 unitToDest = new Vector2();
@@ -240,6 +273,10 @@ public class Unit implements Clickable {
         object.addProperty("x", x);
         object.addProperty("y", y);
         object.addProperty("size", size);
+        object.addProperty("health", health);
+        if (destinationPlanet != null) {
+            object.addProperty("destinationPlanetId", destinationPlanet.planetId);
+        }
         return gson.toJson(object);
     }
 
