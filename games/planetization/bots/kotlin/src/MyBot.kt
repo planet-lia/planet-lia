@@ -1,39 +1,49 @@
-import com.google.gson.Gson
-import core.*
-import core.api.*
+import core.Bot
+import core.NetworkingClient
+import core.api.InitialData
+import core.api.MatchState
+import core.api.Response
+import core.api.UnitType
 
-/**
- * Example Kotlin bot implementation for Planet Lia game-example.
- * To change this so that it can be used in some other Planet Lia game:
- * 1. Change InitialData, MatchState and Response objects to fit
- *   the API format of that game
- * 2. Update the basic MyBot implementation with basic bot logic
- */
+/** Example Kotlin bot implementation for Planetization game. */
 class MyBot : Bot {
 
     lateinit var data: InitialData;
 
     // Called only once before the match starts. It holds the
-    // data that you may need before the game starts.
+    // data that you may need to setup your bot.
     override fun setup(data: InitialData) {
-        println(Gson().toJson(data))
         this.data = data
-        println("There are ${data.__matchDetails.botsDetails.size} bots in the match.")
     }
 
-    // Called repeatedly while the match is generating. Each
-    // time you receive the current match state and can use
-    // response object to issue your commands.
+    // Called repeatedly while the match is generating. Read game state using
+    // state parameter and issue your commands with response parameter.
     override fun update(state: MatchState, response: Response) {
-        println(Gson().toJson(state))
 
-        // Move in one of the four directions every update call
-        val randomNumber = Math.random()
-        when {
-            randomNumber < 0.25 -> response.moveUnit(Direction.LEFT)
-            randomNumber < 0.5 -> response.moveUnit(Direction.RIGHT)
-            randomNumber < 0.75 -> response.moveUnit(Direction.UP)
-            else -> response.moveUnit(Direction.DOWN)
+        // Iterate through all the planets you own
+        for (planet in state.yourPlanets) {
+
+            // If the planet has enough resources, spawn new unit on it
+            if (planet.canSpawnNewUnit) {
+                val type = if (Math.random() < 0.5f) UnitType.WARRIOR else UnitType.WORKER
+                response.spawnUnit(planet.id, type)
+            }
+
+            // Only a certain number of workers can mine resources on
+            // a planet. Let's send the rest of them somewhere else.
+            for (i in data.maxActiveWorkersPerPlanet until planet.idsOfUnitsOnPlanet.size) {
+                val unitId = planet.idsOfUnitsOnPlanet[i]
+
+                // Randomly select if you will send the unit to a free or opponent planet
+                val planets = if (Math.random() < 0.5f) state.freePlanets else state.opponentPlanets
+
+                if (planets.isNotEmpty()) {
+                    // Select a random planet in planets and send your unit there
+                    val destinationPlanetIndex = (Math.random() * planets.size).toInt()
+                    val destinationPlanetId = planets[destinationPlanetIndex].id
+                    response.sendUnit(unitId, destinationPlanetId)
+                }
+            }
         }
     }
 

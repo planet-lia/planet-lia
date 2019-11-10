@@ -3,7 +3,7 @@
 pathToScript="`dirname \"$0\"`"
 cd "${pathToScript}/.." || exit
 
-gameName="planetization"
+gameName="$1"
 
 pathToBuild="scripts/serveReleasesBuild"
 pathToGameExampleMatchGenerator="../games/${gameName}/match-generator"
@@ -28,6 +28,7 @@ cp -r "${pathToGameExampleAssets}" "${pathToBuild}/${gameName}/assets"
 # Zip example-game bots
 cp -r "${pathToGameExampleBots}" "${pathToBuild}/bots"
 rm -r "${pathToBuild}/bots/python3/env"
+rm -r "${pathToBuild}/bots/python3/venv"
 (
   cd "${pathToBuild}/bots" || exit
   zip -r "java.zip" "java" || exit

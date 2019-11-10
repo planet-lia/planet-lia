@@ -3,37 +3,46 @@ import random
 
 from core.bot import Bot
 from core.networking_client import connect
-from core.enums import Direction
+from core.enums import *
 
 
-# Example Python 3 bot implementation for Planet Lia game-example.
-# To change this so that it can be used in some other Planet Lia game:
-# 1. Change response object to fit the API format of that game
-# 2. Update the basic MyBot implementation with basic bot logic
+# Example Python3 bot implementation for Planetization game.
 class MyBot(Bot):
 
     # Called only once before the match starts. It holds the
-    # data that you may need before the game starts.
+    # data that you may need to setup your bot.
     def setup(self, initial_data):
-        print(initial_data)
-        self.initial_data = initial_data
+        self.data = initial_data
 
-    # Called repeatedly while the match is generating. Each
-    # time you receive the current match state and can use
-    # response object to issue your commands.
+    # Called repeatedly while the match is generating. Read
+    # game state using state parameter and issue your
+    # commands with response parameter.
     def update(self, state, response):
-        print(state)
 
-        # Move in one of the four directions every update call
-        r = random.randint(0, 3)
-        if r == 0:
-            response.move_unit(Direction.LEFT)
-        elif r == 1:
-            response.move_unit(Direction.RIGHT)
-        elif r == 2:
-            response.move_unit(Direction.UP)
-        else:
-            response.move_unit(Direction.DOWN)
+        # Iterate through all the planets you own
+        for planet in state["yourPlanets"]:
+
+            # If the planet has enough resources, spawn new unit on it
+            if planet["canSpawnNewUnit"]:
+                unit_type = UnitType.WORKER if (random.random() < 0.5) else UnitType.WARRIOR
+                response.spawn_unit(planet["id"], unit_type)
+
+            max_active_workers = self.data["maxActiveWorkersPerPlanet"]
+            num_bots_on_planet = len(planet["idsOfUnitsOnPlanet"])
+
+            # Only a certain number of workers can mine resources on
+            # a planet. Let's send the rest of them somewhere else.
+            for i in range(max_active_workers, num_bots_on_planet):
+                unit_id = planet["idsOfUnitsOnPlanet"][i]
+
+                # Randomly select if you will send the unit to a free or opponent planet
+                planets = state["freePlanets"] if random.random() < 0.5 else state["opponentPlanets"]
+
+                if len(planets) > 0:
+                    # Select a random planet in planets and send your unit there
+                    destination_planet_index = random.randint(0, len(planets) - 1)
+                    destination_planet_id = planets[destination_planet_index]["id"]
+                    response.send_unit(unit_id, destination_planet_id)
 
 
 # Connects your bot to match generator, don't change it.

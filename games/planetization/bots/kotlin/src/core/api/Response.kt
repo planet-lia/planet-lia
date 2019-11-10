@@ -1,21 +1,28 @@
 package core.api
 
-
 interface Command
 
 class Response {
     var __uid: Int = 0
     private val commands = ArrayList<Command>()
 
-    fun moveUnit(direction: Direction) {
-        commands.add(MoveCommand(direction))
+    fun spawnUnit(planetId: Int, type: UnitType) {
+        commands.add(SpawnUnitCommand(planetId, type))
+    }
+
+    fun sendUnit(unitId: Int, destinationPlanetId: Int) {
+        commands.add(SendUnitCommand(unitId, destinationPlanetId))
     }
 }
 
-enum class Direction {
-    LEFT, RIGHT, UP, DOWN
+class SendUnitCommand(var unitId: Int, var destinationPlanetId: Int) : Command {
+    var __type = this.javaClass.simpleName
 }
 
-class MoveCommand(var direction: Direction) : Command {
+class SpawnUnitCommand(var planetId: Int, var type: UnitType) : Command {
     var __type = this.javaClass.simpleName
+}
+
+enum class UnitType {
+    WORKER, WARRIOR
 }

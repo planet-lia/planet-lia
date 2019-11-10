@@ -1,5 +1,9 @@
-class Direction:
-    LEFT = "LEFT"
-    RIGHT = "RIGHT"
-    UP = "UP"
-    DOWN = "DOWN"
+class UnitType:
+    WORKER = "WORKER"
+    WARRIOR = "WARRIOR"
+
+
+class Owner:
+    RED = "RED"
+    GREEN = "GREEN"
+    NONE = "NONE"

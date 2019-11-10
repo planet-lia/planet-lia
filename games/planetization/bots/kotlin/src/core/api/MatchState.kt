@@ -1,12 +1,14 @@
 package core.api
 
-class MatchState(
-    var __uid: Int,
-    var time: Float,
-    var unit: Unit
-)
+import java.util.ArrayList
 
-class Unit(
-    var x: Float,
-    var y: Float
+class MatchState(var __uid: Int,
+                 var time: Float,
+                 var yourPlanets: ArrayList<PlanetData>,
+                 var freePlanets: ArrayList<PlanetData>,
+                 var opponentPlanets: ArrayList<PlanetData>,
+                 var yourWorkers: ArrayList<UnitData>,
+                 var opponentWorkers: ArrayList<UnitData>,
+                 var yourWarriors: ArrayList<UnitData>,
+                 var opponentWarriors: ArrayList<UnitData>
 )
