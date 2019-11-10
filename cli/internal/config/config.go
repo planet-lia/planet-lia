@@ -8,7 +8,7 @@ import (
 	"runtime"
 )
 
-const defaultReleasesPath = "https://files.production.cloud.planetlia.com/games/planetization/1.0/cli-releases.json"
+const defaultReleasesPath = "https://files.production.cloud.planetlia.com/permanent/cli-releases.json"
 const SettingsFileExtension = "json"
 const SettingsFile = ".planet-lia"
 const DefaultMatchPort = 8887
