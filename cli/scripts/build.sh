@@ -11,10 +11,11 @@ cd "${pathToScript}"/.. || exit
 go fmt ./...
 
 if [[ $quickMode != "quick" ]]; then
-    echo "Running tests"
+    # echo "Running tests"
     #go test ./... || exit
 
     echo "Building local-match-viewer"
+    make -C ../websites/local-match-viewer/ install || exit
     make -C ../websites/local-match-viewer/ build || exit
 fi
 
