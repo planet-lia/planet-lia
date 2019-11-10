@@ -27,9 +27,12 @@ If you want to run build without testing and redeploying local-match-viewer run 
  
 #### Serve Releases Locally
 
-Run the command below. It will build game-example match-generator and java, kotlin and python3 bots for that game 
-and serve them as a release on port `4447`.
+Run the command below. It will build a match-generator and java, kotlin and python3 bots for that game 
+and serve them as a release on port `4447`. 
 
 ```bash
-./scripts/serveReleases.sh
+./scripts/serveReleases.sh [game-name] 
+# eg.  ./scripts/serveReleases.sh planetization
 ```
+
+Also expose the url on which releases are server: `export RELEASES_URL="http://localhost:4447/planet-lia-releases.json"`

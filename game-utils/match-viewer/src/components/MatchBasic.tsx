@@ -41,6 +41,7 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
 
     // Parses the replay file and displays the gameName
     gameCanvas: HTMLDivElement | null = null;
+    timeUpdateInterval: any = null;
 
     state: MatchBaseState = {
         app: null,
@@ -75,6 +76,7 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
             this.state.app!.destroy(true);
             this.setState({app: null});
         }
+        if (this.timeUpdateInterval !== null) clearInterval(this.timeUpdateInterval);
     };
 
     loadReplayAndStart = async () => {
@@ -129,7 +131,8 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
 
             this.state.numberOfCameras = app.gameCameras.length;
             this.onCameraChange(0);
-            this.setTime();
+
+            this.timeUpdateInterval = setInterval(this.setTime, 10);
 
             // Send back application application
             if (this.props.setApplication != null) {
@@ -179,8 +182,6 @@ export class MatchBasic extends Component<MatchBasicProps, {}> {
             // Regular functionality
             this.setState({time: time});
         }
-
-        setTimeout(this.setTime, 100)
     };
 
     // When user picks new time via timeline

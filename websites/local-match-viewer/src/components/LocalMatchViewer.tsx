@@ -49,6 +49,7 @@ export class LocalMatchViewer extends Component<LocalMatchViewerProps, LocalMatc
                         />
                     </Col>
                 </Row>
+                <br/> {/* TODO Replace with css padding */}
             </Grid>
         )
     }

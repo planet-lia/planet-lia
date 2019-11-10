@@ -1,0 +1,34 @@
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+sourceSets.main.java.srcDirs = ['src']
+
+dependencies {
+    compile 'org.java-websocket:Java-WebSocket:1.4.0'
+    compile 'org.slf4j:slf4j-simple:1.6.1'	
+    compile 'com.google.code.gson:gson:2.8.5'
+    compile 'com.beust:jcommander:1.71'
+}
+
+task downloadDependencies() {
+    description 'Download all dependencies to the Gradle cache'
+    doLast {
+        configurations.findAll { it.canBeResolved }.files
+    }
+}
+
+jar {
+    archiveName 'my-bot.jar'
+    manifest {
+        attributes 'Main-Class': 'MyBot'
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}

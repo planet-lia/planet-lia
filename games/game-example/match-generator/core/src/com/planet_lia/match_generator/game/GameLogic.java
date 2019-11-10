@@ -5,7 +5,7 @@ import com.planet_lia.match_generator.libs.*;
 import com.planet_lia.match_generator.libs.replays.*;
 import com.planet_lia.match_generator.game.api.InitialMessage;
 import com.planet_lia.match_generator.game.api.MatchStateMessage;
-import com.planet_lia.match_generator.game.api.MoveCommand;
+import com.planet_lia.match_generator.game.api.commands.MoveCommand;
 import com.planet_lia.match_generator.game.api.UnitData;
 import com.planet_lia.match_generator.game.entities.Background;
 import com.planet_lia.match_generator.game.entities.Coin;

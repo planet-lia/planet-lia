@@ -11,10 +11,11 @@ cd "${pathToScript}"/.. || exit
 go fmt ./...
 
 if [[ $quickMode != "quick" ]]; then
-    echo "Running tests"
+    # echo "Running tests"
     #go test ./... || exit
 
     echo "Building local-match-viewer"
+    make -C ../websites/local-match-viewer/ install || exit
     make -C ../websites/local-match-viewer/ build || exit
 fi
 
@@ -35,7 +36,7 @@ do
         osName="macos"
     fi
 
-    buildDir="build/lia-"${osName}
+    buildDir="build/${osName}/planet-lia"
 
     if [[ ${#platformSplit[@]} == 3 ]]; then
        CGO_ENABLED=0

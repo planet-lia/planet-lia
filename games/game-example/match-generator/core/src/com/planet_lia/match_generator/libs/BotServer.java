@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.planet_lia.match_generator.libs.BotListener.MessageSender;
-import com.planet_lia.match_generator.game.api.commands.BotCommandDeserializer;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;

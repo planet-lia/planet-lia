@@ -3,10 +3,12 @@
 pathToScript="`dirname \"$0\"`"
 cd "${pathToScript}/.." || exit
 
+gameName="$1"
+
 pathToBuild="scripts/serveReleasesBuild"
-pathToGameExampleMatchGenerator="../games/game-example/match-generator"
-pathToGameExampleAssets="../games/game-example/assets"
-pathToGameExampleBots="../games/game-example/bots"
+pathToGameExampleMatchGenerator="../games/${gameName}/match-generator"
+pathToGameExampleAssets="../games/${gameName}/assets"
+pathToGameExampleBots="../games/${gameName}/bots"
 
 rm -r ${pathToBuild}
 
@@ -14,18 +16,19 @@ rm -r ${pathToBuild}
 "./${pathToGameExampleMatchGenerator}/gradlew" -p "${pathToGameExampleMatchGenerator}/" dist
 
 # Zip match-generator.jar and assets together
-mkdir -p "${pathToBuild}/game-example"
-cp "${pathToGameExampleMatchGenerator}/desktop/build/libs/match-generator.jar" "${pathToBuild}/game-example/match-generator.jar"
-cp -r "${pathToGameExampleAssets}" "${pathToBuild}/game-example/assets"
+mkdir -p "${pathToBuild}/${gameName}"
+cp "${pathToGameExampleMatchGenerator}/desktop/build/libs/match-generator.jar" "${pathToBuild}/${gameName}/match-generator.jar"
+cp -r "${pathToGameExampleAssets}" "${pathToBuild}/${gameName}/assets"
 (
   cd "${pathToBuild}" || exit
-  zip -r "game-example.zip" "game-example" || exit
-  rm -r game-example
+  zip -r "${gameName}.zip" "${gameName}" || exit
+  rm -r ${gameName}
 )
 
 # Zip example-game bots
 cp -r "${pathToGameExampleBots}" "${pathToBuild}/bots"
 rm -r "${pathToBuild}/bots/python3/env"
+rm -r "${pathToBuild}/bots/python3/venv"
 (
   cd "${pathToBuild}/bots" || exit
   zip -r "java.zip" "java" || exit

@@ -8,7 +8,7 @@ import (
 	"runtime"
 )
 
-const defaultReleasesPath = "https://cli.planetlia.com/releases.json"
+const defaultReleasesPath = "https://files.production.cloud.planetlia.com/permanent/cli-releases.json"
 const SettingsFileExtension = "json"
 const SettingsFile = ".planet-lia"
 const DefaultMatchPort = 8887
