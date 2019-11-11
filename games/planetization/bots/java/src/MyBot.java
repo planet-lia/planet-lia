@@ -14,7 +14,7 @@ public class MyBot implements Bot {
     // Called only once before the match starts. It holds
     // the data that you may need to setup your bot.
     @Override
-        public void setup(InitialData data) {
+    public void setup(InitialData data) {
         this.data = data;
     }
 
