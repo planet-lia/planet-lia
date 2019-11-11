@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.planet_lia.match_generator.game.Assets;
 import com.planet_lia.match_generator.game.GameConfig;
@@ -18,6 +19,8 @@ import com.planet_lia.match_generator.libs.replays.TextSection;
 import com.planet_lia.match_generator.libs.replays.TextureEntityAttribute;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.planet_lia.match_generator.game.GameConfig.shortenImagePath;
 
@@ -46,6 +49,7 @@ public class Planet implements Clickable {
     public ArrayList<Unit> unitsOnPlanet = new ArrayList<>();
 
     public ArrayList<PathNode> closePathNodes = new ArrayList<>();
+    public ArrayList<Integer> directlyAccessiblePlanetIds;
 
     private ArrayList<UnitIndicator> workerIndicators = new ArrayList<>();
     private ArrayList<UnitIndicator> warriorIndicators = new ArrayList<>();
@@ -207,7 +211,7 @@ public class Planet implements Clickable {
                         // Battle
                         ownerUnit.dealDamage(unit.attack * GameConfig.values.damageReductionRatioOnDefence, time);
                         unit.dealDamage(ownerUnit.attack, time);
-                        if (unit.health <= 0) break;
+                        break;
                     }
                 }
             }
@@ -286,9 +290,17 @@ public class Planet implements Clickable {
             }
         }
     }
+    public void addDirectlyAccessiblePlanets(Integer... planetIds) {
+        directlyAccessiblePlanetIds = new ArrayList<>(Arrays.asList(planetIds));
+    }
 
     @Override
     public String getDisplayText() {
+        JsonArray unitsDisplayText = new JsonArray(unitsOnPlanet.size());
+        for (Unit unit : unitsOnPlanet) {
+            unitsDisplayText.add(unit.getDisplayTextJsonObject());
+        }
+
         JsonObject object = new JsonObject();
         object.addProperty("type", "Planet");
         object.addProperty("owner", owner.toString());
@@ -299,6 +311,7 @@ public class Planet implements Clickable {
         object.addProperty("resources", resources);
         object.addProperty("numberOfWorkers", getNumberOfWorkers());
         object.addProperty("numberOfWarriors", getNumberOfWarriors());
+        object.add("units", unitsDisplayText);
         return gson.toJson(object);
     }
 

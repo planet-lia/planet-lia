@@ -1,6 +1,9 @@
 package com.planet_lia.match_generator.game;
 
+import com.badlogic.gdx.ai.utils.Collision;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.google.gson.Gson;
@@ -18,6 +21,7 @@ import com.planet_lia.match_generator.libs.*;
 import com.planet_lia.match_generator.libs.replays.*;
 
 import java.util.ArrayList;
+import java.util.SimpleTimeZone;
 
 public class GameLogic extends GameLogicBase {
 
@@ -164,6 +168,20 @@ public class GameLogic extends GameLogicBase {
             matchOver(winningTeamIndex, timer.getTime());
         }
 
+        // Check for unit collision
+        for (Unit greenUnit : greenUnits) {
+            for (Unit redUnit : redUnits) {
+                if (greenUnit.health > 0 && redUnit.health > 0
+                        && greenUnit.currentPlanet == null && redUnit.currentPlanet == null) {
+                    float unitSize = GameConfig.values.unitSize;
+                    if (Vector2.dst(greenUnit.x, greenUnit.y, redUnit.x, redUnit.y) <= unitSize * 0.8) {
+                        greenUnit.dealDamage(redUnit.attack, timer.getTime());
+                        redUnit.dealDamage(greenUnit.attack, timer.getTime());
+                    }
+                }
+            }
+        }
+
         // Update green units
         for (Unit unit : greenUnits) {
             unit.update(timer.getTime(), delta);
@@ -174,25 +192,14 @@ public class GameLogic extends GameLogicBase {
             unit.update(timer.getTime(), delta);
         }
 
-        // Check for unit collision
-        for (Unit greenUnit : greenUnits) {
-            for (Unit redUnit : redUnits) {
-                if (greenUnit.health > 0 && redUnit.health > 0) {
-                    float unitSize = GameConfig.values.unitSize;
-                    if (Vector2.dst(greenUnit.x, greenUnit.y, redUnit.x, redUnit.y) <= unitSize * 0.5f) {
-                        greenUnit.dealDamage(redUnit.attack, timer.getTime());
-                        redUnit.dealDamage(greenUnit.attack, timer.getTime());
-                    }
-                }
-            }
-        }
-
         // Remove dead units
         for (Unit unit : greenUnitsToRemove) greenUnits.remove(unit);
         for (Unit unit : redUnitsToRemove) redUnits.remove(unit);
         if (greenUnitsToRemove.size() + redUnitsToRemove.size() > 0) {
             hud.updateUnits(greenUnits, redUnits);
         }
+        chartManager.unitsDestroyed(greenUnitsToRemove.size(), Owner.GREEN, timer.getTime());
+        chartManager.unitsDestroyed(redUnitsToRemove.size(), Owner.RED, timer.getTime());
         greenUnitsToRemove.clear();
         redUnitsToRemove.clear();
 
@@ -224,7 +231,7 @@ public class GameLogic extends GameLogicBase {
 
     private void matchOver(int winningTeamIndex, float time) {
         // We have found a winner
-        System.out.printf("Bot '%s' has won!\n", tools.botsDetails[winningTeamIndex].botName);
+        System.out.printf("Bot '%s' (index: %d) has won!\n", tools.botsDetails[winningTeamIndex].botName, winningTeamIndex);
         System.out.println("Time elapsed in seconds: " + TimeUtils.timeSinceMillis(startTime) / 1000f);
 
         // Create a final order of the teams
@@ -258,7 +265,7 @@ public class GameLogic extends GameLogicBase {
                 return tools.botsDetails[1].teamIndex;
             }
             else {
-                return (int) (Math.random() * 2);
+                return GameConfig.random.nextInt(2);
             }
         }
 
@@ -266,7 +273,7 @@ public class GameLogic extends GameLogicBase {
             Owner owner = botOwnerByBotIndex[botIndex];
             // If both teams lost all units then pick random winner
             if (redUnits.isEmpty() && greenUnits.isEmpty()) {
-                return (int) (Math.random() * 2);
+                return GameConfig.random.nextInt(2);
             }
 
             if (owner == Owner.GREEN && redUnits.isEmpty()
@@ -356,15 +363,16 @@ public class GameLogic extends GameLogicBase {
         // Draw scene
         background.draw(batch);
 
+        for (Planet planet : planets) {
+            planet.draw(batch);
+        }
+
+
         for (Unit unit : greenUnits) {
             unit.draw(batch);
         }
         for (Unit unit : redUnits) {
             unit.draw(batch);
-        }
-
-        for (Planet planet : planets) {
-            planet.draw(batch);
         }
 
         hud.draw(batch);

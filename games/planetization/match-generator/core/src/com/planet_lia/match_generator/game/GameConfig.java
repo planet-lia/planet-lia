@@ -5,8 +5,12 @@ import com.planet_lia.match_generator.libs.GeneralConfig;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class GameConfig {
+
+
+    public static final Random random = new Random(3);
 
     public static GameConfig values;
 
@@ -40,7 +44,7 @@ public class GameConfig {
     public int maxActiveWorkersPerPlanet;
     public float unitIndicatorSize;
     public float unitIndicatorOffset;
-    public float maxNumberOfUnitsPerTeam;
+    public int maxNumberOfUnitsPerTeam;
     public float maxMatchDuration;
     public float workerHealth;
     public float workerAttack;

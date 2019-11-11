@@ -34,6 +34,12 @@ public class ChartManager {
     String nRedPlanetsTakenSumCurveId = "CURVE_red_planets_taken";
     int nRedPlanetsTakenSum = 0;
 
+    String nGreenUnitsDestroyedCurveId = "CURVE_green_units_destroyed";
+    int nGreenUnitsDestroyed = 0;
+    String nRedUnitsDestroyedCurveId = "CURVE_red_units_destroyed";
+    int nRedUnitsDestroyed = 0;
+
+
     public ChartManager(Replay replay, Hud hud, BotDetails[] botDetails) {
         this.replay = replay;
         this.hud = hud;
@@ -58,6 +64,17 @@ public class ChartManager {
         else {
             nRedUnitsSum++;
             replay.sections.add(new StepSection(nRedUnitsSumCurveId, EmptyAttribute.NONE, time, nRedUnitsSum));
+        }
+    }
+
+    public void unitsDestroyed(int nUnitsDestroyed, Owner owner, float time) {
+        if (owner == Owner.GREEN) {
+            nGreenUnitsDestroyed += nUnitsDestroyed;
+            replay.sections.add(new StepSection(nGreenUnitsDestroyedCurveId, EmptyAttribute.NONE, time, nGreenUnitsDestroyed));
+        }
+        else {
+            nRedUnitsDestroyed += nUnitsDestroyed;
+            replay.sections.add(new StepSection(nRedUnitsDestroyedCurveId, EmptyAttribute.NONE, time, nRedUnitsDestroyed));
         }
     }
 
@@ -133,6 +150,18 @@ public class ChartManager {
         chart.series.add(new ChartSeriesElement(
                 redBotName, redHex,
                 new CurveRef(hud.redWarriorTextId, TextEntityAttribute.NUMBER_TEXT)
+        ));
+        replay.charts.add(chart);
+
+        // Units destroyed
+        chart = new Chart("Opponent units destroyed");
+        chart.series.add(new ChartSeriesElement(
+                greenBotName, greenHex,
+                new CurveRef(nRedUnitsDestroyedCurveId, TextEntityAttribute.NUMBER_TEXT)
+        ));
+        chart.series.add(new ChartSeriesElement(
+                redBotName, redHex,
+                new CurveRef(nGreenUnitsDestroyedCurveId, TextEntityAttribute.NUMBER_TEXT)
         ));
         replay.charts.add(chart);
 

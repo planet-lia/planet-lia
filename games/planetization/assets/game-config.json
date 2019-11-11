@@ -21,8 +21,8 @@
         },
         "gameUpdatesPerSecond": 5,
         "connectingBotsTimeout": 15,
-        "botFirstResponseTimeout": 2,
-        "botResponseTimeout": 1,
+        "botFirstResponseTimeout": 1,
+        "botResponseTimeout": 0.2,
         "maxTimeoutsPerBot": 8,
         "botResponseTotalDurationMax": 45,
         "gameUpdatesPerBotsUpdate": 3,
@@ -32,7 +32,7 @@
         "botColors": ["#74B732", "#B74254"]
     },
     "maxNumberOfUnitsPerTeam": 500,
-    "maxMatchDuration": 200,
+    "maxMatchDuration": 2000000,
     "gameUpdatesPerBotRequest": 1,
     "cameraViewWidth": 96,
     "cameraViewHeight": 54,
@@ -58,5 +58,5 @@
     "workerAttack": 50,
     "warriorHealth": 100,
     "warriorAttack": 100,
-    "damageReductionRatioOnDefence": 0.8
+    "damageReductionRatioOnDefence": 0.2
 }
