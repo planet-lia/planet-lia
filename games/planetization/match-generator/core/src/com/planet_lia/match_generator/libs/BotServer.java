@@ -1,8 +1,11 @@
 package com.planet_lia.match_generator.libs;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.planet_lia.match_generator.game.GameConfig;
 import com.planet_lia.match_generator.libs.BotListener.MessageSender;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -36,6 +39,7 @@ public class BotServer {
 
     private Gson gsonPretty = new GsonBuilder().setPrettyPrinting().create();
     private Gson gson;
+    ObjectMapper objectMapper = new ObjectMapper();
 
     public BotServer(GeneralConfig generalConfig,
                      Timer gameTimer,
@@ -206,7 +210,17 @@ public class BotServer {
             ((BaseInitialMessage) message).__matchDetails = new MatchDetails(this.botsDetails, botIndex);
         }
 
-        String jsonData = gson.toJson(message);
+        // Use Jackson as it is faster
+        //String jsonData = gson.toJson(message);
+        String jsonData;
+        try {
+            jsonData = objectMapper.writeValueAsString(message);
+        } catch (JsonProcessingException e) {
+            System.err.println("Failed to convert message to json.");
+            e.printStackTrace();
+            return;
+        }
+
 
         bot.currentRequestIndex = currentRequestIndex;
         bot.currentRequestTime = System.currentTimeMillis();

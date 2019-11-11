@@ -11,14 +11,14 @@ public class InitialData {
     public int mapWidth;
     public int mapHeight;
     public float unitSize;
-    public int planetDiameter;
+    public float planetDiameter;
     public float unitSpeed;
     public float unitRotationSpeed;
     public int numberOfWorkersOnStart;
-    public int unitResourcesCost;
-    public int resourceGenerationSpeed;
+    public int unitCost;
+    public float resourceGenerationSpeed;
     public int maxActiveWorkersPerPlanet;
-    public float maxNumberOfUnitsPerTeam;
+    public int maxNumberOfUnitsPerTeam;
     public float maxMatchDuration;
     public float workerHealth;
     public float workerAttack;

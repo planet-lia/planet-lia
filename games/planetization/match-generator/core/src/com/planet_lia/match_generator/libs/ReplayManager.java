@@ -1,5 +1,7 @@
 package com.planet_lia.match_generator.libs;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.planet_lia.match_generator.libs.replays.*;
 import com.planet_lia.match_generator.game.GameConfig;
@@ -52,8 +54,8 @@ public class ReplayManager {
         }
 
         // Save replay file
-        String replayJson = new Gson().toJson(replay);
         try {
+            String replayJson = new ObjectMapper().writeValueAsString(replay);
             Files.write(Paths.get(filePath), replayJson.getBytes());
         } catch (IOException e) {
             System.err.println("Failed to save replay file in a file");

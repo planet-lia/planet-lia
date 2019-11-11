@@ -15,14 +15,14 @@ public class InitialMessage extends BaseInitialMessage {
     public int mapWidth;
     public int mapHeight;
     public float unitSize;
-    public int planetDiameter;
+    public float planetDiameter;
     public float unitSpeed;
     public float unitRotationSpeed;
     public int numberOfWorkersOnStart;
     public int unitCost;
-    public int resourceGenerationSpeed;
+    public float resourceGenerationSpeed;
     public int maxActiveWorkersPerPlanet;
-    public float maxNumberOfUnitsPerTeam;
+    public int maxNumberOfUnitsPerTeam;
     public float maxMatchDuration;
     public float workerHealth;
     public float workerAttack;

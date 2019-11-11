@@ -32,6 +32,7 @@ allprojects {
         junitVersion = '5.3.1'
         gdxUtilsVersion = '0.13.4'
         gdxAiVersion = '1.6.0'
+        jacksonVersion = '2.9.8'
     }
 
     repositories {
@@ -78,6 +79,7 @@ project(":core") {
         compile "net.dermetfan.libgdx-utils:libgdx-utils:$gdxUtilsVersion"
         compile "net.dermetfan.libgdx-utils:libgdx-utils-box2d:$gdxUtilsVersion"
         compile "com.badlogicgames.gdx:gdx-ai:$gdxAiVersion"
+        compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
 
         testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"

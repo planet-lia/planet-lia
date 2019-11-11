@@ -125,6 +125,30 @@ public class Grid {
         planets.get(19).addCloseNodePaths(nodes, 21, 17, 18);
         planets.get(20).addCloseNodePaths(nodes, 18, 19, 22);
         planets.get(21).addCloseNodePaths(nodes, 20, 22);
+
+        // Add directly accessible planets for each planet
+        planets.get(0).addDirectlyAccessiblePlanets(1, 4, 6, 10);
+        planets.get(1).addDirectlyAccessiblePlanets(0, 4, 10, 7, 8, 2);
+        planets.get(2).addDirectlyAccessiblePlanets(1, 7, 8, 11, 5, 3);
+        planets.get(3).addDirectlyAccessiblePlanets(2, 5, 11, 9);
+        planets.get(4).addDirectlyAccessiblePlanets(0, 1, 7, 6, 10, 12, 13, 5);
+        planets.get(5).addDirectlyAccessiblePlanets(2, 3, 9, 15, 11, 14, 8, 4);
+        planets.get(6).addDirectlyAccessiblePlanets(0, 4, 7, 10, 12, 16);
+        planets.get(7).addDirectlyAccessiblePlanets(1, 2, 6, 8, 14, 13, 16, 10, 4);
+        planets.get(8).addDirectlyAccessiblePlanets(1, 2, 5, 9, 11, 17, 14, 13, 7);
+        planets.get(9).addDirectlyAccessiblePlanets(3, 5, 8, 11, 17, 15);
+        planets.get(10).addDirectlyAccessiblePlanets(6, 0, 4, 1, 7, 11, 13, 19, 16, 18, 12);
+        planets.get(11).addDirectlyAccessiblePlanets(8, 2, 5, 3, 9, 15, 21, 17, 20, 14, 10);
+        planets.get(12).addDirectlyAccessiblePlanets(6, 4, 10, 13, 16, 18);
+        planets.get(13).addDirectlyAccessiblePlanets(12, 10, 4, 7, 8, 14, 20, 19, 16);
+        planets.get(14).addDirectlyAccessiblePlanets(7, 8, 5, 11, 15, 17, 20, 19, 13);
+        planets.get(15).addDirectlyAccessiblePlanets(9, 5, 11, 14, 17, 21);
+        planets.get(16).addDirectlyAccessiblePlanets(18, 12, 6, 10, 7, 13, 19, 17);
+        planets.get(17).addDirectlyAccessiblePlanets(20, 16, 14, 8, 11, 9, 15, 21);
+        planets.get(18).addDirectlyAccessiblePlanets(12, 10, 16, 19);
+        planets.get(19).addDirectlyAccessiblePlanets(18, 16, 10, 13, 14, 20);
+        planets.get(20).addDirectlyAccessiblePlanets(19, 13, 14, 11, 17, 21);
+        planets.get(21).addDirectlyAccessiblePlanets(20, 17, 11, 15);
     }
 
     private float halfX(ArrayList<Planet> planets, int i, int j) {

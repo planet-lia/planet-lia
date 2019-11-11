@@ -2,9 +2,9 @@ package core;
 
 import com.beust.jcommander.JCommander;
 import com.google.gson.Gson;
-import core.api.Response;
 import core.api.InitialData;
 import core.api.MatchState;
+import core.api.Response;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 

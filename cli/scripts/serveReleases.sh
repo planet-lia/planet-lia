@@ -25,10 +25,17 @@ cp -r "${pathToGameExampleAssets}" "${pathToBuild}/${gameName}/assets"
   rm -r ${gameName}
 )
 
-# Zip example-game bots
+# Zip bots
 cp -r "${pathToGameExampleBots}" "${pathToBuild}/bots"
 rm -r "${pathToBuild}/bots/python3/env"
 rm -r "${pathToBuild}/bots/python3/venv"
+rm -r "${pathToBuild}/bots/python3/.idea"
+rm -r "${pathToBuild}/bots/java/.idea"
+rm -r "${pathToBuild}/bots/java/.gradle"
+rm -r "${pathToBuild}/bots/java/build"
+rm -r "${pathToBuild}/bots/kotlin/.idea"
+rm -r "${pathToBuild}/bots/kotlin/.gradle"
+rm -r "${pathToBuild}/bots/kotlin/build"
 (
   cd "${pathToBuild}/bots" || exit
   zip -r "java.zip" "java" || exit

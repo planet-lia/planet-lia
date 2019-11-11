@@ -85,8 +85,8 @@ public class MatchStateMessage extends ApiMessage {
 
     private static PlanetData toPlanetData(Planet planet) {
         ArrayList<Integer> idsOfUnitsOnPlanet = new ArrayList<>(planet.unitsOnPlanet.size());
-        for (Unit unit : planet.unitsOnPlanet) {
-            idsOfUnitsOnPlanet.add(unit.unitId);
+        for (int i = 0; i < planet.unitsOnPlanet.size(); i++) {
+            idsOfUnitsOnPlanet.add(planet.unitsOnPlanet.get(i).unitId);
         }
 
         return new PlanetData(planet.planetId, planet.owner, planet.x, planet.y, idsOfUnitsOnPlanet,
