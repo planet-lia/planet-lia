@@ -31,7 +31,7 @@
         ],
         "botColors": ["#74B732", "#B74254"]
     },
-    "maxNumberOfUnitsPerTeam": 500,
+    "maxNumberOfUnitsPerTeam": 400,
     "maxMatchDuration": 200,
     "gameUpdatesPerBotRequest": 1,
     "cameraViewWidth": 96,

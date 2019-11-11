@@ -1,11 +1,10 @@
 package core;
 
 import com.beust.jcommander.JCommander;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import core.api.Response;
 import core.api.InitialData;
 import core.api.MatchState;
+import core.api.Response;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -23,7 +22,6 @@ public class NetworkingClient extends WebSocketClient {
 
     private Bot myBot;
     private Gson gson;
-    private ObjectMapper mapper;
 
     public static NetworkingClient connectNew(String[] args, Bot myBot) throws Exception {
         Args parsedArgs = new Args();
@@ -55,7 +53,6 @@ public class NetworkingClient extends WebSocketClient {
     private NetworkingClient(URI serverUri, Map<String, String> httpHeaders, Bot myBot) {
         super(serverUri, httpHeaders);
         this.gson = new Gson();
-        this.mapper = new ObjectMapper();
         this.myBot = myBot;
     }
 
@@ -86,14 +83,12 @@ public class NetworkingClient extends WebSocketClient {
             Response response = new Response();
 
             if (message.contains("\"__type\":\"INITIAL\"")) {
-                // InitialData data = gson.fromJson(message, InitialData.class);
-                InitialData data = mapper.readValue(message, InitialData.class);
+                InitialData data = gson.fromJson(message, InitialData.class);
                 response.set__uid(data.get__uid());
                 myBot.setup(data);
             }
             else if (message.contains("\"__type\":\"UPDATE\"")) {
-                //MatchState data = gson.fromJson(message, MatchState.class);
-                MatchState data = mapper.readValue(message, MatchState.class);
+                MatchState data = gson.fromJson(message, MatchState.class);
                 response.set__uid(data.get__uid());
                 myBot.update(data, response);
             }
