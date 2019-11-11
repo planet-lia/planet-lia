@@ -1,7 +1,6 @@
 package com.planet_lia.match_generator.libs;
 
 import com.google.gson.*;
-import com.planet_lia.match_generator.libs.BotCommand;
 
 import java.lang.reflect.Type;
 

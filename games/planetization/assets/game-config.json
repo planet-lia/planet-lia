@@ -32,7 +32,7 @@
         "botColors": ["#74B732", "#B74254"]
     },
     "maxNumberOfUnitsPerTeam": 500,
-    "maxMatchDuration": 2000000,
+    "maxMatchDuration": 200,
     "gameUpdatesPerBotRequest": 1,
     "cameraViewWidth": 96,
     "cameraViewHeight": 54,
@@ -58,5 +58,5 @@
     "workerAttack": 50,
     "warriorHealth": 100,
     "warriorAttack": 100,
-    "damageReductionRatioOnDefence": 0.2
+    "damageReductionRatioOnDefence": 0.8
 }

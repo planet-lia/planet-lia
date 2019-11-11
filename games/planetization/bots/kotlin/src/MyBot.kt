@@ -4,12 +4,10 @@ import core.api.InitialData
 import core.api.MatchState
 import core.api.Response
 import core.api.UnitType
-import java.util.*
 
 /** Example Kotlin bot implementation for Planetization game. */
 class MyBot : Bot {
 
-    var rand = Random(12)
     lateinit var data: InitialData;
 
     // Called only once before the match starts. It holds the
@@ -27,7 +25,7 @@ class MyBot : Bot {
 
             // If the planet has enough resources, spawn new unit on it
             if (planet.canSpawnNewUnit) {
-                val type = if (rand.nextFloat() < 0.5f) UnitType.WARRIOR else UnitType.WORKER
+                val type = if (Math.random() < 0.5f) UnitType.WARRIOR else UnitType.WORKER
                 response.spawnUnit(planet.id, type)
             }
 
@@ -37,11 +35,11 @@ class MyBot : Bot {
                 val unitId = planet.idsOfUnitsOnPlanet[i]
 
                 // Randomly select if you will send the unit to a free or opponent planet
-                val planets = if (rand.nextFloat() < 0.5f) state.freePlanets else state.opponentPlanets
+                val planets = if (Math.random() < 0.5f) state.freePlanets else state.opponentPlanets
 
                 if (planets.isNotEmpty()) {
                     // Select a random planet in planets and send your unit there
-                    val destinationPlanetIndex = (rand.nextFloat() * planets.size).toInt()
+                    val destinationPlanetIndex = (Math.random() * planets.size).toInt()
                     val destinationPlanetId = planets[destinationPlanetIndex].id
                     response.sendUnit(unitId, destinationPlanetId)
                 }

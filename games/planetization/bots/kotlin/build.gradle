@@ -28,6 +28,7 @@ dependencies {
     compile 'org.slf4j:slf4j-simple:1.6.1'
     compile "com.github.salomonbrys.kotson:kotson:2.5.0"
     compile "com.beust:jcommander:1.71"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.9.8"
 }
 
 task downloadDependencies() {

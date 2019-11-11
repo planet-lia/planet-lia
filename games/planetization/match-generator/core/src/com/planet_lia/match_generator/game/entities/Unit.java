@@ -83,7 +83,7 @@ public class Unit implements Clickable {
         replay.sections.add(new StepSection(eid, TextureEntityAttribute.ROTATION_DEG, time, rotation));
         replay.sections.add(new TextSection(eid, TextureEntityAttribute.TEXTURE, time,
                 shortenImagePath(asset)));
-        replay.sections.add(new StepSection(eid, TextureEntityAttribute.LAYER, time, 6));
+        replay.sections.add(new StepSection(eid, TextureEntityAttribute.LAYER, time, 1));
         replay.sections.add(new StepSection(eid, TextureEntityAttribute.VISIBILITY, time, 1));
     }
 

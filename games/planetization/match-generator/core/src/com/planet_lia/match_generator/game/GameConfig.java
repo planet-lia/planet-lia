@@ -3,7 +3,9 @@ package com.planet_lia.match_generator.game;
 import com.google.gson.Gson;
 import com.planet_lia.match_generator.libs.GeneralConfig;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 

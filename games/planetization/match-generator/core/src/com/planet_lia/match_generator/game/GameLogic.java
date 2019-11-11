@@ -115,8 +115,6 @@ public class GameLogic extends GameLogicBase {
             createUnit(Unit.Type.WORKER, Owner.GREEN, GameConfig.values.greenPlanetOnStart, 0f);
         }
 
-        hud.updateUnits(greenUnits, redUnits);
-
         // Send initial information to bots
         tools.server.send(0, InitialMessage.create(botOwnerByBotIndex[0], planets, redUnits, greenUnits));
         tools.server.send(1, InitialMessage.create(botOwnerByBotIndex[1], planets, redUnits, greenUnits));
@@ -137,7 +135,7 @@ public class GameLogic extends GameLogicBase {
         if (owner == Owner.RED) redUnits.add(unit);
         else greenUnits.add(unit);
         planet.unitArrived(unit, time);
-        hud.updateUnits(greenUnits, redUnits);
+        hud.unitCountChanged(owner, type, 1, time);
         chartManager.newUnitCreated(owner, time);
     }
 
@@ -193,11 +191,15 @@ public class GameLogic extends GameLogicBase {
         }
 
         // Remove dead units
-        for (Unit unit : greenUnitsToRemove) greenUnits.remove(unit);
-        for (Unit unit : redUnitsToRemove) redUnits.remove(unit);
-        if (greenUnitsToRemove.size() + redUnitsToRemove.size() > 0) {
-            hud.updateUnits(greenUnits, redUnits);
+        for (Unit unit : greenUnitsToRemove) {
+            greenUnits.remove(unit);
+            hud.unitCountChanged(Owner.GREEN, unit.type, -1, timer.getTime());
         }
+        for (Unit unit : redUnitsToRemove) {
+            redUnits.remove(unit);
+            hud.unitCountChanged(Owner.RED, unit.type, -1, timer.getTime());
+        }
+
         chartManager.unitsDestroyed(greenUnitsToRemove.size(), Owner.GREEN, timer.getTime());
         chartManager.unitsDestroyed(redUnitsToRemove.size(), Owner.RED, timer.getTime());
         greenUnitsToRemove.clear();
@@ -363,16 +365,15 @@ public class GameLogic extends GameLogicBase {
         // Draw scene
         background.draw(batch);
 
-        for (Planet planet : planets) {
-            planet.draw(batch);
-        }
-
-
         for (Unit unit : greenUnits) {
             unit.draw(batch);
         }
         for (Unit unit : redUnits) {
             unit.draw(batch);
+        }
+
+        for (Planet planet : planets) {
+            planet.draw(batch);
         }
 
         hud.draw(batch);

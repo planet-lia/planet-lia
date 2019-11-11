@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.planet_lia.match_generator.game.Assets;
 import com.planet_lia.match_generator.game.GameConfig;
+import com.planet_lia.match_generator.game.entities.Owner;
 import com.planet_lia.match_generator.game.entities.Unit;
 import com.planet_lia.match_generator.libs.BotDetails;
 import com.planet_lia.match_generator.libs.replays.*;
@@ -63,7 +64,7 @@ public class Hud {
 
     // Green worker text
     float greenWorkerTextX = greenWorkerImageX + offsetSmall;
-    int nGreenWorkers;
+    int nGreenWorkers = 0;
     public String greenWorkerTextId = "HUD_TEXT_green_worker";
 
     // Green warrior
@@ -72,7 +73,7 @@ public class Hud {
 
     // Green warrior text
     float greenWarriorTextX = greenWarriorImageX + offsetSmall;
-    int nGreenWarriors;
+    int nGreenWarriors = 0;
     public String greenWarriorTextId = "HUD_TEXT_green_warrior";
 
     // Red warrior
@@ -81,7 +82,7 @@ public class Hud {
 
     // Red warrior text
     float redWarriorTextX = redWarriorImageX + offsetSmall;
-    int nRedWarriors;
+    int nRedWarriors = 0;
     public String redWarriorTextId = "HUD_TEXT_red_warrior";
 
     // Red worker
@@ -90,7 +91,7 @@ public class Hud {
 
     // Red worker text
     float redWorkerTextX = redWorkerImageX + offsetSmall;
-    int nRedWorkers;
+    int nRedWorkers = 0;
     public String redWorkerTextId = "HUD_TEXT_red_worker";
 
     // Time
@@ -102,8 +103,6 @@ public class Hud {
     // Standalone curve ids
     public String nGreenUnitsCurveId = "CURVE_green_units";
     public String nRedUnitsCurveId = "CURVE_red_units";
-    public String nGreenPlanetsCurveId = "CURVE_green_planets";
-    public String nRedPlanetsCurveId = "CURVE_red_planets";
 
     public Hud(Replay replay, BotDetails[] botDetails) {
         this.replay = replay;
@@ -189,10 +188,6 @@ public class Hud {
         replay.sections.add(new StepSection(id, TextEntityAttribute.LAYER, time, layer));
     }
 
-    private void writeUpdatedBasicText(String id, String text) {
-        replay.sections.add(new TextSection(id, TextEntityAttribute.TEXT, time, text));
-    }
-
     private void writeBasicNumericText(String id, float x, float y, float anchor, float numericText,
                                       float precision, String color, float layer) {
         replay.sections.add(new StepSection(id, TextEntityAttribute.X, time, x));
@@ -213,19 +208,24 @@ public class Hud {
         replay.sections.add(new StepSection(id, TextEntityAttribute.NUMBER_TEXT, time, numericText));
     }
 
-    public void updateUnits(ArrayList<Unit> greenUnits, ArrayList<Unit> redUnits) {
-        nGreenWorkers = 0;
-        nGreenWarriors = 0;
-        nRedWorkers = 0;
-        nRedWarriors = 0;
-        for (Unit unit : greenUnits) {
-            if (unit.type == Unit.Type.WORKER) nGreenWorkers++;
-            else nGreenWarriors++;
+    public void unitCountChanged(Owner owner, Unit.Type type, int numberChange, float time) {
+        if (owner == Owner.GREEN && type == Unit.Type.WORKER) {
+            nGreenWorkers += numberChange;
+            writeUpdatedNumericText(greenWorkerTextId, nGreenWorkers);
         }
-        for (Unit unit : redUnits) {
-            if (unit.type == Unit.Type.WORKER) nRedWorkers++;
-            else nRedWarriors++;
+        else if (owner == Owner.GREEN && type == Unit.Type.WARRIOR) {
+            nGreenWarriors += numberChange;
+            writeUpdatedNumericText(greenWarriorTextId, nGreenWarriors);
         }
+        else if (owner == Owner.RED && type == Unit.Type.WORKER) {
+            nRedWorkers += numberChange;
+            writeUpdatedNumericText(redWorkerTextId, nRedWorkers);
+        }
+        else if (owner == Owner.RED && type == Unit.Type.WARRIOR) {
+            nRedWarriors += numberChange;
+            writeUpdatedNumericText(redWarriorTextId, nRedWarriors);
+        }
+
         int nGreenUnits = nGreenWarriors + nGreenWorkers;
         int nRedUnits = nRedWarriors + nRedWorkers;
         int nAllUnits = nGreenUnits + nRedUnits;
@@ -241,11 +241,6 @@ public class Hud {
 
         writeUpdatedPowerBar(pbGreenId, pbGreenX, pbGreenWidth);
         writeUpdatedPowerBar(pbRedId, pbRedX, pbRedWidth);
-
-        writeUpdatedNumericText(greenWarriorTextId, nGreenWarriors);
-        writeUpdatedNumericText(greenWorkerTextId, nGreenWorkers);
-        writeUpdatedNumericText(redWarriorTextId, nRedWarriors);
-        writeUpdatedNumericText(redWorkerTextId, nRedWorkers);
     }
 
     public void writeEndGameAnimation(int winningTeamIndex) {
