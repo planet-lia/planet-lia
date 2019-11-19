@@ -8,6 +8,7 @@ import (
 
 var noMatchViewer bool
 var skipBotBuilds bool
+var numberOfMatches int
 
 var playCmd = &cobra.Command{
 	Use:   "play <bot-1-path> <bot-2-path> ... <bot-n-path>",
@@ -17,7 +18,7 @@ var playCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		settings.ExitIfNoGameSelected("play", settings.Lia.SelectedGame)
 
-		internal.Play(args, &matchFlags, noMatchViewer, skipBotBuilds, serverPort)
+		internal.Play(args, &matchFlags, noMatchViewer, skipBotBuilds, serverPort, numberOfMatches)
 	},
 }
 
@@ -26,8 +27,10 @@ func init() {
 
 	registerReplayFlags(&serverPort, playCmd)
 	registerGenerateFlags(&matchFlags, playCmd)
-	playCmd.Flags().BoolVarP(&noMatchViewer, "no-viewer", "n", false,
-		"do not open match viewer to view the replay once the match is generated")
+	playCmd.Flags().BoolVar(&noMatchViewer, "no-viewer", false,
+		"Do not open match viewer to view the replay once the match is generated")
 	playCmd.Flags().BoolVar(&skipBotBuilds, "skip-build", false,
-		"skip building bots before generating the match")
+		"Skip building bots before generating the match")
+	playCmd.Flags().IntVarP(&numberOfMatches, "num-matches", "n", 1,
+		"Choose how many matches to generate")
 }

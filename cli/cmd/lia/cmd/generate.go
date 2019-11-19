@@ -1,10 +1,12 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/planet-lia/planet-lia/cli/internal"
 	"github.com/planet-lia/planet-lia/cli/internal/config"
 	"github.com/planet-lia/planet-lia/cli/internal/settings"
 	"github.com/spf13/cobra"
+	"os"
 )
 
 var matchFlags = internal.MatchFlags{}
@@ -17,7 +19,9 @@ var generateCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		settings.ExitIfNoGameSelected("generate", settings.Lia.SelectedGame)
 
-		internal.GenerateMatch(args, &matchFlags)
+		if _, err := internal.GenerateMatch(args, &matchFlags); err != nil {
+			fmt.Fprintf(os.Stderr, "failed to generate match: %s\n", err)
+		}
 	},
 }
 
@@ -28,7 +32,7 @@ func init() {
 }
 
 func registerGenerateFlags(matchFlags *internal.MatchFlags, command *cobra.Command) {
-	command.Flags().BoolVarP(&matchFlags.Debug, "debug", "d", false, "show debug window")
+	command.Flags().BoolVarP(&matchFlags.Debug, "debug", "d", false, "Show debug window")
 	command.Flags().IntVarP(&matchFlags.Port, "port", "p", config.DefaultMatchPort,
 		"Port on which match generator will run")
 	command.Flags().StringVarP(&matchFlags.ReplayPath, "replay", "r", "",
@@ -39,11 +43,11 @@ func registerGenerateFlags(matchFlags *internal.MatchFlags, command *cobra.Comma
 		"Set which bots need to be connected manually, examples: `-d 0,1` will debug bot1 and "+
 			"bot2, `-d 1` will debug bot2, `-d` will only open a debug view but will connect all bots automatically)")
 	command.Flags().Float32VarP(&matchFlags.WindowToScreenRatio, "window-to-screen", "w", 0,
-		"Specify the ratio between debug view and the size of the monitor, it only works when also `-d/--debug` is provided")
-	command.Flags().StringVarP(&matchFlags.BotListenerToken, "--bot-listener-token", "b", "",
+		"Specify the ratio between debug view and the size of the monitor, it only works when also -d/--debug is provided")
+	command.Flags().StringVarP(&matchFlags.BotListenerToken, "bot-listener-token", "b", "",
 		"Token with which an external service can connect and listen all communications between match-generator"+
 			" and all bots. Disabled if not provided")
-	command.Flags().StringVarP(&matchFlags.Teams, "--teams", "t", "",
+	command.Flags().StringVarP(&matchFlags.Teams, "teams", "t", "",
 		"Specify the teams for the bots in a format x:y:z:... which means that first x provided bots belongs "+
 			"to the team 0, next y bots to team 1, next z to team 3 etc. Note that the teams format must be supported "+
 			"by the game in order to work. If the parameter is not provided, the teams are set up automatically "+

@@ -3,8 +3,8 @@ package internal
 import (
 	"bytes"
 	"compress/gzip"
+	"encoding/json"
 	"fmt"
-	"github.com/planet-lia/planet-lia/cli"
 	"github.com/planet-lia/planet-lia/cli/internal/config"
 	"github.com/planet-lia/planet-lia/cli/internal/settings"
 	uuid "github.com/satori/go.uuid"
@@ -36,7 +36,13 @@ type BotDetails struct {
 	cmdRef  *CommandRef
 }
 
-func GenerateMatch(botPaths []string, gameFlags *MatchFlags) {
+type MatchResult struct {
+	winnerIndex int
+	success     bool
+}
+
+// Returns winner bot index
+func GenerateMatch(botPaths []string, gameFlags *MatchFlags) (int, error) {
 	configureReplayFilePath(gameFlags)
 	configureGameConfig(gameFlags)
 	botsDetails := getBotsDetails(botPaths, gameFlags)
@@ -81,7 +87,7 @@ func GenerateMatch(botPaths []string, gameFlags *MatchFlags) {
 	err := <-result
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to generate game, match generator error: %s\n", err)
-		os.Exit(cli.Default)
+		return -1, err
 	}
 
 	generatorFinished = true
@@ -91,7 +97,16 @@ func GenerateMatch(botPaths []string, gameFlags *MatchFlags) {
 		killProcess(botDetails.cmdRef)
 	}
 
-	gzipReplayFile(gameFlags.ReplayPath)
+	winnerBotIndex, err := getWinnerBotIndex(gameFlags.ReplayPath)
+	if err != nil {
+		return -1, err
+	}
+
+	if err := gzipReplayFile(gameFlags.ReplayPath); err != nil {
+		return -1, err
+	}
+
+	return winnerBotIndex, nil
 }
 
 func getBotsDetails(botDirs []string, gameFlags *MatchFlags) []BotDetails {
@@ -138,18 +153,43 @@ func configureReplayFilePath(gameFlags *MatchFlags) {
 	}
 }
 
-func gzipReplayFile(replayPath string) {
+type ReplayFileBasic struct {
+	TeamsFinalOrder []int `json:"TeamsFinalOrder"`
+}
+
+func getWinnerBotIndex(replayPath string) (int, error) {
+	// Read replay file
+	body, err := ioutil.ReadFile(replayPath)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to read the replay file for path '%s'\n%s\n", replayPath, err)
+		return -1, err
+	}
+
+	replay := &ReplayFileBasic{}
+	if err = json.Unmarshal(body, replay); err != nil {
+		return -1, err
+	}
+
+	if len(replay.TeamsFinalOrder) < 2 {
+		return -1, fmt.Errorf("Field TeamsFinalOrder in replay file has %d items\n", len(replay.TeamsFinalOrder))
+	}
+
+	return replay.TeamsFinalOrder[0], nil
+}
+
+func gzipReplayFile(replayPath string) error {
 	// Read replay file
 	replayData, err := ioutil.ReadFile(replayPath)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to read the replay file for path '%s'\n%s\n", replayPath, err)
+		fmt.Fprintf(os.Stderr, "failed to read the replay file for path '%s'\n", replayPath)
+		return err
 	}
 
 	// Open a file for writing.
 	outFile, err := os.Create(replayPath)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "failed to create and truncate the replay file for path '%s'\n%s\n", replayPath, err)
-		return
+		fmt.Fprintf(os.Stderr, "failed to create and truncate the replay file for path '%s'\n", replayPath)
+		return err
 	}
 
 	// Create gzip writer.
@@ -157,13 +197,17 @@ func gzipReplayFile(replayPath string) {
 
 	// Write bytes in compressed form to the file.
 	if _, err := w.Write(replayData); err != nil {
-		fmt.Fprintf(os.Stderr, "failed to gzip replay to path '%s'\n%s\n", replayPath, err)
+		fmt.Fprintf(os.Stderr, "failed to gzip replay to path '%s'\n", replayPath)
+		return err
 	}
 
 	// Close the file.
 	if err := w.Close(); err != nil {
-		fmt.Fprintf(os.Stderr, "failed to close replay file '%s'\n%s\n", replayPath, err)
+		fmt.Fprintf(os.Stderr, "failed to close replay file '%s'\n", replayPath)
+		return err
 	}
+
+	return nil
 }
 
 func parseBotName(botDir string) string {

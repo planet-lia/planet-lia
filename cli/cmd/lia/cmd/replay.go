@@ -31,5 +31,5 @@ func init() {
 
 func registerReplayFlags(serverPort *int, command *cobra.Command) {
 	command.Flags().IntVarP(serverPort, "server-port", "s", config.DefaultServerPort,
-		"select a port on which to serve match-viewer, replay files and assets")
+		"Select a port on which to serve match-viewer, replay files and assets")
 }

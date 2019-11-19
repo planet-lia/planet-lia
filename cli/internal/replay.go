@@ -51,7 +51,7 @@ func OpenMatchViewer(replayFile string, serverPort int) {
 		}
 		fmt.Printf("Running match-viewer on %v.\n", address)
 		if err := srv.ListenAndServe(); err != nil {
-			fmt.Fprintf(os.Stderr, "failed to run server on port %d, try running using the -s plag to "+
+			fmt.Fprintf(os.Stderr, "failed to run server on port %d, try running using the -s flag to "+
 				"run the server on a different port.\n%s\n", serverPort, err)
 			os.Exit(1)
 		}
