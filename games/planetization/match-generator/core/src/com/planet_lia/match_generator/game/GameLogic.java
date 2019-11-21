@@ -418,5 +418,7 @@ public class GameLogic extends GameLogicBase {
     @Override
     public void dispose() {
         Assets.dispose();
+        batchHud.dispose();
+        batch.dispose();
     }
 }

@@ -1,0 +1,5 @@
+{
+    "language": "kotlin",
+    "version": "1.0.0",
+    "mainFile": "src/MyBot.kt"
+}
