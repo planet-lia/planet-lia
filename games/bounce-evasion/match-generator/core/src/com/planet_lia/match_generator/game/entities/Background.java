@@ -40,7 +40,6 @@ public class Background {
 
     private void removeTiles() {
         int nTilesToRemove = GameConfig.values.random.nextInt(20) + 10;
-        nTilesToRemove = 20;
         System.out.println("Number of map gaps: " + nTilesToRemove);
 
         // Remove symmetrical tiles

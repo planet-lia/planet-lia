@@ -337,7 +337,7 @@ public class GameLogic extends GameLogicBase {
 
     private void sendMatchState(float time, int botIndex) {
         int opponentBotIndex = (botIndex == 0) ? 1 : 0;
-        MatchStateMessage message = MatchStateMessage.create(time, units[botIndex], units[opponentBotIndex], saws);
+        MatchStateMessage message = MatchStateMessage.create(time, units[botIndex], units[opponentBotIndex], coins, saws);
         tools.server.send(botIndex, message);
     }
 
