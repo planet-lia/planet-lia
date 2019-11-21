@@ -4,9 +4,9 @@
   },
   "games": [
     {
-      "name": "planetization",
+      "name": "bounce-evasion",
       "version": "1.0.0",
-      "downloadUrl": "http://localhost:4447/serveReleasesBuild/planetization.zip",
+      "downloadUrl": "http://localhost:4447/serveReleasesBuild/bounce-evasion.zip",
       "bots": [
         {
           "language": "java",

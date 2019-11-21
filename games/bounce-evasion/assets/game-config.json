@@ -1,0 +1,47 @@
+{
+    "general": {
+        "gameNamePretty": "Bounce Evasion",
+        "gameName": "bounce-evasion",
+        "gameVersion": "1.0",
+        "assetsVersion": "1.0",
+        "backgroundColor": "#111111",
+        "debugWindow": {
+            "framesPerSecond": 60,
+            "logsToGameRatio": 0.3,
+            "entityDetailsToScreenHeight": 0.3,
+            "controlsToWindowHeightRatio": 0.08
+        },
+        "showEntityPathSettings": {
+            "pathColor": "#FFFFFF", 
+            "pathAlpha": 0.6, 
+            "clickedEntityTint": "#FF0000", 
+            "pathWidth": 0.2, 
+            "drawingTimeInterval": 0.2
+        },
+        "gameUpdatesPerSecond": 2,
+        "connectingBotsTimeout": 10,
+        "botFirstResponseTimeout": 2,
+        "botResponseTimeout": 1,
+        "maxTimeoutsPerBot": 8,
+        "botResponseTotalDurationMax": 45,
+        "gameUpdatesPerBotsUpdate": 3,
+        "allowedTeamFormats": [
+            {"format": "1:1", "weight": 1}
+        ],
+        "botColors": ["#D9C72E", "#019170"]
+    },
+    "gameUpdatesPerBotRequest": 1,
+    "cameraViewWidth": 24,
+    "cameraViewHeight": 13.5,
+    "defaultFontSize": 0.2,
+    "mapWidth": 20,
+    "mapHeight": 11,
+    "tileSize": 1,
+    "coinSize": 0.5,
+    "numberOfCoins": 2,
+    "unitSize": 0.7,
+    "unitLives": 3,
+    "minSpawnCoinDistance": 2,
+    "sawSize": 0.5,
+    "sawSpawnUpdatesDelay": 22
+}
