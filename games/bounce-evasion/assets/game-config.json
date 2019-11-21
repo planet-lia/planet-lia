@@ -21,9 +21,9 @@
         "gameUpdatesPerSecond": 2,
         "connectingBotsTimeout": 10,
         "botFirstResponseTimeout": 2,
-        "botResponseTimeout": 1,
+        "botResponseTimeout": 0.2,
         "maxTimeoutsPerBot": 8,
-        "botResponseTotalDurationMax": 45,
+        "botResponseTotalDurationMax": 15,
         "gameUpdatesPerBotsUpdate": 3,
         "allowedTeamFormats": [
             {"format": "1:1", "weight": 1}

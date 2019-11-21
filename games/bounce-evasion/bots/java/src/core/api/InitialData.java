@@ -7,6 +7,7 @@ public class InitialData {
     public MatchDetails __matchDetails;
     public int mapWidth;
     public int mapHeight;
+    public int sawSpawnDelay;
     public boolean[][] map;
     public Unit yourUnit;
     public Unit opponentUnit;
