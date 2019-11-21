@@ -27,6 +27,28 @@
           "downloadUrl": "https://files.production.cloud.planetlia.com/games/planetization/1.0/python3.zip"
         }
       ]
+    },
+    {
+      "name": "bounce-evasion",
+      "version": "1.0.0",
+      "downloadUrl": "https://files.production.cloud.planetlia.com/games/bounce-evasion/1.0/bounce-evasion.zip",
+      "bots": [
+        {
+          "language": "java",
+          "version": "1.0.0",
+          "downloadUrl": "https://files.production.cloud.planetlia.com/games/bounce-evasion/1.0/java.zip"
+        },
+        {
+          "language": "kotlin",
+          "version": "1.0.0",
+          "downloadUrl": "https://files.production.cloud.planetlia.com/games/bounce-evasion/1.0/kotlin.zip"
+        },
+        {
+          "language": "python3",
+          "version": "1.0.0",
+          "downloadUrl": "https://files.production.cloud.planetlia.com/games/bounce-evasion/1.0/python3.zip"
+        }
+      ]
     }
   ]
 }
