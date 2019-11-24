@@ -1,3 +1,42 @@
 $primaryColor: #019170;      // (text)color: black
 $primaryColorLight: #4fc29e; // (text)color: black
 $primaryColorDark: #006245;  // (text)color: white
+
+/* custom navigation tabs */
+.navPillsCustom {
+  ul, .navPillsCustom {
+    margin: 20px auto;
+    float: none;
+    li, .nav-item {
+      &.active {
+        a {
+          border-bottom: 4px solid $primaryColor;
+          border-radius: 0;
+          background-color: white;
+          color: $primaryColorDark;
+          font-weight: bold;
+          &:hover {
+            border-bottom: 4px solid $primaryColorLight;
+            color: $primaryColor;
+          }
+          &:focus {
+            border-bottom: 4px solid $primaryColorDark;
+            color: $primaryColorDark;
+          }
+        }
+      }
+      a {
+        background-color: #fff;
+        text-decoration: none !important;
+        color: $primaryColor;
+        border-bottom: 4px solid white;
+        border-radius: 0;
+        &:hover {
+          border-bottom: 4px solid $primaryColorLight;
+          border-radius: 0;
+          color: $primaryColorLight;
+        }
+      }
+    }
+  }
+}
