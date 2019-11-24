@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import ScrollToTop from './components/layout/ScrollToTop';
 
 import './index.css';
+import './styles.scss';
 import App from './App';
 import { store } from './utils/helpers/store';
 import { authActions } from './utils/actions/authActions'
