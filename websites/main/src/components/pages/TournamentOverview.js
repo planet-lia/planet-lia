@@ -89,7 +89,7 @@ class TournamentPage extends Component {
                 <Link to={currentPath + "?lang=" + languageConst.SLOVENIAN}>SLO</Link>
               </div>
               <h2 className="tour-title">{content.titleTour}</h2>
-              {currentPath==="/tournament"
+              {currentPath==="/tournament/overview"
                 ? (
                   <div id="tour-cont-addition">
                     <h4 className="tour-date">{content.tourDate}</h4>
@@ -136,7 +136,7 @@ class TournamentPage extends Component {
         </div>
 
         <Switch>
-          <Route exact path='/tournament' render={() => <TournamentMain content={content} />} />
+          <Route exact path='/tournament/overview' render={() => <TournamentMain content={content} />} />
           <Route path='/tournament/rules' render={() => <TournamentRules content={content} />} />
         </Switch>
       </div>

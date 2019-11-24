@@ -1,9 +1,7 @@
 import React from 'react';
-import {Route, Switch} from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import LandingPage from '../pages/LandingPage';
-import TournamentPage from '../pages/TournamentPage';
-import LeaderboardPage from '../pages/LeaderboardPage';
-import GamesPage from '../pages/GamesPage';
+import TournamentPage from '../pages/TournamentPage.tsx';
 import EditorPage from '../pages/EditorPage';
 import EditorTracking from '../pages/EditorTracking';
 import AboutPage from '../pages/AboutPage';
@@ -20,9 +18,8 @@ const Routes = () => {
   return (
     <Switch>
       <Route exact path="/" component={LandingPage} />
+      <Route path="/tournament/:subPage" component={TournamentPage} />
       <Route path="/tournament" component={TournamentPage} />
-      <Route path="/leaderboard" component={LeaderboardPage} />
-      <Route path="/games" component={GamesPage} />
       <Route path="/editor/tracking" component={EditorTracking} />
       <Route path="/editor" component={EditorPage} />
       <Route path="/about" component={AboutPage} />

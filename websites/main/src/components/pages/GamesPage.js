@@ -17,8 +17,8 @@ class GamesPage extends Component {
         </div>
         <div className="container">
           <Switch>
-            <Route exact path='/games' component={GamesList} />
-            <Route path='/games/:number' component={GameReplay} />
+            <Route exact path='/tournament/games' component={GamesList} />
+            <Route path='/tournament/games/:number' component={GameReplay} />
           </Switch>
         </div>
       </div>
