@@ -270,6 +270,7 @@ func runBot(cmdRef *CommandRef, botPath, token string, port int) error {
 
 	err := cmd.Run()
 	if err != nil {
+		fmt.Printf("Bot failed with error: %s\n", err)
 		return err
 	}
 
@@ -358,7 +359,7 @@ func runMatchGenerator(started chan bool, cmdRef *CommandRef, gameFlags *MatchFl
 
 	// Run match generator
 	if err := cmd.Run(); err != nil {
-		fmt.Fprintf(os.Stderr, "match generator failed\n")
+		fmt.Fprintf(os.Stderr, "match generator failed with error: %s\n", err)
 		return err
 	}
 

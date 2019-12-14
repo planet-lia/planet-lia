@@ -66,7 +66,7 @@ public class GameLogic extends GameLogicBase {
             coins[i + 1] = new Coin(i + 1, replay, pos2[0], pos2[1]);
         }
 
-        spawn2Saws(0f);
+        //spawn2Saws(0f);
 
         // Register entities so that their details will be displayed
         // when they will be clicked on
@@ -131,10 +131,6 @@ public class GameLogic extends GameLogicBase {
             System.out.printf("%d ticks generated.\n", updatesCount);
         }
 
-        if (updatesCount != 0 && updatesCount % GameConfig.values.sawSpawnUpdatesDelay == 0) {
-            spawn2Saws(timer.getTime());
-        }
-
         // Update entities
         for (Unit unit : units) {
             unit.update(timer.getTime(), delta);
@@ -142,6 +138,10 @@ public class GameLogic extends GameLogicBase {
 
         for (Saw saw : saws) {
             saw.update(timer.getTime(), delta);
+        }
+
+        if (updatesCount % GameConfig.values.sawSpawnUpdatesDelay == 0) {
+            spawn2Saws(timer.getTime());
         }
 
         checkForCoinPickUp(timer.getTime());

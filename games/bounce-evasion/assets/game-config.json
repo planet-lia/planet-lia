@@ -2,7 +2,7 @@
     "general": {
         "gameNamePretty": "Bounce Evasion",
         "gameName": "bounce-evasion",
-        "gameVersion": "1.0",
+        "gameVersion": "1.1",
         "assetsVersion": "1.0",
         "backgroundColor": "#111111",
         "debugWindow": {

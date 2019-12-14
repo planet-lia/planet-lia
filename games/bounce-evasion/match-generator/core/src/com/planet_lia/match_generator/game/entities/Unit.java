@@ -39,6 +39,8 @@ public class Unit implements Clickable {
     public int points;
     public int lives;
 
+    public float lastPointTime = 0f;
+
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     public Unit(int id, int x, int y, Replay replay, String assetPath, Direction startDirection) {
@@ -111,6 +113,8 @@ public class Unit implements Clickable {
         replay.sections.add(new TextSection(eidParticle, ParticleEntityAttribute.EFFECT, time, "pickup"));
         replay.sections.add(new BooleanSection(eidParticle, ParticleEntityAttribute.EMIT, time, true));
         replay.sections.add(new StepSection(eidParticle, ParticleEntityAttribute.LAYER, time, 20f));
+
+        lastPointTime = time;
     }
 
     public void removeLife(float time) {
@@ -134,6 +138,11 @@ public class Unit implements Clickable {
     public void update(float time, float delta) {
         // If the move command was issued in previous turn, move the unit
         if (lives == 0) return;
+
+        if (time - lastPointTime > 100) {
+            System.out.printf("Unit %s died because it failed to pick up a single coin in past 100 seconds.\n", eid);
+            willDie = true;
+        }
 
         if (x != destinationX || y != destinationY) {
 
