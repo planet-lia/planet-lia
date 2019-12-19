@@ -144,6 +144,14 @@ public class Unit implements Clickable {
             willDie = true;
         }
 
+        // Make the unit move linearly to its destination from previous to this update call
+        if (willDie) {
+            willDie = false;
+            lives = 0;
+            replay.sections.add(new StepSection(eid, TextureEntityAttribute.SCALE, time, 1f));
+            replay.sections.add(new LinearSection(eid, TextureEntityAttribute.SCALE, time + 1, 0f));
+        }
+
         if (x != destinationX || y != destinationY) {
 
             float halfTileSize = GameConfig.values.tileSize / 2f;
@@ -158,13 +166,6 @@ public class Unit implements Clickable {
             this.x = destinationX;
             this.y = destinationY;
 
-            // Make the unit move linearly to its destination from previous to this update call
-            if (willDie) {
-                willDie = false;
-                lives = 0;
-                replay.sections.add(new StepSection(eid, TextureEntityAttribute.SCALE, time, 1f));
-                replay.sections.add(new LinearSection(eid, TextureEntityAttribute.SCALE, time + 1, 0f));
-            }
             replay.sections.add(new LinearSection(eid, TextureEntityAttribute.X, time, x + halfTileSize));
             replay.sections.add(new LinearSection(eid, TextureEntityAttribute.Y, time, y + halfTileSize));
         }

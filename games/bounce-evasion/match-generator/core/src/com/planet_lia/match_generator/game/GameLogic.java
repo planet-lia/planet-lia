@@ -164,8 +164,10 @@ public class GameLogic extends GameLogicBase {
 
             // Handle bot responses
             for (int botIndex = 0; botIndex < tools.botsDetails.length; botIndex++) {
-                BotResponse botResponse = tools.server.getLastResponseData(botIndex, BotResponse.class);
-                handleBotResponse(botIndex, botResponse, timer.getTime());
+                if (!tools.server.isDisqualified(botIndex)) {
+                    BotResponse botResponse = tools.server.getLastResponseData(botIndex, BotResponse.class);
+                    handleBotResponse(botIndex, botResponse, timer.getTime());
+                }
             }
         }
 
