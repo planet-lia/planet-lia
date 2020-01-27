@@ -1,0 +1,473 @@
+#battle-round-title {
+  text-align: center;
+  color: #fff;
+  font-family: 'Ubuntu', sans-serif;
+  margin: 100px 0 0;
+  font-size: 30px;
+}
+
+#battle-title {
+  text-align: center;
+  color: #fff;
+  font-family: 'Ubuntu', sans-serif;
+  margin: 0 0 30px;
+}
+
+.match-text {
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.vs-text {
+  color: #fff;
+  font-size: 1.2em;
+  padding-top: 10px;
+}
+
+.battle-watch-buttons {
+  margin-top: 30px;
+}
+
+.game-id {
+  margin-bottom: 5px;
+}
+
+.user1-color {
+  color: #facd3b;
+}
+
+.user2-color {
+  color: #019170;
+}
+
+.user-color {
+  color: #555;
+}
+
+#back-to-bracket {
+  margin-top: 60px;
+  text-align: center;
+}
+
+#bracket-title {
+  text-align: center;
+  color: #fff;
+  font-family: 'Ubuntu', sans-serif;
+  margin: 30px 0 0;
+}
+
+#bracket-title > h2 {
+  font-weight: normal;
+}
+
+#bracket-title > h2:last-child {
+  font-weight: bold;
+}
+
+#logo-lia {
+  height: 75px;
+}
+
+#cont-brackets-page {
+  background-color: #1e1e1e;
+  color: #000;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.battle-indicators {
+  height: 22.85px;
+  margin: 3px 0 3px 13px;
+  display: flex;
+  align-items: center;
+}
+
+.btn-game {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #555;
+  margin-left: 5px;
+}
+
+.yellow {
+  background-color: #facd3b;
+}
+
+.green {
+  background-color: #019170;
+}
+
+.cont-brackets {
+  display: grid;
+  grid-template-columns: 14.2857% 14.2857% 14.2857% 14.2857% 14.2857% 14.2857% 14.2857%;
+  grid-row-gap: 30px;
+
+  min-width: 810px;
+  font-size: 16px;
+  padding: 0 20px 47px;
+}
+
+.cont-brackets > div {
+  position: relative;
+}
+
+#brackets-winners {
+  grid-column-start: 3;
+  grid-column-end: 6;
+  grid-row-start: 1;
+  grid-row-end: 3;
+
+  font-size: 22px;
+  margin-top: 60px;
+}
+
+#brackets-winners > div {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.cont-win-name {
+  color: #fff;
+  background: #3b3b3b;
+  text-align: center;
+  padding: 3px 16px;
+  min-width: 246px;
+}
+
+.cont-win-name > a,
+.cont-win-name > a:focus,
+.cont-win-name > a:active {
+  color: #fff;
+  text-decoration: none;
+}
+
+.cont-win-name > a:hover {
+  color: #ccc;
+}
+
+.cont-win-icon {
+  margin: 0 33px;
+  font-size: 36px;
+}
+
+.bracket {
+  width: 100%;
+  height: 100%;
+  padding: 30px 0;
+  position: relative;
+
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.vertex {
+  width: 82%;
+}
+
+.player-field {
+  display: flex;
+  flex-wrap: nowrap;
+  padding-bottom: 6px;
+  margin-top: 6px;
+  white-space: nowrap;
+}
+
+.player-field.player1 {
+  background-image: linear-gradient(to right, #facd3b, #c79a05);
+}
+
+.player-field.player2 {
+  background-image: linear-gradient(to right, #019170, #01654e);
+}
+
+.player-field > div {
+  background-color: #3b3b3b;
+  color: #fff;
+  padding: 4px 0;
+}
+
+.player-field > div:first-child {
+  padding-left: 8px;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-field > div:last-child {
+  width: 26px;
+  text-align: center;
+}
+
+.player-field a,
+.player-field a:focus,
+.player-field a:active {
+  color: #fff;
+  text-decoration: none;
+}
+
+.player-field.player1 a:hover{
+  color: #facd3b;
+  text-decoration: none;
+}
+
+.player-field.player2 a:hover{
+  color: #019170;
+  text-decoration: none;
+}
+
+.bracket-btn-watch {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 15px;
+}
+
+.root-edge {
+  width: 9%;
+  height: 100%;
+  position: relative;
+}
+
+.root-edge .edge {
+  width: 100%;
+  position: absolute;
+  border-bottom: 2px solid #999;
+}
+
+.root-edge .edge.left {
+  top: 39%;
+}
+
+.root-edge .edge.right {
+  top: 60.5%;
+}
+
+.edge-in {
+  width: 6%;
+  height: 100%;
+  position: relative;
+}
+
+.edge-in > .top {
+  width: 100%;
+  height: calc(35% - 43px);
+  position: absolute;
+  top: 57px;
+  border-bottom: 2px solid #999;
+}
+
+.edge-in > .top.left {
+  border-left: 2px solid #999;
+}
+
+.edge-in > .top.right {
+  border-right: 2px solid #999;
+}
+
+.edge-in > .bottom {
+  width: 100%;
+  height: calc(50% - 90px);
+  position: absolute;
+  bottom: 57px;
+  border-top: 2px solid #999;
+}
+
+.edge-in > .bottom.left {
+  border-left: 2px solid #999;
+}
+
+.edge-in > .bottom.right {
+  border-right: 2px solid #999;
+}
+
+.edge-out {
+  width: 12%;
+  height: 100%;
+  min-height: 110.84px;
+  position: relative;
+}
+
+.edge-out > .connect {
+  width: 50%;
+  height: calc(111.55px - 25px - 18px); /*vertex height - 1x height of player-field - paddings*/
+
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+
+  border-top: 2px solid #999;
+  border-bottom: 2px solid #999;
+}
+
+.edge-out > .connect.left {
+  left: 0;
+  border-right: 2px solid #999;
+}
+
+.edge-out > .connect.right {
+  right:0;
+  border-left: 2px solid #999;
+}
+
+.edge-out > .edge {
+  width: calc(50% + 3px);
+  height: calc(50% - 12.5px);
+  position: absolute;
+}
+
+.edge-out > .edge.left {
+  right: -2px;
+  border-right: 2px solid #999;
+}
+
+.edge-out > .edge.right {
+  left: -2px;
+  border-left: 2px solid #999;
+}
+
+.edge-out > .edge.top {
+  bottom: 12.5px;
+  border-top: 2px solid #999;
+}
+
+.edge-out > .edge.bottom {
+  top: 12.5px;
+  border-bottom: 2px solid #999;
+}
+
+.edge-out > .edge.top-mid {
+  height: calc(5.525% + 17px);
+  bottom: calc(43% - 11px);
+  border-top: 2px solid #999;
+}
+
+.edge-out > .edge.bottom-mid {
+  height: calc(5.525% + 17px);
+  top: calc(43% - 11px);
+  border-bottom: 2px solid #999;
+}
+
+.battle-id {
+  color: #999;
+  position: absolute;
+  top: calc(50% + 2px);
+  transform: translateY(-50%);
+  font-size: 0.8em;
+  text-align: center;
+}
+
+.battle-id.left,
+.battle-id.center {
+  right: 0;
+}
+
+.battle-id.right {
+  left: 0;
+}
+
+@media (max-width: 1294.98px) {
+  .edge-out > .connect {
+    height: calc(110px - 25px - 18px); /*vertex height - 1x height of player-field - paddings*/
+  }
+  .cont-brackets {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 1174.98px) {
+  .edge-out > .connect {
+    height: calc(107.5px - 25px - 18px); /*vertex height - 1x height of player-field - paddings*/
+  }
+  .cont-brackets {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 1064.98px) {
+  .edge-out > .connect {
+    height: calc(105px - 25px - 18px); /*vertex height - 1x height of player-field - paddings*/
+  }
+  .cont-brackets {
+    font-size: 10px;
+  }
+  .battle-indicators {
+    margin-left: 5px;
+  }
+}
+
+@media (max-width: 944.98px) {
+  .edge-out > .connect {
+    height: calc(102.5px - 25px - 18px); /*vertex height - 1x height of player-field - paddings*/
+  }
+  .cont-brackets {
+    font-size: 8px;
+  }
+}
+
+
+/* Grid Positions */
+.g-col-1 {
+  grid-column-start: 1;
+}
+
+.g-col-2 {
+  grid-column-start: 2;
+}
+
+.g-col-3 {
+  grid-column-start: 3;
+}
+
+.g-col-4 {
+  grid-column-start: 4;
+}
+
+.g-col-5 {
+  grid-column-start: 5;
+}
+
+.g-col-6 {
+  grid-column-start: 6;
+}
+
+.g-col-7 {
+  grid-column-start: 7;
+}
+
+.g-row-1 {
+  grid-row-start: 1;
+}
+
+.g-row-2 {
+  grid-row-start: 2;
+}
+
+.g-row-3 {
+  grid-row-start: 3;
+}
+
+.g-row-4 {
+  grid-row-start: 4;
+}
+
+.g-row-12 {
+  grid-row-start: 1;
+  grid-row-end: 3;
+}
+
+.g-row-23 {
+  grid-row-start: 2;
+  grid-row-end: 4;
+}
+
+.g-row-34 {
+  grid-row-start: 3;
+  grid-row-end: 5;
+}
