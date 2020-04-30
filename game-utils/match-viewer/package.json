@@ -34,7 +34,7 @@
     "@types/react-dom": "16.8.5",
     "echarts": "^4.2.1",
     "echarts-for-react": "^2.0.15-beta.0",
-    "jquery": "^3.3.1",
+    "jquery": "^3.5.0",
     "jszip": "^3.2.2",
     "pako": "^1.0.10",
     "pixi-particles": "^4.1.2",
